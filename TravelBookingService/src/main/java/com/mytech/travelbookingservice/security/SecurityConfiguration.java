@@ -5,7 +5,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -26,20 +25,25 @@ public class SecurityConfiguration {
                         .requestMatchers(AUTH_WHITELIST).permitAll() // Allow access to Swagger UI // "/v3/api-docs/**", "/swagger-ui/**","/swagger-ui.html"
                         .anyRequest().authenticated() // Require authentication for all other requests
                 )
-                .httpBasic(Customizer.withDefaults()); // Enable basic authentication
-                //.userDetailsService(userDetailsService()); // Add this line
+                .httpBasic(Customizer.withDefaults()) // Enable basic authentication
+                .userDetailsService(userDetailsService()); // Add this line
 
         return http.build();
     }
 
     @Bean
     public UserDetailsService userDetailsService() {
-        UserDetails user = User.withDefaultPasswordEncoder()
-                .username("user")
-                .password("")
-                .roles("USER")
+        UserDetails user = User.builder()
+                .username("admin")
+                .password(passwordEncoder().encode("tommy0211")) // Encode the password securely
+                .roles("ADMIN")
                 .build();
         return new InMemoryUserDetailsManager(user);
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 
     private static final String[] AUTH_WHITELIST = {
