@@ -1,0 +1,59 @@
+:root {
+  --black-text: #333333;
+  --gray-text: #2a2a2a;
+  --red: #e04f67;
+  --green-dark: #008489;
+  --footer: #222222;
+  --yellow-light: #fdf7ac;
+  --gray-light: #7b7b7b;
+  --gray-dark: #434343;
+  --bg-gray-light: #f9f9f9;
+  --white: #ffffff;
+  --pink: #e14d67;
+}
+
+.ant-menu-horizontal {
+  border-bottom: 0px !important;
+}
+
+.ant-select-selector {
+  border: 1px solid var(--gray-dark) !important;
+  background: var(--gray-dark) !important;
+}
+
+.ant-select-single .ant-select-selector {
+  color: var(--gray-light) !important;
+  font-size: 14px;
+  border-radius: 2px !important;
+}
+
+.ant-col {
+  font-family: "Montserrat", sans-serif !important;
+}
+
+.ant-input {
+  padding: 8px 10px !important;
+  color: var(--black-text);
+  font-size: 13px !important;
+  font-family: "Montserrat", sans-serif !important;
+  border-radius: 3px !important;
+}
+
+.hover-zoom:hover {
+  transform: scale(0.98);
+}
+
+.ant-card .ant-card-body {
+  padding: 0 !important;
+  border-radius: 5px !important;
+}
+
+.hover-button.ant-btn:hover {
+  background-color: var(--black-text) !important;
+  border-color: var(--black-text) !important;
+  color: white !important;
+}
+
+.image-hover-zoom:hover {
+  transform: scale(1.1);
+}
