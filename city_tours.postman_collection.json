@@ -1,0 +1,1033 @@
+{
+	"info": {
+		"_postman_id": "991a5844-2196-4906-874c-2d65556df34c",
+		"name": "City tours",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "29777256"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Register (ALL)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"customer4\",\r\n    \"email\": \"customer4@gmail.com\",\r\n    \"password\": \"customer4\",\r\n    \"roles\": [\"ROLE_CUSTOMER\"]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5050/api/v1/auth/register",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5050",
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login (ALL)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"admin\",\r\n    \"password\": \"admin\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5050/api/v1/auth/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5050",
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Logout (ALL)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhZG1pbiIsImlkIjoyNSwiZW1haWwiOiJhZG1pbkBnbWFpbC5jb20iLCJzdGF0dXMiOiJBQ1RJVkUiLCJhdXRob3JpdGllcyI6WyJDUkVBVEVfQUNDT1VOVCIsIkNSRUFURV9DSEFUIiwiQ1JFQVRFX0hPVEVMIiwiQ1JFQVRFX1BFUk1JU1NJT04iLCJDUkVBVEVfVE9VUiIsIkNSRUFURV9XRUJfSU5GTyIsIlJFQURfQUNDT1VOVCIsIlJFQURfQ0hBVCIsIlJFQURfSE9URUwiLCJSRUFEX1BFUk1JU1NJT04iLCJSRUFEX1RPVVIiLCJSRUFEX1dFQl9JTkZPIiwiUk9MRV9BRE1JTiIsIlVQREFURV9BQ0NPVU5UIiwiVVBEQVRFX0hPVEVMIiwiVVBEQVRFX1BFUk1JU1NJT04iLCJVUERBVEVfVE9VUiIsIlVQREFURV9XRUJfSU5GTyJdLCJpYXQiOjE3MTg5NTM0MTEsImV4cCI6MTcxODk1NzAxMX0.Cn5fM6AqDh9mQEfb1Hk2n2djI0ojxNMiLvUBkjg1ihSakIY4b22ZyZ5FhbG8VPdo",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5050/api/v1/auth/logout",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5050",
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"logout"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Upload image (ALL)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "thumbnail",
+									"type": "file",
+									"src": "/C:/Users/GIANG/Downloads/user.jpg"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:5050/api/v1/auth/upload",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5050",
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"upload"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Website",
+			"item": [
+				{
+					"name": "Get info website (ADMIN)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5050/api/v1/websites/15",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5050",
+							"path": [
+								"api",
+								"v1",
+								"websites",
+								"15"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create info website (ADMIN)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhZG1pbiIsImlkIjoyNSwiZW1haWwiOiJhZG1pbkBnbWFpbC5jb20iLCJzdGF0dXMiOiJBQ1RJVkUiLCJhdXRob3JpdGllcyI6WyJDUkVBVEVfQUNDT1VOVCIsIkNSRUFURV9DSEFUIiwiQ1JFQVRFX0hPVEVMIiwiQ1JFQVRFX1BFUk1JU1NJT04iLCJDUkVBVEVfVE9VUiIsIkNSRUFURV9XRUJfSU5GTyIsIlJFQURfQUNDT1VOVCIsIlJFQURfQ0hBVCIsIlJFQURfSE9URUwiLCJSRUFEX1BFUk1JU1NJT04iLCJSRUFEX1RPVVIiLCJSRUFEX1dFQl9JTkZPIiwiUk9MRV9BRE1JTiIsIlVQREFURV9BQ0NPVU5UIiwiVVBEQVRFX0hPVEVMIiwiVVBEQVRFX1BFUk1JU1NJT04iLCJVUERBVEVfVE9VUiIsIlVQREFURV9XRUJfSU5GTyJdLCJpYXQiOjE3MTkwNDUyNDcsImV4cCI6MTcxOTA0ODg0N30.AhN6hrA5KWnX4Z9p2mPv5L6LHwaje-t0gMbV34oo3A6ck3gf1MoC1bdeaUKTZC29",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "City tours",
+									"type": "text"
+								},
+								{
+									"key": "logo",
+									"type": "file",
+									"src": "/C:/Users/GIANG/Downloads/city-tours-user/src/assets/images/logo.png"
+								},
+								{
+									"key": "email",
+									"value": "citytours@gmail.com",
+									"type": "text"
+								},
+								{
+									"key": "phone",
+									"value": "0123456789",
+									"type": "text"
+								},
+								{
+									"key": "address",
+									"value": "Cần Thơ",
+									"type": "text"
+								},
+								{
+									"key": "workingDate",
+									"value": "Thứ 2 - Thứ 6",
+									"type": "text"
+								},
+								{
+									"key": "workingTime",
+									"value": "7h-17h",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:5050/api/v1/websites/create",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5050",
+							"path": [
+								"api",
+								"v1",
+								"websites",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update info website (ADMIN)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhZG1pbiIsImlkIjoyNSwiZW1haWwiOiJhZG1pbkBnbWFpbC5jb20iLCJzdGF0dXMiOiJBQ1RJVkUiLCJhdXRob3JpdGllcyI6WyJDUkVBVEVfQUNDT1VOVCIsIkNSRUFURV9DSEFUIiwiQ1JFQVRFX0hPVEVMIiwiQ1JFQVRFX1BFUk1JU1NJT04iLCJDUkVBVEVfVE9VUiIsIkNSRUFURV9XRUJfSU5GTyIsIlJFQURfQUNDT1VOVCIsIlJFQURfQ0hBVCIsIlJFQURfSE9URUwiLCJSRUFEX1BFUk1JU1NJT04iLCJSRUFEX1RPVVIiLCJSRUFEX1dFQl9JTkZPIiwiUk9MRV9BRE1JTiIsIlVQREFURV9BQ0NPVU5UIiwiVVBEQVRFX0hPVEVMIiwiVVBEQVRFX1BFUk1JU1NJT04iLCJVUERBVEVfVE9VUiIsIlVQREFURV9XRUJfSU5GTyJdLCJpYXQiOjE3MTg4OTY0MzMsImV4cCI6MTcxODkwMDAzM30.dfF3C2g4UKwbtg_Tq_ckkY3Grtdqh1a2hw4D85exdsH8IUCqN_rdIjGDSGCBKdVm",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "City tours new 111",
+									"type": "text"
+								},
+								{
+									"key": "logo",
+									"type": "file",
+									"src": "/C:/Users/GIANG/Downloads/Screenshot 2024-06-20 103055.png"
+								},
+								{
+									"key": "email",
+									"value": "citytours@gmail.com",
+									"type": "text"
+								},
+								{
+									"key": "phone",
+									"value": "0123456789",
+									"type": "text"
+								},
+								{
+									"key": "address",
+									"value": "Cần Thơ",
+									"type": "text"
+								},
+								{
+									"key": "workingDate",
+									"value": "Thứ 2 - Thứ 6",
+									"type": "text"
+								},
+								{
+									"key": "workingTime",
+									"value": "7 - 9",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:5050/api/v1/websites/12",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5050",
+							"path": [
+								"api",
+								"v1",
+								"websites",
+								"12"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "Get all accounts (ADMIN)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhZG1pbiIsImlkIjoyNSwiZW1haWwiOiJhZG1pbkBnbWFpbC5jb20iLCJzdGF0dXMiOiJBQ1RJVkUiLCJhdXRob3JpdGllcyI6WyJDUkVBVEVfQUNDT1VOVCIsIkNSRUFURV9DSEFUIiwiQ1JFQVRFX0hPVEVMIiwiQ1JFQVRFX1BFUk1JU1NJT04iLCJDUkVBVEVfVE9VUiIsIkNSRUFURV9XRUJfSU5GTyIsIlJFQURfQUNDT1VOVCIsIlJFQURfQ0hBVCIsIlJFQURfSE9URUwiLCJSRUFEX1BFUk1JU1NJT04iLCJSRUFEX1RPVVIiLCJSRUFEX1dFQl9JTkZPIiwiUk9MRV9BRE1JTiIsIlVQREFURV9BQ0NPVU5UIiwiVVBEQVRFX0hPVEVMIiwiVVBEQVRFX1BFUk1JU1NJT04iLCJVUERBVEVfVE9VUiIsIlVQREFURV9XRUJfSU5GTyJdLCJpYXQiOjE3MTg5MzU0ODMsImV4cCI6MTcxODkzOTA4M30.Kbk6IQDKIF4lN_Axcvhl59qZ-N8ZgLWm7SVUEU8QReN6ZpofWVTPPD1LuSgGUnED",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5050/api/v1/users?page=1&limit=2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5050",
+							"path": [
+								"api",
+								"v1",
+								"users"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get a single account (ADMIN)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhZG1pbiIsImlkIjoyNSwiZW1haWwiOiJhZG1pbkBnbWFpbC5jb20iLCJzdGF0dXMiOiJBQ1RJVkUiLCJhdXRob3JpdGllcyI6WyJDUkVBVEVfQUNDT1VOVCIsIkNSRUFURV9DSEFUIiwiQ1JFQVRFX0hPVEVMIiwiQ1JFQVRFX1BFUk1JU1NJT04iLCJDUkVBVEVfVE9VUiIsIkNSRUFURV9XRUJfSU5GTyIsIlJFQURfQUNDT1VOVCIsIlJFQURfQ0hBVCIsIlJFQURfSE9URUwiLCJSRUFEX1BFUk1JU1NJT04iLCJSRUFEX1RPVVIiLCJSRUFEX1dFQl9JTkZPIiwiUk9MRV9BRE1JTiIsIlVQREFURV9BQ0NPVU5UIiwiVVBEQVRFX0hPVEVMIiwiVVBEQVRFX1BFUk1JU1NJT04iLCJVUERBVEVfVE9VUiIsIlVQREFURV9XRUJfSU5GTyJdLCJpYXQiOjE3MTg3MDExMDksImV4cCI6MTcxODcwNDcwOX0.gmcpHnewSy_C7LeDJE2cuLuiKFyMtm1XGPzD8NofZAfNu6NiBXVzuRlkFx25MjPE",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5050/api/v1/users/29",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5050",
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"29"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create account (ADMIN)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhZG1pbiIsImlkIjoyNSwiZW1haWwiOiJhZG1pbkBnbWFpbC5jb20iLCJzdGF0dXMiOiJBQ1RJVkUiLCJhdXRob3JpdGllcyI6WyJDUkVBVEVfQUNDT1VOVCIsIkNSRUFURV9DSEFUIiwiQ1JFQVRFX0hPVEVMIiwiQ1JFQVRFX1BFUk1JU1NJT04iLCJDUkVBVEVfVE9VUiIsIkNSRUFURV9XRUJfSU5GTyIsIlJFQURfQUNDT1VOVCIsIlJFQURfQ0hBVCIsIlJFQURfSE9URUwiLCJSRUFEX1BFUk1JU1NJT04iLCJSRUFEX1RPVVIiLCJSRUFEX1dFQl9JTkZPIiwiUk9MRV9BRE1JTiIsIlVQREFURV9BQ0NPVU5UIiwiVVBEQVRFX0hPVEVMIiwiVVBEQVRFX1BFUk1JU1NJT04iLCJVUERBVEVfVE9VUiIsIlVQREFURV9XRUJfSU5GTyJdLCJpYXQiOjE3MTg3MDAwNTgsImV4cCI6MTcxODcwMzY1OH0.qAHpUF_gncxaTqf67wI3ardu4_hT3w_Z9vj1LOCK0mJyHKAmMahmTgHFZcyHLnan",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"customer3\",\r\n    \"email\": \"customer3@gmail.com\",\r\n    \"password\": \"customer3\",\r\n    \"roles\": [\"ROLE_CUSTOMER\"]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5050/api/v1/users",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5050",
+							"path": [
+								"api",
+								"v1",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update account (ADMIN)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhZG1pbiIsImlkIjoyNSwiZW1haWwiOiJhZG1pbkBnbWFpbC5jb20iLCJzdGF0dXMiOiJBQ1RJVkUiLCJhdXRob3JpdGllcyI6WyJDUkVBVEVfQUNDT1VOVCIsIkNSRUFURV9DSEFUIiwiQ1JFQVRFX0hPVEVMIiwiQ1JFQVRFX1BFUk1JU1NJT04iLCJDUkVBVEVfVE9VUiIsIkNSRUFURV9XRUJfSU5GTyIsIlJFQURfQUNDT1VOVCIsIlJFQURfQ0hBVCIsIlJFQURfSE9URUwiLCJSRUFEX1BFUk1JU1NJT04iLCJSRUFEX1RPVVIiLCJSRUFEX1dFQl9JTkZPIiwiUk9MRV9BRE1JTiIsIlVQREFURV9BQ0NPVU5UIiwiVVBEQVRFX0hPVEVMIiwiVVBEQVRFX1BFUk1JU1NJT04iLCJVUERBVEVfVE9VUiIsIlVQREFURV9XRUJfSU5GTyJdLCJpYXQiOjE3MTg3MDExMDksImV4cCI6MTcxODcwNDcwOX0.gmcpHnewSy_C7LeDJE2cuLuiKFyMtm1XGPzD8NofZAfNu6NiBXVzuRlkFx25MjPE",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"customer3\",\r\n    \"email\": \"customer3@gmail.com\",\r\n    \"password\": \"customer3\",\r\n    \"roles\": [\"ROLE_CUSTOMER\"],\r\n    \"status\": \"IN_ACTIVE\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5050/api/v1/users/29",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5050",
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"29"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete account (ADMIN)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhZG1pbiIsImlkIjoyNSwiZW1haWwiOiJhZG1pbkBnbWFpbC5jb20iLCJzdGF0dXMiOiJBQ1RJVkUiLCJhdXRob3JpdGllcyI6WyJDUkVBVEVfQUNDT1VOVCIsIkNSRUFURV9DSEFUIiwiQ1JFQVRFX0hPVEVMIiwiQ1JFQVRFX1BFUk1JU1NJT04iLCJDUkVBVEVfVE9VUiIsIkNSRUFURV9XRUJfSU5GTyIsIlJFQURfQUNDT1VOVCIsIlJFQURfQ0hBVCIsIlJFQURfSE9URUwiLCJSRUFEX1BFUk1JU1NJT04iLCJSRUFEX1RPVVIiLCJSRUFEX1dFQl9JTkZPIiwiUk9MRV9BRE1JTiIsIlVQREFURV9BQ0NPVU5UIiwiVVBEQVRFX0hPVEVMIiwiVVBEQVRFX1BFUk1JU1NJT04iLCJVUERBVEVfVE9VUiIsIlVQREFURV9XRUJfSU5GTyJdLCJpYXQiOjE3MTkyMTA2NzcsImV4cCI6MTcxOTIxNDI3N30.6Ep3Bd0wgbXRUETXryv5vWA7oOMj-UhMWGThFYt927vC68xjKQrzzzBS5Cw1K5Jf",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5050/api/v1/users/29",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5050",
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"29"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Tour",
+			"item": [
+				{
+					"name": "Get all tours (ADMIN)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhZG1pbiIsImlkIjoyNSwiZW1haWwiOiJhZG1pbkBnbWFpbC5jb20iLCJzdGF0dXMiOiJBQ1RJVkUiLCJhdXRob3JpdGllcyI6WyJDUkVBVEVfQUNDT1VOVCIsIkNSRUFURV9DSEFUIiwiQ1JFQVRFX0hPVEVMIiwiQ1JFQVRFX1BFUk1JU1NJT04iLCJDUkVBVEVfVE9VUiIsIkNSRUFURV9XRUJfSU5GTyIsIlJFQURfQUNDT1VOVCIsIlJFQURfQ0hBVCIsIlJFQURfSE9URUwiLCJSRUFEX1BFUk1JU1NJT04iLCJSRUFEX1RPVVIiLCJSRUFEX1dFQl9JTkZPIiwiUk9MRV9BRE1JTiIsIlVQREFURV9BQ0NPVU5UIiwiVVBEQVRFX0hPVEVMIiwiVVBEQVRFX1BFUk1JU1NJT04iLCJVUERBVEVfVE9VUiIsIlVQREFURV9XRUJfSU5GTyJdLCJpYXQiOjE3MTkxOTgyMjYsImV4cCI6MTcxOTIwMTgyNn0.hAi-V1B1Rbjk4MY3fymLhl4TXq9xPyxzvjkf7mRYayLm4G3eD5KLzX19ELUzgo8s",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5050/api/v1/tours",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5050",
+							"path": [
+								"api",
+								"v1",
+								"tours"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get tour by id (ALL)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhZG1pbiIsImlkIjoyNSwiZW1haWwiOiJhZG1pbkBnbWFpbC5jb20iLCJzdGF0dXMiOiJBQ1RJVkUiLCJhdXRob3JpdGllcyI6WyJDUkVBVEVfQUNDT1VOVCIsIkNSRUFURV9DSEFUIiwiQ1JFQVRFX0hPVEVMIiwiQ1JFQVRFX1BFUk1JU1NJT04iLCJDUkVBVEVfVE9VUiIsIkNSRUFURV9XRUJfSU5GTyIsIlJFQURfQUNDT1VOVCIsIlJFQURfQ0hBVCIsIlJFQURfSE9URUwiLCJSRUFEX1BFUk1JU1NJT04iLCJSRUFEX1RPVVIiLCJSRUFEX1dFQl9JTkZPIiwiUk9MRV9BRE1JTiIsIlVQREFURV9BQ0NPVU5UIiwiVVBEQVRFX0hPVEVMIiwiVVBEQVRFX1BFUk1JU1NJT04iLCJVUERBVEVfVE9VUiIsIlVQREFURV9XRUJfSU5GTyJdLCJpYXQiOjE3MTkxOTYxNjAsImV4cCI6MTcxOTE5OTc2MH0.LLWexISRW_9AUg2DO6vffkmevcAnE85aG-5cTXJPzdoBNTfzPFRxZx2k6iFbBVGt",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5050/api/v1/tours/44",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5050",
+							"path": [
+								"api",
+								"v1",
+								"tours",
+								"44"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create tour (ADMIN)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhZG1pbiIsImlkIjoyNSwiZW1haWwiOiJhZG1pbkBnbWFpbC5jb20iLCJzdGF0dXMiOiJBQ1RJVkUiLCJhdXRob3JpdGllcyI6WyJDUkVBVEVfQUNDT1VOVCIsIkNSRUFURV9DSEFUIiwiQ1JFQVRFX0hPVEVMIiwiQ1JFQVRFX1BFUk1JU1NJT04iLCJDUkVBVEVfVE9VUiIsIkNSRUFURV9XRUJfSU5GTyIsIlJFQURfQUNDT1VOVCIsIlJFQURfQ0hBVCIsIlJFQURfSE9URUwiLCJSRUFEX1BFUk1JU1NJT04iLCJSRUFEX1RPVVIiLCJSRUFEX1dFQl9JTkZPIiwiUk9MRV9BRE1JTiIsIlVQREFURV9BQ0NPVU5UIiwiVVBEQVRFX0hPVEVMIiwiVVBEQVRFX1BFUk1JU1NJT04iLCJVUERBVEVfVE9VUiIsIlVQREFURV9XRUJfSU5GTyJdLCJpYXQiOjE3MTkxOTgyMjYsImV4cCI6MTcxOTIwMTgyNn0.hAi-V1B1Rbjk4MY3fymLhl4TXq9xPyxzvjkf7mRYayLm4G3eD5KLzX19ELUzgo8s",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Tour Name\",\r\n    \"description\": \"Tour Description\",\r\n    \"address\": \"Tour Address\",\r\n    \"price\": 100.0,\r\n    \"thumbnail\": \"https://res.cloudinary.com/dbammk7wt/image/upload/v1719074946/zz5prqpiksfidsslkwde.jpg\",\r\n    \"schedules\": [\r\n        {\r\n            \"dayOfWeek\": \"1 day\",\r\n            \"date\": \"2024-01-01\"\r\n        },\r\n        {\r\n            \"dayOfWeek\": \"2 day\",\r\n            \"date\": \"2024-01-02\"\r\n        }\r\n    ]\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5050/api/v1/tours/create",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5050",
+							"path": [
+								"api",
+								"v1",
+								"tours",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update tour (ADMIN)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhZG1pbiIsImlkIjoyNSwiZW1haWwiOiJhZG1pbkBnbWFpbC5jb20iLCJzdGF0dXMiOiJBQ1RJVkUiLCJhdXRob3JpdGllcyI6WyJDUkVBVEVfQUNDT1VOVCIsIkNSRUFURV9DSEFUIiwiQ1JFQVRFX0hPVEVMIiwiQ1JFQVRFX1BFUk1JU1NJT04iLCJDUkVBVEVfVE9VUiIsIkNSRUFURV9XRUJfSU5GTyIsIlJFQURfQUNDT1VOVCIsIlJFQURfQ0hBVCIsIlJFQURfSE9URUwiLCJSRUFEX1BFUk1JU1NJT04iLCJSRUFEX1RPVVIiLCJSRUFEX1dFQl9JTkZPIiwiUk9MRV9BRE1JTiIsIlVQREFURV9BQ0NPVU5UIiwiVVBEQVRFX0hPVEVMIiwiVVBEQVRFX1BFUk1JU1NJT04iLCJVUERBVEVfVE9VUiIsIlVQREFURV9XRUJfSU5GTyJdLCJpYXQiOjE3MTkxOTc4NjksImV4cCI6MTcxOTIwMTQ2OX0.Rx6uBRVNYZDN3l5AwiX4RDYMx39YXL6j3eI-lNfnyZdeeUb90ZEYAVAmYbRmA6Kb",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Tour Name 1\",\r\n    \"description\": \"Tour Description 1\",\r\n    \"address\": \"Tour Address 1\",\r\n    \"price\": 100.0,\r\n    \"thumbnail\": \"https://res.cloudinary.com/dbammk7wt/image/upload/v1719074946/zz5prqpiksfidsslkwde.jpg\",\r\n    \"schedules\": [\r\n        {\r\n            \"id\": 35,\r\n            \"dayOfWeek\": \"5 day\",\r\n            \"date\": \"2024-01-01\"\r\n        },\r\n        {\r\n            \"id\": 36,\r\n            \"dayOfWeek\": \"6 day\",\r\n            \"date\": \"2024-01-02\"\r\n        }\r\n    ]\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5050/api/v1/tours/48",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5050",
+							"path": [
+								"api",
+								"v1",
+								"tours",
+								"48"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete tour (ADMIN)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhZG1pbiIsImlkIjoyNSwiZW1haWwiOiJhZG1pbkBnbWFpbC5jb20iLCJzdGF0dXMiOiJBQ1RJVkUiLCJhdXRob3JpdGllcyI6WyJDUkVBVEVfQUNDT1VOVCIsIkNSRUFURV9DSEFUIiwiQ1JFQVRFX0hPVEVMIiwiQ1JFQVRFX1BFUk1JU1NJT04iLCJDUkVBVEVfVE9VUiIsIkNSRUFURV9XRUJfSU5GTyIsIlJFQURfQUNDT1VOVCIsIlJFQURfQ0hBVCIsIlJFQURfSE9URUwiLCJSRUFEX1BFUk1JU1NJT04iLCJSRUFEX1RPVVIiLCJSRUFEX1dFQl9JTkZPIiwiUk9MRV9BRE1JTiIsIlVQREFURV9BQ0NPVU5UIiwiVVBEQVRFX0hPVEVMIiwiVVBEQVRFX1BFUk1JU1NJT04iLCJVUERBVEVfVE9VUiIsIlVQREFURV9XRUJfSU5GTyJdLCJpYXQiOjE3MTkxOTgyMjYsImV4cCI6MTcxOTIwMTgyNn0.hAi-V1B1Rbjk4MY3fymLhl4TXq9xPyxzvjkf7mRYayLm4G3eD5KLzX19ELUzgo8s",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Tour Name 1\",\r\n    \"description\": \"Tour Description 1\",\r\n    \"address\": \"Tour Address 1\",\r\n    \"price\": 100.0,\r\n    \"thumbnail\": \"https://res.cloudinary.com/dbammk7wt/image/upload/v1719074946/zz5prqpiksfidsslkwde.jpg\",\r\n    \"schedules\": [\r\n        {\r\n            \"id\": 1,\r\n            \"day\": \"Satuday - 2024-01-01\"\r\n        },\r\n        {\r\n            \"id\": 2,\r\n            \"day\": \"Monday - 2024-01-02\"\r\n        }\r\n    ]\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5050/api/v1/tours/47",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5050",
+							"path": [
+								"api",
+								"v1",
+								"tours",
+								"47"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Hotel",
+			"item": [
+				{
+					"name": "Get all hotels (ADMIN)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhZG1pbiIsImlkIjoyNSwiZW1haWwiOiJhZG1pbkBnbWFpbC5jb20iLCJzdGF0dXMiOiJBQ1RJVkUiLCJhdXRob3JpdGllcyI6WyJDUkVBVEVfQUNDT1VOVCIsIkNSRUFURV9DSEFUIiwiQ1JFQVRFX0hPVEVMIiwiQ1JFQVRFX1BFUk1JU1NJT04iLCJDUkVBVEVfVE9VUiIsIkNSRUFURV9XRUJfSU5GTyIsIlJFQURfQUNDT1VOVCIsIlJFQURfQ0hBVCIsIlJFQURfSE9URUwiLCJSRUFEX1BFUk1JU1NJT04iLCJSRUFEX1RPVVIiLCJSRUFEX1dFQl9JTkZPIiwiUk9MRV9BRE1JTiIsIlVQREFURV9BQ0NPVU5UIiwiVVBEQVRFX0hPVEVMIiwiVVBEQVRFX1BFUk1JU1NJT04iLCJVUERBVEVfVE9VUiIsIlVQREFURV9XRUJfSU5GTyJdLCJpYXQiOjE3MTkyMjIxMzYsImV4cCI6MTcxOTIyNTczNn0.6zdc7aY8iSEY9v1vywU0P_FkilVZJX6t4CxOd62-aRsaEOhmiT8t-PRvJP38QN-U",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5050/api/v1/hotels",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5050",
+							"path": [
+								"api",
+								"v1",
+								"hotels"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get hotel by id (ALL)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhZG1pbiIsImlkIjoyNSwiZW1haWwiOiJhZG1pbkBnbWFpbC5jb20iLCJzdGF0dXMiOiJBQ1RJVkUiLCJhdXRob3JpdGllcyI6WyJDUkVBVEVfQUNDT1VOVCIsIkNSRUFURV9DSEFUIiwiQ1JFQVRFX0hPVEVMIiwiQ1JFQVRFX1BFUk1JU1NJT04iLCJDUkVBVEVfVE9VUiIsIkNSRUFURV9XRUJfSU5GTyIsIlJFQURfQUNDT1VOVCIsIlJFQURfQ0hBVCIsIlJFQURfSE9URUwiLCJSRUFEX1BFUk1JU1NJT04iLCJSRUFEX1RPVVIiLCJSRUFEX1dFQl9JTkZPIiwiUk9MRV9BRE1JTiIsIlVQREFURV9BQ0NPVU5UIiwiVVBEQVRFX0hPVEVMIiwiVVBEQVRFX1BFUk1JU1NJT04iLCJVUERBVEVfVE9VUiIsIlVQREFURV9XRUJfSU5GTyJdLCJpYXQiOjE3MTkyNzkwNDEsImV4cCI6MTcxOTI4MjY0MX0.b8UUXbpIPvNzFaVtWfkpAsL4TOedYC1396n4zc7w1H_UwxclmrPWNeA76_1OMwyJ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5050/api/v1/hotels/8",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5050",
+							"path": [
+								"api",
+								"v1",
+								"hotels",
+								"8"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get room in hotel by id (ALL)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhZG1pbiIsImlkIjoyNSwiZW1haWwiOiJhZG1pbkBnbWFpbC5jb20iLCJzdGF0dXMiOiJBQ1RJVkUiLCJhdXRob3JpdGllcyI6WyJDUkVBVEVfQUNDT1VOVCIsIkNSRUFURV9DSEFUIiwiQ1JFQVRFX0hPVEVMIiwiQ1JFQVRFX1BFUk1JU1NJT04iLCJDUkVBVEVfVE9VUiIsIkNSRUFURV9XRUJfSU5GTyIsIlJFQURfQUNDT1VOVCIsIlJFQURfQ0hBVCIsIlJFQURfSE9URUwiLCJSRUFEX1BFUk1JU1NJT04iLCJSRUFEX1RPVVIiLCJSRUFEX1dFQl9JTkZPIiwiUk9MRV9BRE1JTiIsIlVQREFURV9BQ0NPVU5UIiwiVVBEQVRFX0hPVEVMIiwiVVBEQVRFX1BFUk1JU1NJT04iLCJVUERBVEVfVE9VUiIsIlVQREFURV9XRUJfSU5GTyJdLCJpYXQiOjE3MTkzMjk1NjMsImV4cCI6MTcxOTMzMzE2M30.UST2iVUHRTLm_3PSQF0kJaItrEba_pF8ELHV7Cmzl6tlP-09PYRsfm83oXCh0ouX",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5050/api/v1/rooms/7",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5050",
+							"path": [
+								"api",
+								"v1",
+								"rooms",
+								"7"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create hotel (ADMIN)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhZG1pbiIsImlkIjoyNSwiZW1haWwiOiJhZG1pbkBnbWFpbC5jb20iLCJzdGF0dXMiOiJBQ1RJVkUiLCJhdXRob3JpdGllcyI6WyJDUkVBVEVfQUNDT1VOVCIsIkNSRUFURV9DSEFUIiwiQ1JFQVRFX0hPVEVMIiwiQ1JFQVRFX1BFUk1JU1NJT04iLCJDUkVBVEVfVE9VUiIsIkNSRUFURV9XRUJfSU5GTyIsIlJFQURfQUNDT1VOVCIsIlJFQURfQ0hBVCIsIlJFQURfSE9URUwiLCJSRUFEX1BFUk1JU1NJT04iLCJSRUFEX1RPVVIiLCJSRUFEX1dFQl9JTkZPIiwiUk9MRV9BRE1JTiIsIlVQREFURV9BQ0NPVU5UIiwiVVBEQVRFX0hPVEVMIiwiVVBEQVRFX1BFUk1JU1NJT04iLCJVUERBVEVfVE9VUiIsIlVQREFURV9XRUJfSU5GTyJdLCJpYXQiOjE3MTkyMjEwNjYsImV4cCI6MTcxOTIyNDY2Nn0.1B-j_aqp_-N8PQLRBibtboGvM-cuyn1tU-59BOXmPHjKyjf4lb0ZMBlz2qYJ8W3T",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Tour Name\",\r\n    \"description\": \"Tour Description\",\r\n    \"address\": \"Tour Address\",\r\n    \"thumbnailUrls\": [\r\n        \"Image-1\",\r\n        \"Image-2\",\r\n        \"Image-3\"\r\n    ]\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5050/api/v1/hotels/create",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5050",
+							"path": [
+								"api",
+								"v1",
+								"hotels",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create room in hotel (ADMIN)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhZG1pbiIsImlkIjoyNSwiZW1haWwiOiJhZG1pbkBnbWFpbC5jb20iLCJzdGF0dXMiOiJBQ1RJVkUiLCJhdXRob3JpdGllcyI6WyJDUkVBVEVfQUNDT1VOVCIsIkNSRUFURV9DSEFUIiwiQ1JFQVRFX0hPVEVMIiwiQ1JFQVRFX1BFUk1JU1NJT04iLCJDUkVBVEVfVE9VUiIsIkNSRUFURV9XRUJfSU5GTyIsIlJFQURfQUNDT1VOVCIsIlJFQURfQ0hBVCIsIlJFQURfSE9URUwiLCJSRUFEX1BFUk1JU1NJT04iLCJSRUFEX1RPVVIiLCJSRUFEX1dFQl9JTkZPIiwiUk9MRV9BRE1JTiIsIlVQREFURV9BQ0NPVU5UIiwiVVBEQVRFX0hPVEVMIiwiVVBEQVRFX1BFUk1JU1NJT04iLCJVUERBVEVfVE9VUiIsIlVQREFURV9XRUJfSU5GTyJdLCJpYXQiOjE3MTkyNDUzNDEsImV4cCI6MTcxOTI0ODk0MX0._mdEJFSUDY8GhrRoOaSqxkhUdJHehn8kx0g0zQZ_3b29qIma5H_E3zWlTTK9ML1z",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"roomNumber\": \"Room 1\",\r\n    \"type\": \"Alone\",\r\n    \"price\": 10.0,\r\n    \"imageUrls\": [\r\n        \"Image-1\",\r\n        \"Image-2\",\r\n        \"Image-3\"\r\n    ]\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5050/api/v1/rooms/hotels/8/create",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5050",
+							"path": [
+								"api",
+								"v1",
+								"rooms",
+								"hotels",
+								"8",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update hotel (ADMIN)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhZG1pbiIsImlkIjoyNSwiZW1haWwiOiJhZG1pbkBnbWFpbC5jb20iLCJzdGF0dXMiOiJBQ1RJVkUiLCJhdXRob3JpdGllcyI6WyJDUkVBVEVfQUNDT1VOVCIsIkNSRUFURV9DSEFUIiwiQ1JFQVRFX0hPVEVMIiwiQ1JFQVRFX1BFUk1JU1NJT04iLCJDUkVBVEVfVE9VUiIsIkNSRUFURV9XRUJfSU5GTyIsIlJFQURfQUNDT1VOVCIsIlJFQURfQ0hBVCIsIlJFQURfSE9URUwiLCJSRUFEX1BFUk1JU1NJT04iLCJSRUFEX1RPVVIiLCJSRUFEX1dFQl9JTkZPIiwiUk9MRV9BRE1JTiIsIlVQREFURV9BQ0NPVU5UIiwiVVBEQVRFX0hPVEVMIiwiVVBEQVRFX1BFUk1JU1NJT04iLCJVUERBVEVfVE9VUiIsIlVQREFURV9XRUJfSU5GTyJdLCJpYXQiOjE3MTkzMzE3MTYsImV4cCI6MTcxOTMzNTMxNn0.GtBn8o-DzGm0UYsPUE3dolSG7OIBfpm1Om-8G3k2LrfZF3pBnhE1OQwSZnBXlfGr",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Tour Name\",\r\n    \"description\": \"Tour Description\",\r\n    \"address\": \"Tour Address\",\r\n    \"activeStatus\": \"ACTIVE\",\r\n    \"thumbnailUrls\": [\r\n        \"Image-1\",\r\n        \"Image-2\",\r\n        \"Image-3\"\r\n    ]\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5050/api/v1/hotels/9",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5050",
+							"path": [
+								"api",
+								"v1",
+								"hotels",
+								"9"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update room in hotel (ADMIN)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhZG1pbiIsImlkIjoyNSwiZW1haWwiOiJhZG1pbkBnbWFpbC5jb20iLCJzdGF0dXMiOiJBQ1RJVkUiLCJhdXRob3JpdGllcyI6WyJDUkVBVEVfQUNDT1VOVCIsIkNSRUFURV9DSEFUIiwiQ1JFQVRFX0hPVEVMIiwiQ1JFQVRFX1BFUk1JU1NJT04iLCJDUkVBVEVfVE9VUiIsIkNSRUFURV9XRUJfSU5GTyIsIlJFQURfQUNDT1VOVCIsIlJFQURfQ0hBVCIsIlJFQURfSE9URUwiLCJSRUFEX1BFUk1JU1NJT04iLCJSRUFEX1RPVVIiLCJSRUFEX1dFQl9JTkZPIiwiUk9MRV9BRE1JTiIsIlVQREFURV9BQ0NPVU5UIiwiVVBEQVRFX0hPVEVMIiwiVVBEQVRFX1BFUk1JU1NJT04iLCJVUERBVEVfVE9VUiIsIlVQREFURV9XRUJfSU5GTyJdLCJpYXQiOjE3MTkzMzUxMjUsImV4cCI6MTcxOTMzODcyNX0.g_3GE0gF3McksZChvp4K7U7zxiyZS0sv97jNgvFUKqDOyFj1nh8M8A9WNy6yVIje",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"roomNumber\": \"777\",\r\n    \"type\": \"Tripper\",\r\n    \"price\": 777,\r\n    \"bookedStatus\": \"NOT_BOOKED\",\r\n    \"activeStatus\": \"ACTIVE\",\r\n    \"imageUrls\": [\r\n        \"Image-1\",\r\n        \"Image-2\",\r\n        \"Image-3\"\r\n    ]\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5050/api/v1/rooms/9",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5050",
+							"path": [
+								"api",
+								"v1",
+								"rooms",
+								"9"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete hotel (ADMIN)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhZG1pbiIsImlkIjoyNSwiZW1haWwiOiJhZG1pbkBnbWFpbC5jb20iLCJzdGF0dXMiOiJBQ1RJVkUiLCJhdXRob3JpdGllcyI6WyJDUkVBVEVfQUNDT1VOVCIsIkNSRUFURV9DSEFUIiwiQ1JFQVRFX0hPVEVMIiwiQ1JFQVRFX1BFUk1JU1NJT04iLCJDUkVBVEVfVE9VUiIsIkNSRUFURV9XRUJfSU5GTyIsIlJFQURfQUNDT1VOVCIsIlJFQURfQ0hBVCIsIlJFQURfSE9URUwiLCJSRUFEX1BFUk1JU1NJT04iLCJSRUFEX1RPVVIiLCJSRUFEX1dFQl9JTkZPIiwiUk9MRV9BRE1JTiIsIlVQREFURV9BQ0NPVU5UIiwiVVBEQVRFX0hPVEVMIiwiVVBEQVRFX1BFUk1JU1NJT04iLCJVUERBVEVfVE9VUiIsIlVQREFURV9XRUJfSU5GTyJdLCJpYXQiOjE3MTkxOTgyMjYsImV4cCI6MTcxOTIwMTgyNn0.hAi-V1B1Rbjk4MY3fymLhl4TXq9xPyxzvjkf7mRYayLm4G3eD5KLzX19ELUzgo8s",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Tour Name 1\",\r\n    \"description\": \"Tour Description 1\",\r\n    \"address\": \"Tour Address 1\",\r\n    \"price\": 100.0,\r\n    \"thumbnail\": \"https://res.cloudinary.com/dbammk7wt/image/upload/v1719074946/zz5prqpiksfidsslkwde.jpg\",\r\n    \"schedules\": [\r\n        {\r\n            \"id\": 1,\r\n            \"day\": \"Satuday - 2024-01-01\"\r\n        },\r\n        {\r\n            \"id\": 2,\r\n            \"day\": \"Monday - 2024-01-02\"\r\n        }\r\n    ]\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5050/api/v1/tours/47",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5050",
+							"path": [
+								"api",
+								"v1",
+								"tours",
+								"47"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete room in hotel (ADMIN)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhZG1pbiIsImlkIjoyNSwiZW1haWwiOiJhZG1pbkBnbWFpbC5jb20iLCJzdGF0dXMiOiJBQ1RJVkUiLCJhdXRob3JpdGllcyI6WyJDUkVBVEVfQUNDT1VOVCIsIkNSRUFURV9DSEFUIiwiQ1JFQVRFX0hPVEVMIiwiQ1JFQVRFX1BFUk1JU1NJT04iLCJDUkVBVEVfVE9VUiIsIkNSRUFURV9XRUJfSU5GTyIsIlJFQURfQUNDT1VOVCIsIlJFQURfQ0hBVCIsIlJFQURfSE9URUwiLCJSRUFEX1BFUk1JU1NJT04iLCJSRUFEX1RPVVIiLCJSRUFEX1dFQl9JTkZPIiwiUk9MRV9BRE1JTiIsIlVQREFURV9BQ0NPVU5UIiwiVVBEQVRFX0hPVEVMIiwiVVBEQVRFX1BFUk1JU1NJT04iLCJVUERBVEVfVE9VUiIsIlVQREFURV9XRUJfSU5GTyJdLCJpYXQiOjE3MTkzNjA5OTUsImV4cCI6MTcxOTM2NDU5NX0.PBVj85YRd13t4wc9MxWXsbjT29_HQwMFvF09ZftrVrI9TcQAhGRYFoKo7uSoenYZ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5050/api/v1/rooms/7",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5050",
+							"path": [
+								"api",
+								"v1",
+								"rooms",
+								"7"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

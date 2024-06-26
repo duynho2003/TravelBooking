@@ -22,4 +22,6 @@ public class CreateInfoRequestDto {
     private String address;
 
     private String workingDate;
+
+    private String workingTime;
 }

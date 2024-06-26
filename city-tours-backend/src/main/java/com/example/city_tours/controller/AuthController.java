@@ -5,14 +5,18 @@ import com.example.city_tours.common.ApiSuccessResponse;
 import com.example.city_tours.common.ErrorCode;
 import com.example.city_tours.dto.request.Auth.LoginRequestDto;
 import com.example.city_tours.dto.request.Auth.RegisterRequestDto;
+import com.example.city_tours.dto.request.Auth.UploadRequestDto;
 import com.example.city_tours.dto.response.Auth.LoginResponseDto;
 import com.example.city_tours.dto.response.Auth.RegisterResponseDto;
+import com.example.city_tours.dto.response.Auth.UploadResponseDto;
 import com.example.city_tours.exception.*;
 import com.example.city_tours.service.AuthService;
+import com.example.city_tours.service.CloudinaryService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @AllArgsConstructor
 @RestController
@@ -20,6 +24,8 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private AuthService authService;
+
+    private CloudinaryService cloudinaryService;
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequestDto registerRequestDto) {
@@ -99,4 +105,35 @@ public class AuthController {
         System.out.println("getUserByUserId api");
         return ResponseEntity.ok("getUserByUserId");
     }
+
+    @PostMapping("/upload")
+    public ResponseEntity<?> upload(@RequestPart MultipartFile thumbnail) {
+        try {
+            UploadRequestDto requestDto = new UploadRequestDto();
+            requestDto.setThumbnail(thumbnail);
+
+            String imageUrl = cloudinaryService.uploadAndGetUrl(requestDto.getThumbnail());
+
+            UploadResponseDto responseDto = new UploadResponseDto();
+            responseDto.setThumbnail(imageUrl);
+
+            return ResponseEntity
+                    .status(HttpStatus.CREATED)
+                    .body(new ApiSuccessResponse<>(
+                            HttpStatus.CREATED.value(),
+                            "Upload image success",
+                            responseDto
+                    ));
+        } catch (ServerErrorException e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiErrorResponse(
+                            HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                            e.getMessage(),
+                            ErrorCode.INTERNAL_SERVER_ERROR,
+                            "http://localhost:5050/docs/errors/1012"
+                    ));
+        }
+    }
+
 }

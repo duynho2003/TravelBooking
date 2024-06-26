@@ -16,7 +16,6 @@ public class UpdateAccountRequestDto {
 
     private String username;
     private String email;
-    private String password;
     private Set<String> roles;
     private String status;
 

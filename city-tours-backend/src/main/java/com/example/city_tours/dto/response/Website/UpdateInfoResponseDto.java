@@ -26,5 +26,7 @@ public class UpdateInfoResponseDto {
 
     private String workingDate;
 
+    private String workingTime;
+
     private LocalDateTime updatedAt;
 }

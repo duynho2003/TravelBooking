@@ -1,6 +1,5 @@
 package com.example.city_tours.service;
 
-import com.example.city_tours.dto.request.User.ChangeStatusAccountRequestDto;
 import com.example.city_tours.dto.request.User.CreateAccountRequestDto;
 import com.example.city_tours.dto.request.User.UpdateAccountRequestDto;
 import com.example.city_tours.dto.response.User.*;
@@ -14,8 +13,8 @@ import com.example.city_tours.repository.RoleRepository;
 import com.example.city_tours.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -95,7 +94,6 @@ public class UserServiceImpl implements UserService{
 
         user.setUsername(updateAccountRequestDto.getUsername());
         user.setEmail(updateAccountRequestDto.getEmail());
-        user.setPassword(passwordEncoder.encode(updateAccountRequestDto.getPassword()));
 
         if (updateAccountRequestDto.getStatus() != null) {
             user.setStatus(UserStatus.valueOf(updateAccountRequestDto.getStatus().toUpperCase()));
@@ -136,34 +134,22 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public ChangeStatusAccountResponseDto changeStatusAccount(Long userId, ChangeStatusAccountRequestDto changeStatusAccountRequestDto) {
+    public void deleteAccount(Long userId) {
 
         Optional<User> userOptional = userRepository.findById(userId);
 
         if (!userOptional.isPresent()) {
-            throw new ResourceNotFoundException("User not found");
+            throw new ResourceNotFoundException("Account not found");
         }
 
         User user = userOptional.get();
 
-        if (changeStatusAccountRequestDto.getStatus() != null) {
-            user.setStatus(UserStatus.valueOf(changeStatusAccountRequestDto.getStatus().toUpperCase()));
-        } else {
-            throw new IllegalArgumentException("No enum ");
-        }
+        user.setRoles(new HashSet<>());
 
         userRepository.save(user);
 
-        ChangeStatusAccountResponseDto responseDto = new ChangeStatusAccountResponseDto();
+        userRepository.deleteById(userId);
 
-        responseDto.setId(user.getId());
-        responseDto.setUsername(user.getUsername());
-        responseDto.setEmail(user.getEmail());
-        responseDto.setRoles(user.getRoles().stream().map(Role::getName).collect(Collectors.toSet()));
-        responseDto.setStatus(user.getStatus().toString());
-        responseDto.setUpdatedAt(user.getUpdatedAt());
-
-        return responseDto;
     }
 
     @Override
@@ -181,6 +167,7 @@ public class UserServiceImpl implements UserService{
 
         responseDto.setId(user.getId());
         responseDto.setUsername(user.getUsername());
+        responseDto.setPassword(user.getPassword());
         responseDto.setEmail(user.getEmail());
         responseDto.setRoles(user.getRoles().stream().map(Role::getName).collect(Collectors.toSet()));
         responseDto.setStatus(user.getStatus().toString());
@@ -191,24 +178,23 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public Page<GetAllAccountsResponseDto> getAllAccounts(int page, int limit, int skip) {
-        // Calculate the offset based on page, limit, and skip
-        int offset = (page - 1) * limit + skip;
+    public List<GetAllAccountsResponseDto> getAllAccounts(int page, int limit) {
+        // Calculate the offset based on page and limit
+        int offset = (page - 1) * limit;
 
-        // Retrieve a page of users from the repository with offset
-        Page<User> userPage = userRepository.findAll(PageRequest.of(page - 1, limit));
+        // Fetch users from the repository with pagination
+        Pageable pageable = PageRequest.of(page - 1, limit);
+        Page<User> userPage = userRepository.findAll(pageable);
 
-        // Check if the page has any users
-        if (userPage.isEmpty()) {
+        // Retrieve the content from the fetched page
+        List<User> users = userPage.getContent();
+
+        // Check if the fetched list of users is empty
+        if (users.isEmpty()) {
             throw new ResourceNotFoundException("No users found");
         }
 
-        // Skip the specified number of records in the page
-        List<User> users = userPage.getContent();
-        int toSkip = Math.min(offset, users.size());
-        users = users.subList(toSkip, users.size());
-
-        // Convert remaining users to GetAllAccountsResponseDto
+        // Convert users to GetAllAccountsResponseDto
         List<GetAllAccountsResponseDto> responseDtoList = users.stream()
                 .map(user -> {
                     GetAllAccountsResponseDto responseDto = new GetAllAccountsResponseDto();
@@ -223,7 +209,7 @@ public class UserServiceImpl implements UserService{
                 })
                 .collect(Collectors.toList());
 
-        return new PageImpl<>(responseDtoList, PageRequest.of(page - 1, limit), userPage.getTotalElements());
+        // Return the responseDtoList
+        return responseDtoList;
     }
-    
 }

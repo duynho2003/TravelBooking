@@ -26,6 +26,8 @@ public class GetInfoResponseDto {
 
     private String workingDate;
 
+    private String workingTime;
+
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;

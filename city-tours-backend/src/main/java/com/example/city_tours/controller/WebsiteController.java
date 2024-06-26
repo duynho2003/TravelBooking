@@ -24,7 +24,6 @@ public class WebsiteController {
 
     private WebsiteService websiteService;
 
-    @PreAuthorize("hasAuthority('READ_WEB_INFO')")
     @GetMapping("/{websiteInfoId}")
     public ResponseEntity<?> getInfo(@PathVariable Long websiteInfoId) {
         try {
@@ -57,7 +56,6 @@ public class WebsiteController {
         }
     }
 
-    @PreAuthorize("hasAuthority('CREATE_WEB_INFO')")
     @PostMapping("/create")
     public ResponseEntity<?> createInfo(
             @RequestParam String name,
@@ -65,7 +63,8 @@ public class WebsiteController {
             @RequestParam String email,
             @RequestParam String phone,
             @RequestParam String address,
-            @RequestParam String workingDate
+            @RequestParam String workingDate,
+            @RequestParam String workingTime
             ) {
         try {
             CreateInfoRequestDto createInfoRequestDto = new CreateInfoRequestDto();
@@ -76,6 +75,7 @@ public class WebsiteController {
             createInfoRequestDto.setPhone(phone);
             createInfoRequestDto.setAddress(address);
             createInfoRequestDto.setWorkingDate(workingDate);
+            createInfoRequestDto.setWorkingTime(workingTime);
 
             CreateInfoResponseDto responseDto = websiteService.createInfo(createInfoRequestDto);
             return ResponseEntity
@@ -97,7 +97,6 @@ public class WebsiteController {
         }
     }
 
-    @PreAuthorize("hasAuthority('UPDATE_WEB_INFO')")
     @PutMapping("/{websiteInfoId}")
     public ResponseEntity<?> updateInfo(
             @PathVariable Long websiteInfoId,
@@ -106,7 +105,8 @@ public class WebsiteController {
             @RequestParam String email,
             @RequestParam String phone,
             @RequestParam String address,
-            @RequestParam String workingDate
+            @RequestParam String workingDate,
+            @RequestParam String workingTime
     ) {
         try {
             UpdateInfoRequestDto websiteUpdateInfoRequestDto = new UpdateInfoRequestDto();
@@ -117,6 +117,7 @@ public class WebsiteController {
             websiteUpdateInfoRequestDto.setPhone(phone);
             websiteUpdateInfoRequestDto.setAddress(address);
             websiteUpdateInfoRequestDto.setWorkingDate(workingDate);
+            websiteUpdateInfoRequestDto.setWorkingTime(workingTime);
 
             UpdateInfoResponseDto responseDto = websiteService.updateInfo(websiteInfoId, websiteUpdateInfoRequestDto);
             return ResponseEntity

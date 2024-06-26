@@ -40,6 +40,7 @@ public class WebsiteServiceImpl implements WebsiteService{
         getInfoResponseDto.setPhone(website.getPhone());
         getInfoResponseDto.setAddress(website.getAddress());
         getInfoResponseDto.setWorkingDate(website.getWorkingDate());
+        getInfoResponseDto.setWorkingTime(website.getWorkingTime());
         getInfoResponseDto.setCreatedAt(website.getCreatedAt());
         getInfoResponseDto.setUpdatedAt(website.getUpdatedAt());
 
@@ -58,6 +59,7 @@ public class WebsiteServiceImpl implements WebsiteService{
         website.setPhone(createInfoRequestDto.getPhone());
         website.setAddress(createInfoRequestDto.getAddress());
         website.setWorkingDate(createInfoRequestDto.getWorkingDate());
+        website.setWorkingTime(createInfoRequestDto.getWorkingTime());
         website.setCreatedAt(LocalDateTime.now());
         website.setUpdatedAt(LocalDateTime.now());
 
@@ -72,6 +74,7 @@ public class WebsiteServiceImpl implements WebsiteService{
         responseDto.setPhone(website.getPhone());
         responseDto.setAddress(website.getAddress());
         responseDto.setWorkingDate(website.getWorkingDate());
+        responseDto.setWorkingTime(website.getWorkingTime());
         responseDto.setCreatedAt(website.getCreatedAt());
 
         return responseDto;
@@ -95,6 +98,7 @@ public class WebsiteServiceImpl implements WebsiteService{
         website.setPhone(websiteUpdateInfoRequestDto.getPhone());
         website.setAddress(websiteUpdateInfoRequestDto.getAddress());
         website.setWorkingDate(websiteUpdateInfoRequestDto.getWorkingDate());
+        website.setWorkingTime(websiteUpdateInfoRequestDto.getWorkingTime());
         website.setUpdatedAt(LocalDateTime.now());
 
         websiteRepository.save(website);
@@ -108,6 +112,7 @@ public class WebsiteServiceImpl implements WebsiteService{
         updateInfoResponseDto.setPhone(website.getPhone());
         updateInfoResponseDto.setAddress(website.getAddress());
         updateInfoResponseDto.setWorkingDate(website.getWorkingDate());
+        updateInfoResponseDto.setWorkingTime(website.getWorkingTime());
         updateInfoResponseDto.setUpdatedAt(website.getUpdatedAt());
 
         return updateInfoResponseDto;

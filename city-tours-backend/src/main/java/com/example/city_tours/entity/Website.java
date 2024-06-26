@@ -34,6 +34,8 @@ public class Website {
 
     private String workingDate;
 
+    private String workingTime;
+
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;

@@ -3,7 +3,6 @@ package com.example.city_tours.controller;
 import com.example.city_tours.common.ApiErrorResponse;
 import com.example.city_tours.common.ApiSuccessResponse;
 import com.example.city_tours.common.ErrorCode;
-import com.example.city_tours.dto.request.User.ChangeStatusAccountRequestDto;
 import com.example.city_tours.dto.request.User.CreateAccountRequestDto;
 import com.example.city_tours.dto.request.User.UpdateAccountRequestDto;
 import com.example.city_tours.dto.response.User.*;
@@ -11,9 +10,9 @@ import com.example.city_tours.exception.EmailAlreadyExistsException;
 import com.example.city_tours.exception.ResourceNotFoundException;
 import com.example.city_tours.exception.ServerErrorException;
 import com.example.city_tours.exception.UsernameAlreadyExistsException;
+import com.example.city_tours.repository.UserRepository;
 import com.example.city_tours.service.UserService;
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -27,6 +26,7 @@ import java.util.List;
 public class UserController {
 
     private UserService userService;
+    private final UserRepository userRepository;
 
     @PreAuthorize("hasAuthority('CREATE_ACCOUNT')")
     @PostMapping("")
@@ -122,25 +122,17 @@ public class UserController {
     }
 
     @PreAuthorize("hasAuthority('UPDATE_ACCOUNT')")
-    @PatchMapping("/{userId}")
-    public ResponseEntity<?> changeStatusAccount(@PathVariable Long userId, @RequestBody ChangeStatusAccountRequestDto changeStatusAccountRequestDto) {
+    @DeleteMapping("/{userId}")
+    public ResponseEntity<?> deleteAccount(@PathVariable Long userId) {
         try {
-            ChangeStatusAccountResponseDto responseDto = userService.changeStatusAccount(userId, changeStatusAccountRequestDto);
+            userService.deleteAccount(userId);
+
             return ResponseEntity
                     .status(HttpStatus.CREATED)
                     .body(new ApiSuccessResponse<>(
                             HttpStatus.CREATED.value(),
-                            "Account changed successfully",
-                            responseDto
-                    ));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
-                    .body(new ApiErrorResponse(
-                            HttpStatus.NOT_FOUND.value(),
-                            e.getMessage(),
-                            ErrorCode.NOT_FOUND,
-                            "http://localhost:5050/docs/errors/1015"
+                            "Deleted account successfully",
+                            null
                     ));
         } catch (ServerErrorException e) {
             return ResponseEntity
@@ -191,20 +183,25 @@ public class UserController {
     @GetMapping("")
     public ResponseEntity<?> getAllAccounts(
             @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "10") int limit,
-            @RequestParam(defaultValue = "0") int skip
+            @RequestParam(defaultValue = "10") int limit
     ) {
         try {
             // Call userService to get a page of accounts
-            Page<GetAllAccountsResponseDto> responsePage = userService.getAllAccounts(page, limit, skip);
+            List<GetAllAccountsResponseDto> responsePage = userService.getAllAccounts(page, limit);
+
+            // Count total users
+            long totalUsers = userRepository.count();
+
+            // Calculate skip (number of records skipped)
+            int skip = (page - 1) * limit;
 
             // Prepare the response structure
             PageResponseDto<GetAllAccountsResponseDto> pageResponseDto = new PageResponseDto<>();
-            pageResponseDto.setData(responsePage.getContent());
+            pageResponseDto.setData(responsePage);
             pageResponseDto.setPage(page);
             pageResponseDto.setLimit(limit);
             pageResponseDto.setSkip(skip);
-            pageResponseDto.setTotals(responsePage.getTotalElements());
+            pageResponseDto.setTotals(totalUsers);
 
             // Return success response
             return ResponseEntity

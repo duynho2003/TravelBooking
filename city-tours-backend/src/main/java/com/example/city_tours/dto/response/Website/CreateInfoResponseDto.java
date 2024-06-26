@@ -26,5 +26,7 @@ public class CreateInfoResponseDto {
 
     private String workingDate;
 
+    private String workingTime;
+
     private LocalDateTime createdAt;
 }

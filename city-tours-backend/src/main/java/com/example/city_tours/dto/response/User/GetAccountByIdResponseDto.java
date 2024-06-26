@@ -17,6 +17,7 @@ public class GetAccountByIdResponseDto {
     private Long id;
     private String username;
     private String email;
+    private String password;
     private Set<String> roles;
     private String status;
     private LocalDateTime createAt;
