@@ -76,7 +76,7 @@ const UpdateInfoWebsite = () => {
         endDate: endDay.trim(),
         startTime: startTime.trim(),
         endTime: endTime.trim(),
-        logo: website?.logo,
+        // logo: website?.logo,
       });
     }
   }, [website, reset]);

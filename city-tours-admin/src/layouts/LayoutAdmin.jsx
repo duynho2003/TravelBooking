@@ -146,7 +146,7 @@ export default function AdminLayout() {
         {
           key: `/admin/hotels/update/${hotelId}`,
           label: "Update hotel",
-          key: `/admin/hotels/update/${hotelId}`,
+          path: `/admin/hotels/update/${hotelId}`,
         },
       ],
     },
