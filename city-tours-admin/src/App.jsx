@@ -21,6 +21,13 @@ import ViewHotels from "./pages/hotels/ViewHotels";
 import CreateHotel from "./pages/hotels/CreateHotel";
 import ViewAHotel from "./pages/hotels/ViewAHotel";
 import UpdateHotel from "./pages/hotels/UpdateHotel";
+import CreateTransaction from "./pages/transactions/CreateTransaction";
+import ResultTransaction from "./pages/transactions/ResultTransaction";
+import ViewTransactions from "./pages/transactions/ViewTransactions";
+import CreateRegion from "./pages/region/CreateRegion";
+import ViewRegions from "./pages/region/ViewRegions";
+import UpdateRegion from "./pages/region/UpdateRegion";
+import ViewTourBookings from "./pages/tourBookings/ViewTourBookings";
 
 function App() {
   // Redux State
@@ -51,11 +58,11 @@ function App() {
             <Route path="users/create" element={<CreateUser />} />
             <Route path="users/update/:userId" element={<UpdateUser />} />
 
-            {/* Tours management */}
-            <Route path="tours/view" element={<ViewTours />} />
-            <Route path="tours/view/:tourId" element={<ViewATour />} />
-            <Route path="tours/create" element={<CreateTour />} />
-            <Route path="tours/update/:tourId" element={<UpdateTour />} />
+            {/* Regions management */}
+            <Route path="regions/view" element={<ViewRegions />} />
+            <Route path="regions/view/:tourId" element={<ViewATour />} />
+            <Route path="regions/create" element={<CreateRegion />} />
+            <Route path="regions/update/:regionId" element={<UpdateRegion />} />
 
             {/* Hotels management */}
             <Route path="hotels/view" element={<ViewHotels />} />
@@ -63,10 +70,19 @@ function App() {
             <Route path="hotels/create" element={<CreateHotel />} />
             <Route path="hotels/update/:hotelId" element={<UpdateHotel />} />
 
-            {/* Bookings management */}
-            <Route path="bookings/view" element={<ViewInfoWebsite />} />
-            <Route path="bookings/create" element={<ViewInfoWebsite />} />
-            <Route path="bookings/update" element={<ViewInfoWebsite />} />
+            {/* Tours management */}
+            <Route path="tours/view" element={<ViewTours />} />
+            <Route path="tours/view/:tourId" element={<ViewATour />} />
+            <Route path="tours/create" element={<CreateTour />} />
+            <Route path="tours/update/:tourId" element={<UpdateTour />} />
+
+            {/* Tour Bookings management */}
+            <Route path="tourBookings/view" element={<ViewTourBookings />} />
+
+            {/* Transactions management */}
+            <Route path="transactions/view" element={<ViewTransactions />} />
+            <Route path="transactions/create" element={<CreateTransaction />} />
+            <Route path="transactions/result" element={<ResultTransaction />} />
 
             {/* Not found */}
             <Route path="admin/*" element={<NotFound />} />
