@@ -7,17 +7,18 @@ import com.example.city_tours.dto.response.Hotel.GetAllHotelsResponseDto;
 import com.example.city_tours.dto.response.Hotel.GetHotelByIdResponseDto;
 import com.example.city_tours.dto.response.Hotel.UpdateHotelResponseDto;
 import com.example.city_tours.dto.response.Room.RoomResponseDto;
+import com.example.city_tours.dto.response.Tour.GetTourRoomBookingResponseDto;
 import com.example.city_tours.entity.*;
 import com.example.city_tours.enums.ActiveStatus;
 import com.example.city_tours.exception.ResourceNotFoundException;
-import com.example.city_tours.repository.HotelRepository;
-import com.example.city_tours.repository.ScheduleRepository;
-import com.example.city_tours.repository.TourRepository;
+import com.example.city_tours.repository.*;
+import jakarta.persistence.criteria.Predicate;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -32,6 +33,8 @@ public class HotelServiceImpl implements HotelService{
     private final ScheduleRepository scheduleRepository;
     private final HotelRepository hotelRepository;
     private final HotelImageRepository hotelImageRepository;
+    private final TourRoomBookingRepository tourRoomBookingRepository;
+    private final ProvinceRepository provinceRepository;
 
     @Override
     public CreateHotelResponseDto createHotel(CreateHotelRequestDto requestDto) {
@@ -47,6 +50,16 @@ public class HotelServiceImpl implements HotelService{
         hotel.setCreatedAt(LocalDateTime.now());
         hotel.setUpdatedAt(LocalDateTime.now());
 
+        Optional<Province> optionalProvince = provinceRepository.findById(requestDto.getProvinceId());
+
+        if (!optionalProvince.isPresent()) {
+            throw new ResourceNotFoundException("Province not found");
+        }
+
+        Province province = optionalProvince.get();
+
+        hotel.setProvince(province);
+
         Hotel savedHotel = hotelRepository.save(hotel);
 
         Set<HotelImage> hotelImages = new HashSet<>();
@@ -61,6 +74,9 @@ public class HotelServiceImpl implements HotelService{
         }
 
         hotelImageRepository.saveAll(hotelImages);
+
+        province.setQuantityHotel(province.getQuantityHotel() + 1);
+        provinceRepository.save(province);
 
         CreateHotelResponseDto responseDto = new CreateHotelResponseDto();
 
@@ -149,33 +165,28 @@ public class HotelServiceImpl implements HotelService{
         hotelImageRepository.deleteAll(hotelImages);
     }
 
-//    @Override
-//    public void deleteTour(Long tourId) {
-//
-//        Optional<Tour> optionalTour = tourRepository.findById(tourId);
-//
-//        if (!optionalTour.isPresent()) {
-//            throw new ResourceNotFoundException("Tour not found");
-//        }
-//
-//        Tour tour = optionalTour.get();
-//
-//        for (Schedule schedule : tour.getSchedules()) {
-//            scheduleRepository.deleteById(schedule.getId());
-//        }
-//
-//        tourRepository.deleteById(tourId);
-//
-//    }
-
     @Override
-    public List<GetAllHotelsResponseDto> getAllHotels(int page, int limit) {
+    public List<GetAllHotelsResponseDto> getAllHotels(int page, int limit, String search) {
         // Calculate the offset based on page and limit
         int offset = (page - 1) * limit;
 
         // Fetch tours from the repository with pagination
         Pageable pageable = PageRequest.of(page - 1, limit);
-        Page<Hotel> hotelPage = hotelRepository.findAll(pageable);
+
+        Specification<Hotel> spec = (root, query, cb) -> {
+            Predicate predicate = cb.conjunction(); // Start with an "AND" conjunction
+
+            // Add condition to search for username or email if search parameter is provided
+            if (search != null && !search.isEmpty()) {
+                Predicate namePredicate = cb.like(cb.lower(root.get("name")), "%" + search.toLowerCase() + "%");
+                Predicate addressPredicate = cb.like(cb.lower(root.get("address")), "%" + search.toLowerCase() + "%");
+                predicate = cb.or(namePredicate, addressPredicate);
+            }
+
+            return predicate;
+        };
+
+        Page<Hotel> hotelPage = hotelRepository.findAll(spec, pageable);
 
         // Retrieve the content from the fetched page
         List<Hotel> hotels = hotelPage.getContent();
@@ -201,6 +212,66 @@ public class HotelServiceImpl implements HotelService{
             responseDto.setActiveStatus(hotel.getActiveStatus().toString());
             responseDto.setCreatedAt(hotel.getCreatedAt());
             responseDto.setUpdatedAt(hotel.getUpdatedAt());
+
+            List<Room> sortedRoomRespnseDto = hotel.getRooms().stream()
+                    .sorted(Comparator.comparingLong(Room::getId))
+                    .collect(Collectors.toList());
+
+            // Khai báo một danh sách để lưu trữ RoomResponseDto
+            List<RoomResponseDto> rooms = new ArrayList<>();
+
+            // Lặp qua từng phòng trong danh sách phòng của khách sạn
+            for (Room room : sortedRoomRespnseDto) {
+                // Tạo một đối tượng RoomResponseDto mới
+                RoomResponseDto roomDto = new RoomResponseDto();
+
+                // Thiết lập thông tin cho roomDto từ room
+                roomDto.setId(room.getId());
+                roomDto.setRoomNumber(room.getRoomNumber());
+                roomDto.setType(room.getType());
+                roomDto.setPrice(room.getPrice());
+                roomDto.setDiscount(room.getDiscount());
+                roomDto.setBookedStatus(room.getBookedStatus().toString());
+                roomDto.setActiveStatus(room.getActiveStatus().toString());
+                roomDto.setCreatedAt(room.getCreatedAt());
+
+                // Khai báo một danh sách để lưu trữ URL hình ảnh
+                List<String> imageUrls = new ArrayList<>();
+
+                // Lặp qua từng hình ảnh của phòng
+                for (RoomImage roomImage : room.getImages()) {
+                    // Lấy URL của hình ảnh và thêm vào danh sách imageUrls
+                    String imageUrl = roomImage.getImageUrl();
+                    imageUrls.add(imageUrl);
+                }
+
+                // Thiết lập danh sách imageUrls cho roomDto
+                roomDto.setImageUrls(imageUrls);
+
+                List<TourRoomBooking> tourRoomBookings = tourRoomBookingRepository.findByRoom(room);
+
+                List<GetTourRoomBookingResponseDto> tourRoomBookingDtos = new ArrayList<>();
+                for (TourRoomBooking tourRoomBooking : tourRoomBookings) {
+                    GetTourRoomBookingResponseDto tourRoomBookingDto = new GetTourRoomBookingResponseDto();
+                    tourRoomBookingDto.setId(tourRoomBooking.getId());
+                    tourRoomBookingDto.setDate(tourRoomBooking.getDate());
+                    tourRoomBookingDto.setStartHour(tourRoomBooking.getStartHour());
+                    tourRoomBookingDto.setEndHour(tourRoomBooking.getEndHour());
+                    tourRoomBookingDto.setPrice(tourRoomBooking.getPrice());
+                    tourRoomBookingDto.setCreatedAt(tourRoomBooking.getCreatedAt());
+                    tourRoomBookingDto.setUpdatedAt(tourRoomBooking.getUpdatedAt());
+                    tourRoomBookingDtos.add(tourRoomBookingDto);
+                }
+
+                // Set tour room bookings to roomDto
+                roomDto.setTourRoomBookings(tourRoomBookingDtos);
+
+                // Thêm roomDto vào danh sách rooms
+                rooms.add(roomDto);
+            }
+
+            // Thiết lập danh sách rooms cho responseDto
+            responseDto.setRooms(rooms);
 
             List<String> thumbnailUrls = new ArrayList<>();
 
@@ -238,6 +309,8 @@ public class HotelServiceImpl implements HotelService{
         responseDto.setActiveStatus(hotel.getActiveStatus().toString());
         responseDto.setCreatedAt(hotel.getCreatedAt());
         responseDto.setUpdatedAt(hotel.getUpdatedAt());
+        responseDto.setProvinceName(hotel.getProvince().getName());
+        responseDto.setRegionName(hotel.getProvince().getRegion().getName());
 
         List<Room> sortedRoomRespnseDto = hotel.getRooms().stream()
                 .sorted(Comparator.comparingLong(Room::getId))
@@ -256,6 +329,7 @@ public class HotelServiceImpl implements HotelService{
             roomDto.setRoomNumber(room.getRoomNumber());
             roomDto.setType(room.getType());
             roomDto.setPrice(room.getPrice());
+            roomDto.setDiscount(room.getDiscount());
             roomDto.setBookedStatus(room.getBookedStatus().toString());
             roomDto.setActiveStatus(room.getActiveStatus().toString());
             roomDto.setCreatedAt(room.getCreatedAt());
@@ -273,13 +347,30 @@ public class HotelServiceImpl implements HotelService{
             // Thiết lập danh sách imageUrls cho roomDto
             roomDto.setImageUrls(imageUrls);
 
+            List<TourRoomBooking> tourRoomBookings = tourRoomBookingRepository.findByRoom(room);
+
+            List<GetTourRoomBookingResponseDto> tourRoomBookingDtos = new ArrayList<>();
+            for (TourRoomBooking tourRoomBooking : tourRoomBookings) {
+                GetTourRoomBookingResponseDto tourRoomBookingDto = new GetTourRoomBookingResponseDto();
+                tourRoomBookingDto.setId(tourRoomBooking.getId());
+                tourRoomBookingDto.setDate(tourRoomBooking.getDate());
+                tourRoomBookingDto.setStartHour(tourRoomBooking.getStartHour());
+                tourRoomBookingDto.setEndHour(tourRoomBooking.getEndHour());
+                tourRoomBookingDto.setPrice(tourRoomBooking.getPrice());
+                tourRoomBookingDto.setCreatedAt(tourRoomBooking.getCreatedAt());
+                tourRoomBookingDto.setUpdatedAt(tourRoomBooking.getUpdatedAt());
+                tourRoomBookingDtos.add(tourRoomBookingDto);
+            }
+
+            // Set tour room bookings to roomDto
+            roomDto.setTourRoomBookings(tourRoomBookingDtos);
+
             // Thêm roomDto vào danh sách rooms
             rooms.add(roomDto);
         }
 
         // Thiết lập danh sách rooms cho responseDto
         responseDto.setRooms(rooms);
-
 
         List<String> thumbnailUrls = new ArrayList<>();
 

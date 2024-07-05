@@ -1,0 +1,227 @@
+import { useEffect, useState } from "react";
+import {
+  Breadcrumb,
+  Button,
+  Col,
+  Form,
+  Image,
+  Input,
+  Row,
+  Select,
+  Spin,
+  notification,
+} from "antd";
+import { createRegion } from "../../features/region/RegionSlice";
+import "../../App.css";
+import { Controller, useForm } from "react-hook-form";
+import Cookies from "js-cookie";
+import axios from "axios";
+import CustomText from "../../components/common/CustomText";
+import Loading from "../../components/common/Loading";
+import { userRoles } from "../../utils/enums/UserRoles";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { vietnamProvinces } from "../../utils/data/VietnamProvinces";
+
+const { Option } = Select;
+
+const CreateRegion = () => {
+  // Constants
+  const DELAY_TIME = 1000;
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  // Local State
+  const [loadingButton, setLoadingButton] = useState(false);
+  const [roles, setRoles] = useState("");
+  const [showContent, setShowContent] = useState(false);
+
+  // React Hook Form
+  const { control, handleSubmit, reset } = useForm();
+
+  // useEffect for loading data
+  useEffect(() => {
+    setTimeout(() => {
+      setShowContent(true);
+    }, DELAY_TIME);
+  }, []);
+
+  // Event Handlers
+  const onSubmit = async (data) => {
+    const provinceObject = data.province.map((name) => ({
+      name,
+    }));
+
+    const newData = {
+      name: data.nameRegion,
+      provinces: provinceObject,
+    };
+
+    console.log(newData);
+
+    setLoadingButton(true);
+
+    try {
+      const action = await dispatch(createRegion(newData));
+
+      console.log("action: ", action);
+
+      if (createRegion.fulfilled.match(action)) {
+        if (action?.payload?.status === 201) {
+          notification.success({
+            message: "Create region Successful",
+            description: "Create region Successful.",
+          });
+
+          reset();
+        } else {
+          const error =
+            action?.payload?.error?.data?.message || "Unknown error.";
+          notification.error({
+            message: "Create region Error",
+            description: error,
+          });
+        }
+      } else if (createRegion.rejected.match(action)) {
+        const error = action?.payload?.error?.data?.message || "Unknown error.";
+        notification.error({
+          message: "Create region Error",
+          description: error,
+        });
+      }
+    } catch (error) {
+      notification.error({
+        message: "System Error",
+        description:
+          "The server failed to perform a valid request due to an issue with the server.",
+      });
+    } finally {
+      setLoadingButton(false);
+    }
+  };
+
+  return (
+    <>
+      {/* Show loading */}
+      {!showContent && <Loading />}
+
+      {/* Show content */}
+      {showContent && (
+        <Row
+          style={{
+            padding: "20px",
+            background: "var( --white)",
+            borderRadius: "8px",
+          }}
+        >
+          <Col
+            xl={24}
+            style={{
+              borderBottom: "1px solid var(--border)",
+              padding: "0 0 20px 0",
+              marginBottom: "10px",
+            }}
+          >
+            <Breadcrumb
+              items={[
+                {
+                  title: (
+                    <CustomText
+                      size={"18px"}
+                      weight={"500"}
+                      color={"var(--black-text)"}
+                      isButton={true}
+                    >
+                      Create New Region
+                    </CustomText>
+                  ),
+                },
+              ]}
+            />
+          </Col>
+          <Col
+            xl={24}
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <Col xxl={8} xl={8} lg={8} md={8} sm={8} xs={8}>
+              <Form onFinish={handleSubmit(onSubmit)} layout="vertical">
+                <Controller
+                  name="nameRegion"
+                  control={control}
+                  rules={{ required: "Name is required" }}
+                  render={({ field, fieldState: { error } }) => (
+                    <Form.Item
+                      label="Name Region"
+                      validateStatus={error ? "error" : ""}
+                      help={error?.message}
+                    >
+                      <Input {...field} placeholder="Enter your name" />
+                    </Form.Item>
+                  )}
+                />
+
+                <Controller
+                  name="province"
+                  control={control}
+                  rules={{ required: "Role is required" }}
+                  render={({ field, fieldState: { error } }) => (
+                    <Form.Item
+                      label="Provinces"
+                      validateStatus={error ? "error" : ""}
+                      help={error?.message}
+                    >
+                      <Select
+                        {...field}
+                        mode="multiple"
+                        onChange={(value) => {
+                          field.onChange(value);
+                          setRoles(value);
+                        }}
+                        placeholder="Choose province"
+                      >
+                        {vietnamProvinces.map((province) => (
+                          <Select.Option
+                            key={province.value}
+                            value={province.value}
+                          >
+                            {province.value}
+                          </Select.Option>
+                        ))}
+                      </Select>
+                    </Form.Item>
+                  )}
+                />
+
+                <Form.Item
+                  style={{
+                    marginBottom: 20,
+                  }}
+                >
+                  <Button
+                    htmlType="submit"
+                    style={{
+                      background: "var(--pink)",
+                      color: "var(--white)",
+                      width: "100%",
+                    }}
+                    icon={loadingButton ? <Spin /> : null}
+                    loading={loadingButton}
+                  >
+                    Save
+                  </Button>
+                </Form.Item>
+              </Form>
+            </Col>
+          </Col>
+        </Row>
+      )}
+    </>
+  );
+};
+
+export default CreateRegion;

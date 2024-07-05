@@ -17,7 +17,7 @@ import {
 
 const { useBreakpoint } = Grid;
 
-export default function Footer() {
+export default function Footer({ websiteInfo }) {
   const screens = useBreakpoint();
 
   const handleChange = (value) => {
@@ -82,7 +82,7 @@ export default function Footer() {
                     marginRight: "3px",
                   }}
                 />
-                +45 423 445 99
+                +{websiteInfo?.phone || "45 423 445 99"}
               </CustomText>
 
               <CustomText
@@ -96,7 +96,7 @@ export default function Footer() {
                     marginRight: "3px",
                   }}
                 />
-                help@citytours.com
+                {websiteInfo?.email || "help@citytours.com"}
               </CustomText>
             </Col>
 

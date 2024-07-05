@@ -46,7 +46,7 @@ public class WebSecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173"));
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173", "http://localhost:4200"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
 
@@ -58,12 +58,17 @@ public class WebSecurityConfig {
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.cors(Customizer.withDefaults());
+        http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
 
         http.csrf(csrf -> csrf.disable())
                         .authorizeHttpRequests((authorize) -> {
                             authorize.requestMatchers("/api/v1/auth/**").permitAll();
-                            authorize.requestMatchers( "/api/v1/websites/**").permitAll();
+                            authorize.requestMatchers(HttpMethod.GET, "/api/v1/websites/{websiteInfoId}").permitAll();
+                            authorize.requestMatchers(HttpMethod.GET, "/api/v1/tours").permitAll();
+                            authorize.requestMatchers(HttpMethod.GET, "/api/v1/tours/{tourId}").permitAll();
+                            authorize.requestMatchers(HttpMethod.GET, "/api/v1/hotels").permitAll();
+                            authorize.requestMatchers(HttpMethod.GET, "/api/v1/hotels/{hotelId}").permitAll();
+                            authorize.requestMatchers("/api/v1/payments/**").permitAll();
                             authorize.anyRequest().authenticated();
                         }).httpBasic(Customizer.withDefaults());
 

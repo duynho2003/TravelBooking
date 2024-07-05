@@ -37,6 +37,18 @@ export const deleteTour = createAsyncThunk(
   }
 );
 
+export const tourRoomBooking = createAsyncThunk(
+  "tours/tourRoomBooking",
+  async (data) => {
+    const response = await tourApi.tourRoomBooking(data);
+    if (response.data) {
+      return response;
+    } else {
+      return response;
+    }
+  }
+);
+
 // export const changeStatusAccount = createAsyncThunk(
 //   "users/changeStatusAccount",
 //   async (data) => {
@@ -131,6 +143,20 @@ const tourSlice = createSlice({
     });
 
     builder.addCase(deleteTour.rejected, (state, action) => {
+      state.isLoading = false;
+      state.error = action.error.message;
+    });
+
+    // Tour room booking
+    builder.addCase(tourRoomBooking.pending, (state) => {
+      state.isLoading = true;
+    });
+
+    builder.addCase(tourRoomBooking.fulfilled, (state, action) => {
+      state.isLoading = false;
+    });
+
+    builder.addCase(tourRoomBooking.rejected, (state, action) => {
       state.isLoading = false;
       state.error = action.error.message;
     });

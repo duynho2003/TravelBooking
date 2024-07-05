@@ -11,13 +11,16 @@ import com.example.city_tours.dto.response.User.GetAllAccountsResponseDto;
 import com.example.city_tours.entity.*;
 import com.example.city_tours.enums.ActiveStatus;
 import com.example.city_tours.enums.BookedStatus;
+import com.example.city_tours.enums.UserStatus;
 import com.example.city_tours.exception.ResourceNotFoundException;
 import com.example.city_tours.repository.*;
+import jakarta.persistence.criteria.Predicate;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -36,12 +39,19 @@ public class TourServiceImpl implements TourService{
     public CreateTourResponseDto createTour(CreateTourRequestDto requestDto) {
 
         Tour tour = new Tour();
+        tour.setCode(requestDto.getCode());
         tour.setName(requestDto.getName());
         tour.setDescription(requestDto.getDescription());
-        tour.setAddress(requestDto.getAddress());
         tour.setRating(0.0);
         tour.setNumberOfRating(0);
         tour.setPrice(requestDto.getPrice());
+        tour.setDiscount(requestDto.getDiscount());
+        tour.setLocations(requestDto.getLocations());
+        tour.setDepart(requestDto.getDepart());
+        tour.setStartTime(requestDto.getStartTime());
+        tour.setAdults(requestDto.getAdults());
+        tour.setChildren(requestDto.getChildren());
+        tour.setBaby(requestDto.getBaby());
         tour.setThumbnail(requestDto.getThumbnail());
         tour.setBookedStatus(BookedStatus.NOT_BOOKED);
         tour.setActiveStatus(ActiveStatus.ACTIVE);
@@ -64,12 +74,19 @@ public class TourServiceImpl implements TourService{
         CreateTourResponseDto tourResponseDto = new CreateTourResponseDto();
 
         tourResponseDto.setId(updatedTour.getId());
+        tourResponseDto.setCode(updatedTour.getCode());
         tourResponseDto.setName(updatedTour.getName());
         tourResponseDto.setDescription(updatedTour.getDescription());
-        tourResponseDto.setAddress(updatedTour.getAddress());
+        tourResponseDto.setDepart(updatedTour.getDepart());
+        tourResponseDto.setStartTime(updatedTour.getStartTime());
+        tourResponseDto.setAdults(updatedTour.getAdults());
+        tourResponseDto.setChildren(updatedTour.getChildren());
+        tourResponseDto.setBaby(updatedTour.getBaby());
         tourResponseDto.setRating(updatedTour.getRating());
         tourResponseDto.setNumberOfRating(updatedTour.getNumberOfRating());
         tourResponseDto.setPrice(updatedTour.getPrice());
+        tourResponseDto.setDiscount(updatedTour.getDiscount());
+        tourResponseDto.setLocations(updatedTour.getLocations());
         tourResponseDto.setThumbnail(updatedTour.getThumbnail());
         tourResponseDto.setBookedStatus(updatedTour.getBookedStatus().toString());
         tourResponseDto.setActiveStatus(updatedTour.getActiveStatus().toString());
@@ -105,8 +122,13 @@ public class TourServiceImpl implements TourService{
 
         tour.setName(requestDto.getName());
         tour.setDescription(requestDto.getDescription());
-        tour.setAddress(requestDto.getAddress());
+        tour.setDepart(requestDto.getDepart());
         tour.setPrice(requestDto.getPrice());
+        tour.setDiscount(requestDto.getDiscount());
+        tour.setLocations(requestDto.getLocations());
+        tour.setAdults(requestDto.getAdults());
+        tour.setChildren(requestDto.getChildren());
+        tour.setBaby(requestDto.getBaby());
         tour.setBookedStatus(BookedStatus.valueOf(requestDto.getBookedStatus()));
         tour.setActiveStatus(ActiveStatus.valueOf(requestDto.getActiveStatus()));
         tour.setThumbnail(requestDto.getThumbnail());
@@ -144,6 +166,7 @@ public class TourServiceImpl implements TourService{
 
                 updatedSchedule.setDayOfWeek(schedule.getDayOfWeek());
                 updatedSchedule.setDate(schedule.getDate());
+                updatedSchedule.setActivities(schedule.getActivities());
 
                 updatedSchedules.add(scheduleRepository.save(updatedSchedule));
             } else {
@@ -151,6 +174,7 @@ public class TourServiceImpl implements TourService{
                 Schedule newSchedule = new Schedule();
                 newSchedule.setDayOfWeek(schedule.getDayOfWeek());
                 newSchedule.setDate(schedule.getDate());
+                newSchedule.setActivities(schedule.getActivities());
 
                 // Add new schedule to the tour
                 updatedSchedules.add(scheduleRepository.save(newSchedule));
@@ -166,8 +190,15 @@ public class TourServiceImpl implements TourService{
         tourResponseDto.setId(updatedTour.getId());
         tourResponseDto.setName(updatedTour.getName());
         tourResponseDto.setDescription(updatedTour.getDescription());
-        tourResponseDto.setAddress(updatedTour.getAddress());
+        tourResponseDto.setDepart(updatedTour.getDepart());
+        tourResponseDto.setRating(updatedTour.getRating());
+        tourResponseDto.setNumberOfRating(updatedTour.getNumberOfRating());
         tourResponseDto.setPrice(updatedTour.getPrice());
+        tourResponseDto.setDiscount(updatedTour.getDiscount());
+        tourResponseDto.setLocations(updatedTour.getLocations());
+        tourResponseDto.setAdults(updatedTour.getAdults());
+        tourResponseDto.setChildren(updatedTour.getChildren());
+        tourResponseDto.setBaby(updatedTour.getBaby());
         tourResponseDto.setBookedStatus(updatedTour.getBookedStatus().toString());
         tourResponseDto.setActiveStatus(updatedTour.getActiveStatus().toString());
         tourResponseDto.setThumbnail(updatedTour.getThumbnail());
@@ -212,13 +243,36 @@ public class TourServiceImpl implements TourService{
     }
 
     @Override
-    public List<GetAllToursResponseDto> getAllTours(int page, int limit) {
+    public List<GetAllToursResponseDto> getAllTours(int page, int limit, String search, String date, String status) {
         // Calculate the offset based on page and limit
         int offset = (page - 1) * limit;
 
         // Fetch tours from the repository with pagination
         Pageable pageable = PageRequest.of(page - 1, limit);
-        Page<Tour> tourPage = tourRepository.findAll(pageable);
+
+        Specification<Tour> spec = (root, query, cb) -> {
+            Predicate predicate = cb.conjunction(); // Start with an "AND" conjunction
+
+            // Add condition to search for username or email if search parameter is provided
+            if (search != null && !search.isEmpty()) {
+                Predicate namePredicate = cb.like(cb.lower(root.get("name")), "%" + search.toLowerCase() + "%");
+                predicate = cb.or(namePredicate);
+            }
+
+            // Add condition to filter by role if role parameter is provided
+            if (date != null && !date.isEmpty()) {
+                predicate = cb.and(predicate, cb.equal(root.join("schedules").get("date"), date));
+            }
+
+            // Add condition to filter by status if status parameter is provided
+            if (status != null && !status.isEmpty()) {
+                predicate = cb.and(predicate, cb.equal(root.get("activeStatus"), ActiveStatus.valueOf(status.toUpperCase())));
+            }
+
+            return predicate;
+        };
+
+        Page<Tour> tourPage = tourRepository.findAll(spec, pageable);
 
         // Retrieve the content from the fetched page
         List<Tour> tours = tourPage.getContent();
@@ -235,13 +289,17 @@ public class TourServiceImpl implements TourService{
         for (Tour tour : tours) {
             GetAllToursResponseDto responseDto = new GetAllToursResponseDto();
             responseDto.setId(tour.getId());
+            responseDto.setCode(tour.getCode());
             responseDto.setName(tour.getName());
             responseDto.setDescription(tour.getDescription());
-            responseDto.setAddress(tour.getAddress());
             responseDto.setRating(tour.getRating());
             responseDto.setNumberOfRating(tour.getNumberOfRating());
             responseDto.setPrice(tour.getPrice());
+            responseDto.setDiscount(tour.getDiscount());
+            responseDto.setDepart(tour.getDepart());
+            responseDto.setLocations(tour.getLocations());
             responseDto.setThumbnail(tour.getThumbnail());
+            responseDto.setStartTime(tour.getStartTime());
             responseDto.setBookedStatus(tour.getBookedStatus().toString());
             responseDto.setActiveStatus(tour.getActiveStatus().toString());
             responseDto.setCreatedAt(tour.getCreatedAt());
@@ -284,13 +342,20 @@ public class TourServiceImpl implements TourService{
 
         GetTourByIdResponseDto responseDto = new GetTourByIdResponseDto();
         responseDto.setId(tour.getId());
+        responseDto.setCode(tour.getCode());
         responseDto.setName(tour.getName());
         responseDto.setDescription(tour.getDescription());
-        responseDto.setAddress(tour.getAddress());
+        responseDto.setDepart(tour.getDepart());
         responseDto.setPrice(tour.getPrice());
+        responseDto.setDiscount(tour.getDiscount());
+        responseDto.setLocations(tour.getLocations());
         responseDto.setThumbnail(tour.getThumbnail());
         responseDto.setRating(tour.getRating());
         responseDto.setNumberOfRating(tour.getNumberOfRating());
+        responseDto.setAdults(tour.getAdults());
+        responseDto.setChildren(tour.getChildren());
+        responseDto.setBaby(tour.getBaby());
+        responseDto.setStartTime(tour.getStartTime());
         responseDto.setBookedStatus(tour.getBookedStatus().toString());
         responseDto.setActiveStatus(tour.getActiveStatus().toString());
         responseDto.setCreatedAt(tour.getCreatedAt());
@@ -307,6 +372,7 @@ public class TourServiceImpl implements TourService{
 
             savedSchedule.setId(schedule.getId());
             savedSchedule.setDayOfWeek(schedule.getDayOfWeek());
+            savedSchedule.setActivities(schedule.getActivities());
             savedSchedule.setDate(schedule.getDate());
 
             schedules.add(savedSchedule);

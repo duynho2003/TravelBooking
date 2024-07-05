@@ -31,14 +31,17 @@ import Loading from "../../components/common/Loading";
 import CustomText from "../../components/common/CustomText";
 import { Link, useNavigate } from "react-router-dom";
 import { QuestionCircleOutlined } from "@ant-design/icons";
+import { userRoles } from "../../utils/enums/UserRoles";
+import { userStatus } from "../../utils/enums/UserStatus";
 
+const { Search } = Input;
 const { Option } = Select;
 const { Text } = Typography;
 
 const ViewUsers = () => {
   // Constants
   const INIT_PAGE = 1;
-  const INIT_LIMIT = 6;
+  const INIT_LIMIT = 5;
 
   // Redux State
   const dispatch = useDispatch();
@@ -50,10 +53,17 @@ const ViewUsers = () => {
   const error = useSelector((state) => state.users?.error);
 
   // Local State
+  const [search, setSearch] = useState("");
+  const [role, setRole] = useState("");
+  const [activeStatus, setActiveStatus] = useState("");
+
   const [pageSize, setPageSize] = useState(INIT_LIMIT);
   const [pagination, setPagination] = useState({
     page: INIT_PAGE,
     limit: pageSize,
+    search: search,
+    role: role,
+    status: activeStatus,
   });
   const [isModalOpenChangeStatus, setIsModalOpenChangeStatus] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState(null);
@@ -147,6 +157,9 @@ const ViewUsers = () => {
     setPagination({
       page: current,
       limit: pageSize,
+      search: search,
+      role: role,
+      status: activeStatus,
     });
   };
 
@@ -155,6 +168,9 @@ const ViewUsers = () => {
     setPagination({
       page: INIT_PAGE,
       limit: value,
+      search: search,
+      role: role,
+      status: activeStatus,
     });
   };
 
@@ -325,6 +341,39 @@ const ViewUsers = () => {
     },
   ];
 
+  const onSearch = (value) => {
+    console.log(value);
+    setPagination((prev) => ({
+      ...prev,
+      search: value,
+      page: INIT_PAGE,
+    }));
+
+    setSearch(value);
+  };
+
+  const onChangeRole = (value) => {
+    console.log(value);
+    setPagination((prev) => ({
+      ...prev,
+      role: value,
+      page: INIT_PAGE,
+    }));
+
+    setRole(value);
+  };
+
+  const onChangeStatus = (value) => {
+    console.log(value);
+    setPagination((prev) => ({
+      ...prev,
+      status: value,
+      page: INIT_PAGE,
+    }));
+
+    setActiveStatus(value);
+  };
+
   return (
     <>
       {/* Show loading */}
@@ -346,9 +395,7 @@ const ViewUsers = () => {
             <Col
               xl={24}
               style={{
-                borderBottom: "1px solid var(--border)",
                 padding: "0 0 20px 0",
-                marginBottom: "10px",
                 display: "flex",
                 justifyContent: "space-between",
                 alignItems: "center",
@@ -389,6 +436,52 @@ const ViewUsers = () => {
                 </Link>
               </Button>
             </Col>
+
+            <Col
+              xl={24}
+              style={{
+                borderBottom: "1px solid var(--border)",
+                padding: "0 0 20px 0",
+                marginBottom: "10px",
+                display: "flex",
+                justifyContent: "end",
+                alignItems: "center",
+                gap: "20px",
+              }}
+            >
+              <Search
+                placeholder="Search username and email"
+                onSearch={onSearch}
+                style={{
+                  width: 300,
+                }}
+              />
+
+              <Select
+                onChange={onChangeRole}
+                style={{
+                  width: "150px",
+                }}
+                defaultValue={""}
+              >
+                <Option value={""}>All Role</Option>
+                <Option value={"ROLE_ADMIN"}>Admin</Option>
+                <Option value={"ROLE_STAFF"}>Staff</Option>
+                <Option value={"ROLE_CUSTOMER"}>Customer</Option>
+              </Select>
+
+              <Select
+                onChange={onChangeStatus}
+                style={{
+                  width: "150px",
+                }}
+                defaultValue={""}
+              >
+                <Option value={""}>All Status</Option>
+                <Option value={"ACTIVE"}>Active</Option>
+                <Option value={"IN_ACTIVE"}>In Active</Option>
+              </Select>
+            </Col>
             <Col xl={24}>
               <Table
                 columns={columns}
@@ -422,7 +515,6 @@ const ViewUsers = () => {
                     <Option value={3}>3 / page</Option>
                     <Option value={4}>4 / page</Option>
                     <Option value={5}>5 / page</Option>
-                    <Option value={6}>6 / page</Option>
                   </Select>
                 </Col>
               </Row>

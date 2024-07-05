@@ -17,7 +17,7 @@ public interface TourService {
 
     void deleteTour(Long tourId);
 
-    List<GetAllToursResponseDto> getAllTours(int page, int limit);
+    List<GetAllToursResponseDto> getAllTours(int page, int limit, String search, String date, String status);
 
     GetTourByIdResponseDto getTourById(Long tourId);
 

@@ -23,6 +23,7 @@ import Cookies from "js-cookie";
 import axios from "axios";
 import CustomText from "../../components/common/CustomText";
 import Loading from "../../components/common/Loading";
+import { getAllRegions } from "../../features/region/RegionSlice";
 import dayjs from "dayjs";
 import "dayjs/locale/en"; // Import locale 'en' để sử dụng tiếng Anh
 import customParseFormat from "dayjs/plugin/customParseFormat";
@@ -32,8 +33,12 @@ const { RangePicker } = DatePicker;
 const { Text } = Typography;
 
 const CreateHotel = () => {
+  // Constants
+  const INIT_PAGE = 1;
+
   // Redux State
   const dispatch = useDispatch();
+  const regions = useSelector((state) => state.regions?.list);
   const isLoading = useSelector((state) => state.website?.isLoading);
   const error = useSelector((state) => state.website?.error);
 
@@ -42,12 +47,22 @@ const CreateHotel = () => {
   const [selectedImages, setSelectedImages] = useState([]);
   const [showContent, setShowContent] = useState(false);
   const [thumbnailUrls, setThumbnailUrls] = useState([]);
+  const [selectedRegion, setSelectedRegion] = useState(null);
+  const [selectedProvince, setSelectedProvince] = useState(null);
+  const [filteredProvinces, setFilteredProvinces] = useState([]);
 
   // React Hook Form
   const { control, handleSubmit, reset } = useForm();
 
   // useEffect for loading data
   useEffect(() => {
+    dispatch(
+      getAllRegions({
+        page: INIT_PAGE,
+        limit: "",
+      })
+    );
+
     // Delay showing content after loading
     if (!isLoading) {
       setTimeout(() => {
@@ -55,6 +70,22 @@ const CreateHotel = () => {
       }, 1000);
     }
   }, [dispatch]);
+
+  useEffect(() => {
+    if (selectedRegion) {
+      // Lọc danh sách tỉnh (provinces) theo vùng (region) đã chọn
+      const selectedRegionFilter = regions.find(
+        (region) => region.id === selectedRegion
+      );
+      if (selectedRegionFilter) {
+        setFilteredProvinces(selectedRegionFilter.provinces);
+      } else {
+        setFilteredProvinces([]);
+      }
+    } else {
+      setFilteredProvinces([]);
+    }
+  }, [selectedRegion, regions]);
 
   // Event Handlers
   const uploadImages = async () => {
@@ -97,6 +128,7 @@ const CreateHotel = () => {
         description: data.description,
         address: data.address,
         thumbnailUrls: urls,
+        provinceId: selectedProvince,
       };
 
       console.log("thumbnailUrls: ", thumbnailUrls);
@@ -196,6 +228,65 @@ const CreateHotel = () => {
                 justify={"center"}
               >
                 <Col xxl={11} xl={11} lg={12} md={12} sm={24} xs={24}>
+                  <Controller
+                    name="regions"
+                    control={control}
+                    rules={{ required: "Role is required" }}
+                    render={({ field, fieldState: { error } }) => (
+                      <Form.Item
+                        label="Regions"
+                        validateStatus={error ? "error" : ""}
+                        help={error?.message}
+                      >
+                        <Select
+                          {...field}
+                          onChange={(value) => {
+                            field.onChange(value);
+                            setSelectedRegion(value);
+                          }}
+                          placeholder="Choose province"
+                        >
+                          {regions?.map((region) => (
+                            <Select.Option key={region.name} value={region.id}>
+                              {region.name}
+                            </Select.Option>
+                          ))}
+                        </Select>
+                      </Form.Item>
+                    )}
+                  />
+
+                  <Controller
+                    name="provinces"
+                    control={control}
+                    rules={{ required: "Role is required" }}
+                    render={({ field, fieldState: { error } }) => (
+                      <Form.Item
+                        label="Provinces"
+                        validateStatus={error ? "error" : ""}
+                        help={error?.message}
+                      >
+                        <Select
+                          {...field}
+                          onChange={(value) => {
+                            field.onChange(value);
+                            setSelectedProvince(value);
+                          }}
+                          placeholder="Choose province"
+                        >
+                          {filteredProvinces.map((province) => (
+                            <Select.Option
+                              key={province.id}
+                              value={province.id}
+                            >
+                              {province.name}
+                            </Select.Option>
+                          ))}
+                        </Select>
+                      </Form.Item>
+                    )}
+                  />
+
                   <Controller
                     name="name"
                     control={control}

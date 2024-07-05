@@ -25,6 +25,8 @@ public class GetHotelByIdResponseDto {
     private String activeStatus;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private String provinceName;
+    private String regionName;
     private List<RoomResponseDto> rooms;
     private List<String> thumbnailUrls;
 

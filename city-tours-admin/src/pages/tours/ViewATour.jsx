@@ -12,6 +12,7 @@ import {
   Image,
   Button,
   Tag,
+  Timeline,
 } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { getTourById } from "../../features/tour/TourSlice";
@@ -215,6 +216,10 @@ const ViewATour = () => {
                 justify={"space-between"}
               >
                 <Col xxl={11} xl={11} lg={12} md={12} sm={24} xs={24}>
+                  <Form.Item label="Code">
+                    <Input value={tour?.code} readOnly />
+                  </Form.Item>
+
                   <Form.Item label="Name">
                     <Input value={tour?.name} readOnly />
                   </Form.Item>
@@ -223,8 +228,12 @@ const ViewATour = () => {
                     <Input value={tour?.description} readOnly />
                   </Form.Item>
 
-                  <Form.Item label="Address">
-                    <Input value={tour?.address} readOnly />
+                  <Form.Item label="Locations">
+                    <Input value={tour?.locations} readOnly />
+                  </Form.Item>
+
+                  <Form.Item label="Depart">
+                    <Input value={tour?.depart} readOnly />
                   </Form.Item>
 
                   <Form.Item label="Price">
@@ -233,6 +242,16 @@ const ViewATour = () => {
                         style: "currency",
                         currency: "VND",
                       }).format(tour?.price)}
+                      readOnly
+                    />
+                  </Form.Item>
+
+                  <Form.Item label="Discount">
+                    <Input
+                      value={new Intl.NumberFormat("vi-VN", {
+                        style: "currency",
+                        currency: "VND",
+                      }).format(tour?.discount)}
                       readOnly
                     />
                   </Form.Item>
@@ -290,37 +309,37 @@ const ViewATour = () => {
                     <RangePicker value={dates} disabled />
                   </Form.Item>
 
-                  {/* Render danh sách các ngày */}
-                  {/* {weekdays.length > 0 && (
-                    <Form.Item label="Schedules">
-                      {weekdays.map((day, index) => (
-                        <div
-                          key={index}
-                          style={{
-                            marginBottom: "20px",
-                            borderBottom: "1px solid var(--green-dark)",
-                          }}
-                        >
-                          <CustomText
-                            size={"14px"}
-                            weight={"500"}
-                            color={"var(--green-dark)"}
-                            isButton={true}
+                  <Form.Item label="Schedules">
+                    <Timeline
+                      mode="left"
+                      style={{
+                        marginTop: "5px",
+                      }}
+                    >
+                      {tour?.schedules?.length > 0 &&
+                        tour?.schedules.map((day, index) => (
+                          <Timeline.Item
+                            key={index}
+                            label={`${day.dayOfWeek} - ${day.date} `}
                           >
-                            {day}
-                          </CustomText>
-                          <Table
-                            dataSource={
-                              dataSource.find((data) => data.key === day)
-                                ?.data || []
-                            }
-                            columns={columns}
-                            pagination={false}
-                          />
-                        </div>
-                      ))}
-                    </Form.Item>
-                  )} */}
+                            <Row
+                              style={{
+                                width: "100%",
+                              }}
+                            >
+                              <Col span={24}>
+                                <Input value={day.activities} readOnly />
+                              </Col>
+                            </Row>
+                          </Timeline.Item>
+                        ))}
+                    </Timeline>
+                    {tour?.schedules.length === 0 && (
+                      <Text style={{ fontSize: "14px", fontWeight: 400 }}>
+                        This tour has no schedules
+                      </Text>
+                    )}
+                  </Form.Item>
                 </Col>
               </Row>
             </Form>

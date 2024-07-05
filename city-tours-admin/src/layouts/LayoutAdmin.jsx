@@ -9,6 +9,8 @@ import {
   useParams,
 } from "react-router-dom";
 import {
+  faCreditCard,
+  faEarthAmericas,
   faHotel,
   faLaptop,
   faMoneyBill1,
@@ -33,6 +35,7 @@ export default function AdminLayout() {
   const sub = useSelector((state) => state.auth?.info?.sub);
   const tourId = useSelector((state) => state.tours?.selectedTour?.id);
   const hotelId = useSelector((state) => state.hotels?.selectedHotel?.id);
+  const regionId = useSelector((state) => state.regions?.selectedRegion?.id);
 
   const [collapsed, setCollapsed] = useState(false);
 
@@ -96,6 +99,57 @@ export default function AdminLayout() {
     },
 
     {
+      key: "/admin/regions",
+      icon: <FontAwesomeIcon icon={faEarthAmericas} />,
+      label: "Regions",
+      children: [
+        {
+          key: "/admin/regions/view",
+          label: <Link to="/admin/regions/view">View regions</Link>,
+          path: "/admin/regions/view",
+        },
+        {
+          key: "/admin/regions/create",
+          label: <Link to="/admin/regions/create">Create new region</Link>,
+          path: "/admin/regions/create",
+        },
+        {
+          key: `/admin/regions/update/${regionId}`,
+          label: "Update region",
+          path: `/admin/regions/update/${regionId}`,
+        },
+      ],
+    },
+
+    {
+      key: "/admin/hotels",
+      icon: <FontAwesomeIcon icon={faHotel} />,
+      label: "Hotels",
+      children: [
+        {
+          key: "/admin/hotels/view",
+          label: <Link to="/admin/hotels/view">View hotels</Link>,
+          path: "/admin/hotels/view",
+        },
+        {
+          key: `/admin/hotels/view/${hotelId}`,
+          label: "View a hotel",
+          path: `/admin/hotels/view/${hotelId}`,
+        },
+        {
+          key: "/admin/hotels/create",
+          label: <Link to="/admin/hotels/create">Create new hotel</Link>,
+          path: "/admin/hotels/create",
+        },
+        {
+          key: `/admin/hotels/update/${hotelId}`,
+          label: "Update hotel",
+          key: `/admin/hotels/update/${hotelId}`,
+        },
+      ],
+    },
+
+    {
       key: "/admin/tours",
       icon: <FontAwesomeIcon icon={faPlaneDeparture} />,
       label: "Tours",
@@ -124,30 +178,60 @@ export default function AdminLayout() {
     },
 
     {
-      key: "/admin/hotels",
-      icon: <FontAwesomeIcon icon={faHotel} />,
-      label: "Hotels",
+      key: "/admin/tourBookings",
+      icon: <FontAwesomeIcon icon={faCreditCard} />,
+      label: "Tour Bookings",
       children: [
         {
-          key: "/admin/hotels/view",
-          label: <Link to="/admin/hotels/view">View hotels</Link>,
-          path: "/admin/hotels/view",
+          key: "/admin/tourBookings/view",
+          label: <Link to="/admin/tourBookings/view">View tour bookings</Link>,
+          path: "/admin/tourBookings/view",
         },
+        // {
+        //   key: `/admin/tours/view/${tourId}`,
+        //   label: "View a tour",
+        //   path: `/admin/tours/view/${tourId}`,
+        // },
+        // {
+        //   key: "/admin/tours/create",
+        //   label: <Link to="/admin/tours/create">Create new tour</Link>,
+        //   path: "/admin/tours/create",
+        // },
+        // {
+        //   key: `/admin/tours/update/${tourId}`,
+        //   label: "Update tour",
+        //   path: `/admin/tours/update/${tourId}`,
+        // },
+      ],
+    },
+
+    {
+      key: "/admin/transactions",
+      icon: <FontAwesomeIcon icon={faMoneyBill1} />,
+      label: "Transactions",
+      children: [
         {
-          key: `/admin/hotels/view/${hotelId}`,
-          label: "View a hotel",
-          path: `/admin/hotels/view/${hotelId}`,
+          key: "/admin/transactions/view",
+          label: <Link to="/admin/transactions/view">View transactions</Link>,
+          path: "/admin/transactions/view",
         },
-        {
-          key: "/admin/hotels/create",
-          label: <Link to="/admin/hotels/create">Create new hotel</Link>,
-          path: "/admin/hotels/create",
-        },
-        {
-          key: `/admin/hotels/update/${hotelId}`,
-          label: "Update hotel",
-          path: `/admin/hotels/update/${hotelId}`,
-        },
+        // {
+        //   key: `/admin/hotels/view/${hotelId}`,
+        //   label: "View a hotel",
+        //   path: `/admin/hotels/view/${hotelId}`,
+        // },
+        // {
+        //   key: "/admin/transactions/create",
+        //   label: (
+        //     <Link to="/admin/transactions/create">Create new transation</Link>
+        //   ),
+        //   path: "/admin/transactions/create",
+        // },
+        // {
+        //   key: `/admin/hotels/update/${hotelId}`,
+        //   label: "Update hotel",
+        //   key: `/admin/hotels/update/${hotelId}`,
+        // },
       ],
     },
   ];

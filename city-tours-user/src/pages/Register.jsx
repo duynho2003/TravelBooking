@@ -18,6 +18,8 @@ import { useForm, Controller } from "react-hook-form";
 import { useState } from "react";
 import logo from "../assets/images/logo.png";
 import CustomText from "../components/common/CustomText";
+import { register } from "../features/auth/AuthSlice";
+import { useDispatch } from "react-redux";
 
 const { Title } = Typography;
 const { Option } = Select;
@@ -25,11 +27,11 @@ const { useBreakpoint } = Grid;
 
 export default function Register() {
   // Hook form
-  const { control, handleSubmit } = useForm({});
+  const { getValues, control, handleSubmit } = useForm({});
   const screens = useBreakpoint();
 
   // Redux state
-  // const dispatch = useDispatch();
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   // Local state
@@ -38,42 +40,59 @@ export default function Register() {
   // Handle event
   const onSubmit = async (data) => {
     console.log(data);
-    // setLoading(true);
-    // try {
-    //   const action = await dispatch(register(data));
 
-    //   console.log("action: ", action);
+    const newData = {
+      username: data.username,
+      email: data.email,
+      password: data.password,
+      roles: ["ROLE_CUSTOMER"],
+    };
 
-    //   if (register.fulfilled.match(action)) {
-    //     if (action?.payload?.data) {
-    //       notification.success({
-    //         message: "Đăng ký thành công",
-    //         description: "Đăng ký tài khoản thành công.",
-    //       });
-    //       navigate("/login");
-    //     } else {
-    //       const error = action?.payload?.error.message || "Lỗi không xác định.";
-    //       notification.error({
-    //         message: "Lỗi đăng nhập",
-    //         description: error,
-    //       });
-    //     }
-    //   } else if (register.rejected.match(action)) {
-    //     const error = action?.payload?.error.message || "Lỗi không xác định.";
-    //     notification.error({
-    //       message: "Lỗi đăng nhập",
-    //       description: error,
-    //     });
-    //   }
-    // } catch (error) {
-    //   notification.error({
-    //     message: "Lỗi hệ thống",
-    //     description:
-    //       "Máy chủ không thực hiện được yêu cầu hợp lệ do lỗi với máy chủ.",
-    //   });
-    // } finally {
-    //   setLoading(false);
-    // }
+    setLoading(true);
+
+    try {
+      const action = await dispatch(register(newData));
+
+      console.log("action: ", action);
+
+      if (register.fulfilled.match(action)) {
+        if (action?.payload?.data) {
+          notification.success({
+            message: "Registration successful",
+            description: "Account registration successful.",
+          });
+          navigate("/login");
+        } else {
+          const error =
+            action?.payload?.error?.data?.message || "Lỗi không xác định.";
+          notification.error({
+            message: "Registration Error",
+            description: error,
+          });
+        }
+      } else if (register.rejected.match(action)) {
+        const error = action?.payload?.error.message || "Lỗi không xác định.";
+        notification.error({
+          message: "Registration Error",
+          description: error,
+        });
+      }
+    } catch (error) {
+      notification.error({
+        message: "System error",
+        description:
+          "The server couldn't fulfill a valid request due to an issue with the server.",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const validateConfirmPassword = (value) => {
+    const password = getValues("password");
+    return (
+      value === password || "Confirm password does not match with password."
+    );
   };
 
   return (
@@ -180,7 +199,10 @@ export default function Register() {
             <Controller
               name="confirmPassword"
               control={control}
-              rules={{ required: "Confirm password is required." }}
+              rules={{
+                required: "Confirm password is required.",
+                validate: validateConfirmPassword,
+              }}
               render={({ field, fieldState: { error } }) => (
                 <Form.Item
                   label="Confirm Password"

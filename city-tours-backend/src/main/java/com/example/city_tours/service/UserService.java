@@ -11,7 +11,7 @@ public interface UserService {
     CreateAccountResponseDto createAccount(CreateAccountRequestDto createAccountRequestDto);
     UpdateAccountResponseDto updateAccount(Long userId, UpdateAccountRequestDto updateAccountRequestDto);
     GetAccountByIdResponseDto getAccountById(Long userId);
-    List<GetAllAccountsResponseDto> getAllAccounts(int page, int limit);
+    List<GetAllAccountsResponseDto> getAllAccounts(int page, int limit, String search, String role, String status);
     void deleteAccount(Long userId);
 
 }

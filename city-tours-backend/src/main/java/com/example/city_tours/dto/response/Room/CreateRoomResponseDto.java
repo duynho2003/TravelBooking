@@ -19,21 +19,14 @@ import java.util.Set;
 public class CreateRoomResponseDto {
 
     private Long id;
-
     private String roomNumber;
-
     private String type;
-
     private Double price;
-
+    private Double discount;
     private String bookedStatus;
-
     private String activeStatus;
-
     private LocalDateTime createdAt;
-
     private Long hotelId;
-
     private List<String> imageUrls;
 
 }

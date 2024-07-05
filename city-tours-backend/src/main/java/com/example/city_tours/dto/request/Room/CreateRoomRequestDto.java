@@ -16,6 +16,7 @@ public class CreateRoomRequestDto {
     private String roomNumber;
     private String type;
     private Double price;
+    private Double discount;
     private Set<String> imageUrls;
 
 }

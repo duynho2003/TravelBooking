@@ -76,7 +76,7 @@ const UpdateInfoWebsite = () => {
         endDate: endDay.trim(),
         startTime: startTime.trim(),
         endTime: endTime.trim(),
-        // logo: website?.logo,
+        logo: website?.logo,
       });
     }
   }, [website, reset]);
@@ -108,24 +108,28 @@ const UpdateInfoWebsite = () => {
     setLoadingButton(true);
 
     try {
-      await axios.put(`http://localhost:5050/api/v1/websites/${15}`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      await axios.put(
+        `http://localhost:5050/api/v1/websites/${ID_INFO_WEBSITE}`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       notification.success({
-        message: "Cập nhật thông tin website thành công",
-        description: "Cập nhật hồ sơ giáo viên thành công.",
+        message: "Updated info website",
+        description: "Updated info website successfully",
       });
 
-      dispatch(getWebsiteInfo(15));
+      dispatch(getWebsiteInfo(ID_INFO_WEBSITE));
       setIsChangeImage(false);
       setErrorChangeImage(false);
     } catch (error) {
       notification.error({
-        message: "Lỗi hệ thống",
+        message: "Server error",
         description:
           "Máy chủ không thực hiện được yêu cầu hợp lệ do lỗi với máy chủ.",
       });

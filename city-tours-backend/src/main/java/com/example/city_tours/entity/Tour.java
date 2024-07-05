@@ -23,25 +23,25 @@ public class Tour {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+    private String code;
     private String name;
-
     @Column(columnDefinition = "LONGTEXT")
     private String description;
-
-    private String address;
-
-    private Double rating;
-
-    private int numberOfRating;
-
     private Double price;
-
+    private Double discount;
+    private String locations;
+    private String depart;
+    private String startTime;
+    private Double rating;
+    private int numberOfRating;
+    private int adults;
+    private int children;
+    private int baby;
     private String thumbnail;
-
     private BookedStatus bookedStatus;
-
     private ActiveStatus activeStatus;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "tours_schedules",
@@ -49,9 +49,5 @@ public class Tour {
             inverseJoinColumns = @JoinColumn(name = "schedule_id", referencedColumnName = "id"))
 
     private Set<Schedule> schedules;
-
-    private LocalDateTime createdAt;
-
-    private LocalDateTime updatedAt;
 
 }

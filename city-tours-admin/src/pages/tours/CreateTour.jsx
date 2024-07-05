@@ -10,11 +10,13 @@ import {
   Spin,
   notification,
   DatePicker,
-  Table,
-  Collapse,
   TimePicker,
   Typography,
   InputNumber,
+  Timeline,
+  Tag,
+  Modal,
+  Card,
 } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import "../../App.css";
@@ -24,18 +26,25 @@ import axios from "axios";
 import CustomText from "../../components/common/CustomText";
 import Loading from "../../components/common/Loading";
 import dayjs from "dayjs";
-import "dayjs/locale/en"; // Import locale 'en' để sử dụng tiếng Anh
+import "dayjs/locale/en";
 import customParseFormat from "dayjs/plugin/customParseFormat";
+import { generateTourCode } from "../../utils/generateTourCode";
+import { getAllHotels } from "../../features/hotel/HotelSlice";
 dayjs.extend(customParseFormat);
 
 const { RangePicker } = DatePicker;
 const { Text } = Typography;
 
 const CreateTour = () => {
+  // Constants
+  const INIT_PAGE = 1;
+  const INIT_LIMIT = 6;
+
   // Redux State
   const dispatch = useDispatch();
-  const isLoading = useSelector((state) => state.website?.isLoading);
-  const error = useSelector((state) => state.website?.error);
+  const hotels = useSelector((state) => state.hotels?.list);
+  const isLoading = useSelector((state) => state.hotels?.isLoading);
+  const error = useSelector((state) => state.hotels?.error);
 
   // Local State
   const [loadingButton, setLoadingButton] = useState(false);
@@ -53,15 +62,24 @@ const CreateTour = () => {
   });
   const [dates, setDates] = useState([null, null]);
   const [errorDatePicker, setErrorDatePicker] = useState("");
-
-  console.log("schedules: ", schedules);
-  console.log("dataSource: ", dataSource);
+  const [selectedHotels, setSelectedHotels] = useState([]);
+  const [modalVisibleRooms, setModalVisibleRooms] = useState(false);
+  const [selectedHotelRooms, setSelectedHotelRooms] = useState([]);
+  const [hasRooms, setHasRooms] = useState(true);
+  const [startTime, setStartTime] = useState("");
 
   // React Hook Form
   const { control, handleSubmit, reset } = useForm();
 
   // useEffect for loading data
   useEffect(() => {
+    dispatch(
+      getAllHotels({
+        page: INIT_PAGE,
+        limit: INIT_LIMIT,
+      })
+    );
+
     // Delay showing content after loading
     if (!isLoading) {
       setTimeout(() => {
@@ -107,28 +125,20 @@ const CreateTour = () => {
     try {
       const thumbnail = await uploadImage();
 
-      let convertedSchedule = [];
-
-      for (const dayOfWeek in schedules.weeks) {
-        if (schedules.weeks.hasOwnProperty(dayOfWeek)) {
-          const timeline = schedules.weeks[dayOfWeek];
-          let daySchedule = {
-            dayOfWeek: dayOfWeek,
-            timeLine: timeline.map((item) => ({
-              startHour: item.startHour || "",
-              endHour: item.endHour || "",
-              activities: item.activities || "",
-            })),
-          };
-          convertedSchedule.push(daySchedule);
-        }
-      }
+      const startHour = startTime.split(" ")[1];
 
       const newData = {
+        code: generateTourCode(),
         name: data.name,
         description: data.description,
-        address: data.address,
         price: parseInt(data.price),
+        discount: parseInt(data.discount) || 0.0,
+        locations: data.locations,
+        depart: data.depart,
+        startTime: startHour,
+        adults: data.adults,
+        children: data.children,
+        baby: data.baby,
         thumbnail: thumbnail,
         schedules: weekdays,
       };
@@ -165,11 +175,6 @@ const CreateTour = () => {
     }
   };
 
-  const disabledDate = (current) => {
-    // Chỉ cho phép chọn ngày trong tương lai và không cho phép chọn ngày hiện tại
-    return current && current < Date.now();
-  };
-
   const getWeekdaysInRange = (startDate, endDate) => {
     const weekdays = [];
     let currentDate = dayjs(startDate);
@@ -185,11 +190,10 @@ const CreateTour = () => {
     return weekdays;
   };
 
-  console.log("weekdays: ", weekdays);
-  console.log("dates: ", dates);
-
   const handleRangePickerChange = (dates, dateStrings) => {
     setErrorDatePicker("");
+
+    setStartTime(dateStrings?.[0]);
 
     setStartDate(dateStrings?.[0]);
     setEndDate(dateStrings?.[1]);
@@ -386,6 +390,148 @@ const CreateTour = () => {
     },
   ];
 
+  const handleActivitiesChange = (index, value) => {
+    // Sao chép mảng weekdays để không làm thay đổi trực tiếp state
+    const updatedWeekdays = [...weekdays];
+
+    // Cập nhật giá trị activities tương ứng
+    updatedWeekdays[index].activities = value;
+
+    // Cập nhật state weekdays
+    setWeekdays(updatedWeekdays);
+  };
+
+  const optionsHotels = hotels?.map((hotel) => ({
+    value: hotel.id,
+    label: (
+      <div style={{ display: "flex", alignItems: "center" }}>
+        <img
+          src={hotel.thumbnailUrls[0]}
+          alt={hotel.name}
+          style={{ width: 24, height: 24, marginRight: 10 }}
+        />
+        <p>{hotel.name}</p>
+      </div>
+    ),
+    name: hotel.name,
+  }));
+
+  const handleChangeSelectHotels = (value) => {
+    console.log(`selectedHotels: `, selectedHotels);
+    setSelectedHotels(value);
+  };
+
+  const handleTagClick = (hotelId) => {
+    const selectedHotel = hotels.find((hotel) => hotel.id === hotelId);
+    if (selectedHotel) {
+      setSelectedHotelRooms(selectedHotel.rooms);
+      setHasRooms(selectedHotel.rooms.length > 0);
+      setModalVisibleRooms(true);
+    }
+  };
+
+  const getTagProps = (bookedStatus) => {
+    let color, tagText;
+
+    switch (bookedStatus) {
+      case "CANCELLED":
+        color = "red";
+        tagText = "Cancelled";
+        break;
+      case "NOT_BOOKED":
+        color = "blue";
+        tagText = "Not Booked";
+        break;
+      case "BOOKED":
+        color = "green";
+        tagText = "Booked";
+        break;
+      case "ACTIVE":
+        color = "cyan";
+        tagText = "Active";
+        break;
+      case "IN_ACTIVE":
+        color = "volcano";
+        tagText = "Inactive";
+        break;
+      default:
+        color = "default";
+        tagText = "Unknown";
+        break;
+    }
+
+    return { color, tagText };
+  };
+
+  const onChangeDatePicker = (dates, dateStrings, roomId, pricePerHour) => {
+    if (dateStrings && dateStrings.length === 2) {
+      const startHour = dateStrings[0].split(" ")[1];
+      const endHour = dateStrings[1].split(" ")[1];
+
+      const startTime = dayjs(dateStrings[0]);
+      const endTime = dayjs(dateStrings[1]);
+      const durationHours = endTime.diff(startTime, "hours");
+
+      const price = durationHours * pricePerHour;
+
+      // Find hotelId based on roomId
+      let hotelId = null;
+      hotels.forEach((hotel) => {
+        const room = hotel.rooms.find((r) => r.id === roomId);
+
+        if (room) {
+          hotelId = hotel.id;
+        }
+      });
+
+      if (hotelId) {
+        const newRoom = {
+          roomId: roomId,
+          hotelId: hotelId,
+          date: dates[0].format("YYYY-MM-DD"),
+          startHour: startHour,
+          endHour: endHour,
+          price: price,
+        };
+
+        console.log("Updated newdata with new room:", newRoom);
+        // You can update state or perform other operations with newRoom here
+      } else {
+        console.log(`Hotel not found for roomId: ${roomId}`);
+      }
+    }
+  };
+
+  const disabledDate = (current) => {
+    return current && current < dayjs().endOf("day");
+  };
+
+  const disabledTime = (disabledTimes) => {
+    return (current) => {
+      const currentDate = current.format("YYYY-MM-DD");
+      const currentDisabledTimes = disabledTimes.find(
+        (item) => item.date === currentDate
+      );
+
+      if (currentDisabledTimes) {
+        const { times } = currentDisabledTimes;
+        const disabledHours = [];
+
+        times.forEach(({ startHour, endHour }) => {
+          for (let hour = startHour; hour <= endHour; hour++) {
+            disabledHours.push(hour);
+          }
+        });
+
+        return {
+          disabledHours: () => disabledHours,
+        };
+      }
+
+      return {};
+    };
+  };
+
   return (
     <>
       {/* Show loading */}
@@ -468,16 +614,31 @@ const CreateTour = () => {
                   />
 
                   <Controller
-                    name="address"
+                    name="locations"
                     control={control}
-                    rules={{ required: "Address is required" }}
+                    rules={{ required: "Locations is required" }}
                     render={({ field, fieldState: { error } }) => (
                       <Form.Item
-                        label="Address"
+                        label="Locations"
                         validateStatus={error ? "error" : ""}
                         help={error?.message}
                       >
-                        <Input {...field} placeholder="Enter address" />
+                        <Input {...field} placeholder="Enter locations" />
+                      </Form.Item>
+                    )}
+                  />
+
+                  <Controller
+                    name="depart"
+                    control={control}
+                    rules={{ required: "Depart is required" }}
+                    render={({ field, fieldState: { error } }) => (
+                      <Form.Item
+                        label="Depart"
+                        validateStatus={error ? "error" : ""}
+                        help={error?.message}
+                      >
+                        <Input {...field} placeholder="Enter depart" />
                       </Form.Item>
                     )}
                   />
@@ -497,7 +658,7 @@ const CreateTour = () => {
                     }}
                     render={({ field, fieldState: { error } }) => (
                       <Form.Item
-                        label="Price"
+                        label="Expected Price / people"
                         validateStatus={error ? "error" : ""}
                         help={error?.message}
                       >
@@ -517,6 +678,140 @@ const CreateTour = () => {
                       </Form.Item>
                     )}
                   />
+
+                  <Controller
+                    name="discount"
+                    control={control}
+                    // rules={{
+                    //   required: "Discount is required",
+                    //   validate: {
+                    //     min: (value) =>
+                    //       value >= 100000 || "Minimum price is 100,000 VND",
+                    //     max: (value) =>
+                    //       value <= 100000000 ||
+                    //       "Maximum price is 100,000,000 VND",
+                    //   },
+                    // }}
+                    render={({ field, fieldState: { error } }) => (
+                      <Form.Item
+                        label="Discount"
+                        validateStatus={error ? "error" : ""}
+                        help={error?.message}
+                      >
+                        <InputNumber
+                          {...field}
+                          formatter={(value) =>
+                            new Intl.NumberFormat("vi-VN", {
+                              style: "currency",
+                              currency: "VND",
+                            }).format(value)
+                          }
+                          parser={(value) => value.replace(/[^\d]/g, "")}
+                          style={{
+                            width: "100%",
+                          }}
+                        />
+                      </Form.Item>
+                    )}
+                  />
+
+                  <Row gutter={16} justify={"space-between"}>
+                    <Col span={7}>
+                      <Controller
+                        name="adults"
+                        control={control}
+                        rules={{
+                          validate: {
+                            min: (value) =>
+                              value >= 5 || "Minimum adults is 5 people",
+                            max: (value) =>
+                              value <= 30 || "Maximum adults is 30 people",
+                          },
+                        }}
+                        render={({ field, fieldState: { error } }) => (
+                          <Form.Item
+                            label="Adults"
+                            validateStatus={error ? "error" : ""}
+                            help={error?.message}
+                          >
+                            <InputNumber
+                              {...field}
+                              min={5}
+                              max={30}
+                              style={{
+                                width: "100%",
+                              }}
+                              placeholder="5"
+                            />
+                          </Form.Item>
+                        )}
+                      />
+                    </Col>
+
+                    <Col span={7}>
+                      <Controller
+                        name="children"
+                        control={control}
+                        rules={{
+                          validate: {
+                            min: (value) =>
+                              value >= 0 || "Minimum children is 0 people",
+                            max: (value) =>
+                              value <= 10 || "Maximum children is 10 people",
+                          },
+                        }}
+                        render={({ field, fieldState: { error } }) => (
+                          <Form.Item
+                            label="Children"
+                            validateStatus={error ? "error" : ""}
+                            help={error?.message}
+                          >
+                            <InputNumber
+                              {...field}
+                              min={0}
+                              max={10}
+                              style={{
+                                width: "100%",
+                              }}
+                              placeholder="0"
+                            />
+                          </Form.Item>
+                        )}
+                      />
+                    </Col>
+
+                    <Col span={7}>
+                      <Controller
+                        name="baby"
+                        control={control}
+                        rules={{
+                          validate: {
+                            min: (value) =>
+                              value >= 0 || "Minimum baby is 0 people",
+                            max: (value) =>
+                              value <= 10 || "Maximum baby is 10 people",
+                          },
+                        }}
+                        render={({ field, fieldState: { error } }) => (
+                          <Form.Item
+                            label="Baby"
+                            validateStatus={error ? "error" : ""}
+                            help={error?.message}
+                          >
+                            <InputNumber
+                              {...field}
+                              min={0}
+                              max={10}
+                              style={{
+                                width: "100%",
+                              }}
+                              placeholder="0"
+                            />
+                          </Form.Item>
+                        )}
+                      />
+                    </Col>
+                  </Row>
                 </Col>
 
                 <Col xxl={11} xl={11} lg={12} md={12} sm={24} xs={24}>
@@ -551,8 +846,7 @@ const CreateTour = () => {
                     render={({ field, fieldState: { error } }) => (
                       <Form.Item label="Date Time">
                         <RangePicker
-                          // showTime
-                          disabledDate={disabledDate}
+                          showTime
                           onChange={handleRangePickerChange}
                           value={dates}
                         />
@@ -569,48 +863,46 @@ const CreateTour = () => {
                       </Form.Item>
                     )}
                   />
-
-                  {/* Render danh sách các ngày */}
-                  {/* {weekdays.length > 0 && (
-                    <Form.Item label="Schedules">
-                      {weekdays.map((day, index) => (
-                        <div
-                          key={index}
-                          style={{
-                            marginBottom: "20px",
-                            borderBottom: "1px solid var(--green-dark)",
-                          }}
-                        >
-                          <CustomText
-                            size={"14px"}
-                            weight={"500"}
-                            color={"var(--green-dark)"}
-                            isButton={true}
+                  <Form.Item label="Schedules">
+                    <Timeline
+                      mode="left"
+                      style={{
+                        marginTop: "5px",
+                      }}
+                    >
+                      {weekdays.length > 0 &&
+                        weekdays.map((day, index) => (
+                          <Timeline.Item
+                            key={index}
+                            label={`${day.dayOfWeek} - ${day.date} `}
                           >
-                            {day}
-                          </CustomText>
-                          <Table
-                            dataSource={
-                              dataSource.find((data) => data.key === day)
-                                ?.data || []
-                            }
-                            columns={columns}
-                            pagination={false}
-                          />
-                          <Button
-                            type="primary"
-                            onClick={() => handleAddRow(index)}
-                            style={{
-                              margin: "10px 0",
-                              background: "var(--green-dark)",
-                            }}
-                          >
-                            Add Row
-                          </Button>
-                        </div>
-                      ))}
-                    </Form.Item>
-                  )} */}
+                            <Row
+                              style={{
+                                width: "100%",
+                              }}
+                            >
+                              <Col span={24}>
+                                <Input
+                                  value={day.activities || ""}
+                                  onChange={(e) =>
+                                    handleActivitiesChange(
+                                      index,
+                                      e.target.value
+                                    )
+                                  }
+                                  placeholder="Enter activities"
+                                />
+                              </Col>
+                            </Row>
+                          </Timeline.Item>
+                        ))}
+                    </Timeline>
+                    {weekdays.length === 0 && (
+                      <Text style={{ fontSize: "14px", fontWeight: 400 }}>
+                        This tour has no schedules
+                      </Text>
+                    )}
+                  </Form.Item>
 
                   <Form.Item>
                     <Button

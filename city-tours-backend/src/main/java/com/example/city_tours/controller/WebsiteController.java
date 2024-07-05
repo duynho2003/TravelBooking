@@ -56,6 +56,7 @@ public class WebsiteController {
         }
     }
 
+    @PreAuthorize("hasAuthority('CREATE_WEB_INFO')")
     @PostMapping("/create")
     public ResponseEntity<?> createInfo(
             @RequestParam String name,
@@ -97,6 +98,7 @@ public class WebsiteController {
         }
     }
 
+    @PreAuthorize("hasAuthority('UPDATE_WEB_INFO')")
     @PutMapping("/{websiteInfoId}")
     public ResponseEntity<?> updateInfo(
             @PathVariable Long websiteInfoId,

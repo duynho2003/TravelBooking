@@ -27,6 +27,8 @@ public class Schedule {
 
     private String date;
 
+    private String activities;
+
 //    private String endDay;
 //
 //    @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL)

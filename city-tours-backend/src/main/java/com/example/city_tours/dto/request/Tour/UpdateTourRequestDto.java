@@ -18,11 +18,16 @@ public class UpdateTourRequestDto {
 
     private String name;
     private String description;
-    private String address;
+    private String depart;
     private Double price;
+    private Double discount;
+    private String locations;
+    private int adults;
+    private int children;
+    private int baby;
+    private String thumbnail;
     private String bookedStatus;
     private String activeStatus;
-    private String thumbnail;
     private Set<Schedule> schedules;
 
 }

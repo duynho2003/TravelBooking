@@ -12,15 +12,15 @@ import {
   Grid,
 } from "antd";
 import bgLogin from "../assets/images/bg-login.jpg";
-import { Link, useNavigate } from "react-router-dom";
-import { HeatMapOutlined } from "@ant-design/icons";
+import { useNavigate } from "react-router-dom";
 import { useForm, Controller } from "react-hook-form";
 import { useState } from "react";
 import logo from "../assets/images/logo.png";
 import CustomText from "../components/common/CustomText";
+import { login } from "../features/auth/AuthSlice";
+import { useDispatch } from "react-redux";
+import Cookies from "js-cookie";
 
-const { Title } = Typography;
-const { Option } = Select;
 const { useBreakpoint } = Grid;
 
 export default function Login() {
@@ -29,7 +29,7 @@ export default function Login() {
   const screens = useBreakpoint();
 
   // Redux state
-  // const dispatch = useDispatch();
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   // Local state
@@ -38,42 +38,46 @@ export default function Login() {
   // Handle event
   const onSubmit = async (data) => {
     console.log(data);
-    // setLoading(true);
-    // try {
-    //   const action = await dispatch(register(data));
 
-    //   console.log("action: ", action);
+    setLoading(true);
 
-    //   if (register.fulfilled.match(action)) {
-    //     if (action?.payload?.data) {
-    //       notification.success({
-    //         message: "Đăng ký thành công",
-    //         description: "Đăng ký tài khoản thành công.",
-    //       });
-    //       navigate("/login");
-    //     } else {
-    //       const error = action?.payload?.error.message || "Lỗi không xác định.";
-    //       notification.error({
-    //         message: "Lỗi đăng nhập",
-    //         description: error,
-    //       });
-    //     }
-    //   } else if (register.rejected.match(action)) {
-    //     const error = action?.payload?.error.message || "Lỗi không xác định.";
-    //     notification.error({
-    //       message: "Lỗi đăng nhập",
-    //       description: error,
-    //     });
-    //   }
-    // } catch (error) {
-    //   notification.error({
-    //     message: "Lỗi hệ thống",
-    //     description:
-    //       "Máy chủ không thực hiện được yêu cầu hợp lệ do lỗi với máy chủ.",
-    //   });
-    // } finally {
-    //   setLoading(false);
-    // }
+    try {
+      const action = await dispatch(login(data));
+
+      console.log("action: ", action);
+
+      if (login.fulfilled.match(action)) {
+        if (action?.payload?.status === 200) {
+          const token = action?.payload?.data?.token;
+          Cookies.set("token", token);
+          notification.success({
+            message: "Login successful",
+            description: "Logged into the system successfully.",
+          });
+          navigate("/");
+        } else {
+          const error = action?.payload?.error.message || "Lỗi không xác định.";
+          notification.error({
+            message: "Login error",
+            description: error,
+          });
+        }
+      } else if (login.rejected.match(action)) {
+        const error = action?.payload?.error.message || "Lỗi không xác định.";
+        notification.error({
+          message: "Login error",
+          description: error,
+        });
+      }
+    } catch (error) {
+      notification.error({
+        message: "System error",
+        description:
+          "The server couldn't fulfill a valid request due to an issue with the server.",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -201,7 +205,6 @@ export default function Login() {
 
             <Form.Item>
               <Button
-                htmlType="submit"
                 size="large"
                 style={{
                   background: "var(--white)",
@@ -210,8 +213,6 @@ export default function Login() {
                   borderRadius: "3px",
                   cursor: "pointer",
                 }}
-                icon={loading ? <Spin /> : null}
-                loading={loading}
               >
                 <CustomText
                   size={"13px"}

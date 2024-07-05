@@ -1,5 +1,6 @@
 package com.example.city_tours.dto.response.Hotel;
 
+import com.example.city_tours.dto.response.Room.RoomResponseDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,6 +24,7 @@ public class GetAllHotelsResponseDto {
     private String activeStatus;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private List<RoomResponseDto> rooms;
     private List<String> thumbnailUrls;
 
 }

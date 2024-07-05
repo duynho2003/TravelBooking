@@ -16,6 +16,7 @@ public class UpdateRoomRequestDto {
     private String roomNumber;
     private String type;
     private Double price;
+    private Double discount;
     private String bookedStatus;
     private String activeStatus;
     private Set<String> imageUrls;

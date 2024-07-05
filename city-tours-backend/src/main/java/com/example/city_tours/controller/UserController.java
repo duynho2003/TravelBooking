@@ -183,11 +183,14 @@ public class UserController {
     @GetMapping("")
     public ResponseEntity<?> getAllAccounts(
             @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "10") int limit
+            @RequestParam(defaultValue = "10") int limit,
+            @RequestParam(defaultValue = "") String search,
+            @RequestParam(defaultValue = "") String role,
+            @RequestParam(defaultValue = "") String status
     ) {
         try {
             // Call userService to get a page of accounts
-            List<GetAllAccountsResponseDto> responsePage = userService.getAllAccounts(page, limit);
+            List<GetAllAccountsResponseDto> responsePage = userService.getAllAccounts(page, limit, search, role, status);
 
             // Count total users
             long totalUsers = userRepository.count();

@@ -11,14 +11,19 @@ export default function CustomText({
   isButton,
   isUppercase,
   children,
+  isItalic,
+  isStrikethrough,
+  onClick,
 }) {
   const styleText = {
     fontSize: size,
     fontWeight: weight,
     color: color,
-    cursor: link || isButton ? "pointer" : "auto",
+    cursor: link || isButton || onClick ? "pointer" : "auto",
     fontFamily: "Montserrat, sans-serif !important",
     textTransform: isUppercase ? "uppercase" : "none",
+    fontStyle: isItalic ? "italic" : "none",
+    textDecoration: isStrikethrough ? "line-through" : "none",
   };
 
   const styleLink = {
@@ -26,7 +31,7 @@ export default function CustomText({
   };
 
   return (
-    <Text style={styleText}>
+    <Text style={styleText} onClick={onClick}>
       {link ? (
         <Link to={link} style={styleLink}>
           {children}

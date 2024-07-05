@@ -1,27 +1,18 @@
 package com.example.city_tours.service;
 
-import com.example.city_tours.dto.request.Hotel.CreateHotelRequestDto;
-import com.example.city_tours.dto.request.Hotel.UpdateHotelRequestDto;
 import com.example.city_tours.dto.request.Room.CreateRoomRequestDto;
 import com.example.city_tours.dto.request.Room.UpdateRoomRequestDto;
-import com.example.city_tours.dto.response.Hotel.CreateHotelResponseDto;
-import com.example.city_tours.dto.response.Hotel.GetAllHotelsResponseDto;
-import com.example.city_tours.dto.response.Hotel.UpdateHotelResponseDto;
 import com.example.city_tours.dto.response.Room.CreateRoomResponseDto;
 import com.example.city_tours.dto.response.Room.GetRoomByIdResponseDto;
 import com.example.city_tours.dto.response.Room.UpdateRoomResponseDto;
+import com.example.city_tours.dto.response.Tour.GetTourRoomBookingResponseDto;
 import com.example.city_tours.entity.*;
 import com.example.city_tours.enums.ActiveStatus;
 import com.example.city_tours.enums.BookedStatus;
 import com.example.city_tours.exception.ResourceNotFoundException;
-import com.example.city_tours.repository.HotelRepository;
-import com.example.city_tours.repository.ScheduleRepository;
-import com.example.city_tours.repository.TourRepository;
+import com.example.city_tours.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -38,6 +29,7 @@ public class RoomServiceImpl implements RoomService{
     private final HotelImageRepository hotelImageRepository;
     private final RoomRepository roomRepository;
     private final RoomImageRepository roomImageRepository;
+    private final TourRoomBookingRepository tourRoomBookingRepository;
 
     @Override
     public CreateRoomResponseDto createRoom(Long hotelId, CreateRoomRequestDto requestDto) {
@@ -55,6 +47,7 @@ public class RoomServiceImpl implements RoomService{
         room.setRoomNumber(requestDto.getRoomNumber());
         room.setType(requestDto.getType());
         room.setPrice(requestDto.getPrice());
+        room.setDiscount(requestDto.getDiscount());
         room.setBookedStatus(BookedStatus.NOT_BOOKED);
         room.setActiveStatus(ActiveStatus.ACTIVE);
         room.setCreatedAt(LocalDateTime.now());
@@ -85,6 +78,7 @@ public class RoomServiceImpl implements RoomService{
         responseDto.setRoomNumber(room.getRoomNumber());
         responseDto.setType(room.getType());
         responseDto.setPrice(room.getPrice());
+        responseDto.setDiscount(room.getDiscount());
         responseDto.setBookedStatus(room.getBookedStatus().toString());
         responseDto.setActiveStatus(room.getActiveStatus().toString());
         responseDto.setCreatedAt(room.getCreatedAt());
@@ -116,6 +110,7 @@ public class RoomServiceImpl implements RoomService{
         room.setRoomNumber(requestDto.getRoomNumber());
         room.setType(requestDto.getType());
         room.setPrice(requestDto.getPrice());
+        room.setDiscount(requestDto.getDiscount());
         room.setBookedStatus(BookedStatus.valueOf(requestDto.getBookedStatus()));
         room.setActiveStatus(ActiveStatus.valueOf(requestDto.getActiveStatus()));
         room.setUpdatedAt(LocalDateTime.now());
@@ -143,6 +138,7 @@ public class RoomServiceImpl implements RoomService{
         responseDto.setRoomNumber(room.getRoomNumber());
         responseDto.setType(room.getType());
         responseDto.setPrice(room.getPrice());
+        responseDto.setDiscount(room.getDiscount());
         responseDto.setBookedStatus(room.getBookedStatus().toString());
         responseDto.setActiveStatus(room.getActiveStatus().toString());
         responseDto.setUpdatedAt(room.getUpdatedAt());
@@ -356,6 +352,7 @@ public class RoomServiceImpl implements RoomService{
         responseDto.setRoomNumber(room.getRoomNumber());
         responseDto.setType(room.getType());
         responseDto.setPrice(room.getPrice());
+        responseDto.setDiscount(room.getDiscount());
         responseDto.setBookedStatus(room.getBookedStatus().toString());
         responseDto.setActiveStatus(room.getActiveStatus().toString());
         responseDto.setCreatedAt(room.getCreatedAt());
@@ -373,6 +370,24 @@ public class RoomServiceImpl implements RoomService{
         }
 
         responseDto.setImageUrls(imageUrls);
+
+        List<TourRoomBooking> tourRoomBookings = tourRoomBookingRepository.findByRoom(room);
+
+        List<GetTourRoomBookingResponseDto> tourRoomBookingDtos = new ArrayList<>();
+        for (TourRoomBooking tourRoomBooking : tourRoomBookings) {
+            GetTourRoomBookingResponseDto tourRoomBookingDto = new GetTourRoomBookingResponseDto();
+            tourRoomBookingDto.setId(tourRoomBooking.getId());
+            tourRoomBookingDto.setDate(tourRoomBooking.getDate());
+            tourRoomBookingDto.setStartHour(tourRoomBooking.getStartHour());
+            tourRoomBookingDto.setEndHour(tourRoomBooking.getEndHour());
+            tourRoomBookingDto.setPrice(tourRoomBooking.getPrice());
+            tourRoomBookingDto.setCreatedAt(tourRoomBooking.getCreatedAt());
+            tourRoomBookingDto.setUpdatedAt(tourRoomBooking.getUpdatedAt());
+            tourRoomBookingDtos.add(tourRoomBookingDto);
+        }
+
+        // Set tour room bookings to roomDto
+        responseDto.setTourRoomBookings(tourRoomBookingDtos);
 
         return responseDto;
     }

@@ -29,6 +29,8 @@ public class Room {
 
     private Double price;
 
+    private Double discount;
+
     private BookedStatus bookedStatus;
 
     private ActiveStatus activeStatus;

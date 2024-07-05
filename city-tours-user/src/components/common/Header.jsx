@@ -12,11 +12,22 @@ import { Col, Row, Grid, Image, Menu, Badge, Dropdown, Button } from "antd";
 import CustomText from "./CustomText";
 import logo from "../../assets/images/logo.png";
 import product from "../../assets/images/product.jpg";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { faUser } from "@fortawesome/free-regular-svg-icons";
+import Cookies from "js-cookie";
+import authApi from "../../services/auth/AuthApi";
+import { initInfoBeforeReload, logout } from "../../features/auth/AuthSlice";
+import { useEffect } from "react";
 
 const { useBreakpoint } = Grid;
 
-export default function Header() {
+export default function Header({ websiteInfo }) {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const sub = useSelector((state) => state.auth?.info?.sub);
+
   const screens = useBreakpoint();
 
   const navigations = [
@@ -452,6 +463,16 @@ export default function Header() {
     },
   ];
 
+  const handleLogout = async () => {
+    dispatch(logout());
+
+    await authApi.logout();
+
+    Cookies.remove("token");
+
+    navigate("/login");
+  };
+
   return (
     <Row
       style={{
@@ -503,7 +524,7 @@ export default function Header() {
                   marginRight: "3px",
                 }}
               />
-              0045 043204434
+              {websiteInfo?.phone || "0045 043204434"}
             </CustomText>
           </Col>
 
@@ -521,20 +542,55 @@ export default function Header() {
               gap: "10px",
             }}
           >
-            <CustomText
-              size={"12px"}
-              weight={"600"}
-              color={"var(--black-text)"}
-              link={"/login"}
-            >
-              <FontAwesomeIcon
-                icon={faArrowRightFromBracket}
-                style={{
-                  marginRight: "3px",
-                }}
-              />
-              Sign In
-            </CustomText>
+            {sub ? (
+              <>
+                <CustomText
+                  size={"12px"}
+                  weight={"600"}
+                  color={"var(--black-text)"}
+                  // link={"/login"}
+                >
+                  <FontAwesomeIcon
+                    icon={faUser}
+                    style={{
+                      marginRight: "3px",
+                    }}
+                  />
+                  {sub}
+                </CustomText>
+
+                <CustomText
+                  size={"12px"}
+                  weight={"600"}
+                  color={"var(--black-text)"}
+                  onClick={handleLogout}
+                >
+                  <FontAwesomeIcon
+                    icon={faArrowRightFromBracket}
+                    style={{
+                      marginRight: "3px",
+                    }}
+                  />
+                  Logout
+                </CustomText>
+              </>
+            ) : (
+              <CustomText
+                size={"12px"}
+                weight={"600"}
+                color={"var(--black-text)"}
+                link={"/login"}
+              >
+                <FontAwesomeIcon
+                  icon={faArrowRightFromBracket}
+                  style={{
+                    marginRight: "3px",
+                  }}
+                />
+                Sign In
+              </CustomText>
+            )}
+
             <CustomText
               size={"11px"}
               weight={"600"}
@@ -587,7 +643,7 @@ export default function Header() {
           >
             <Link to="/">
               <Image
-                src={logo}
+                src={websiteInfo?.logo || logo}
                 preview={false}
                 style={{
                   width: "100%",

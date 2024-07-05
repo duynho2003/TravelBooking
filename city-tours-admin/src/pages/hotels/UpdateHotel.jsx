@@ -121,6 +121,7 @@ const UpdateHotel = () => {
         roomNumberRoom: selectedRoom?.roomNumber,
         typeRoom: selectedRoom?.type,
         priceRoom: selectedRoom?.price,
+        discountRoom: selectedRoom?.discount,
         bookedStatusRoom: selectedRoom?.bookedStatus,
         activeStatusRoom: selectedRoom?.activeStatus,
       });
@@ -364,6 +365,7 @@ const UpdateHotel = () => {
         hotelId: parseInt(hotelId),
         roomNumber: data.roomNumber,
         price: data.price,
+        discount: data.discount || 0.0,
         type: data.type,
         imageUrls: urls,
       };
@@ -492,6 +494,7 @@ const UpdateHotel = () => {
         roomNumber: data.roomNumberRoom,
         type: data.typeRoom,
         price: data.priceRoom,
+        discount: data.discountRoom,
         bookedStatus: data.bookedStatusRoom,
         activeStatus: data.activeStatusRoom,
         imageUrls: imageUrlsToUse,
@@ -620,6 +623,14 @@ const UpdateHotel = () => {
                 justify={"space-between"}
               >
                 <Col xxl={11} xl={11} lg={12} md={12} sm={24} xs={24}>
+                  <Form.Item label="Region">
+                    <Input value={hotel?.regionName} readOnly />
+                  </Form.Item>
+
+                  <Form.Item label="Province">
+                    <Input value={hotel?.provinceName} readOnly />
+                  </Form.Item>
+
                   <Controller
                     name="name"
                     control={control}
@@ -934,7 +945,7 @@ const UpdateHotel = () => {
                         {new Intl.NumberFormat("vi-VN", {
                           style: "currency",
                           currency: "VND",
-                        }).format(room?.price)}{" "}
+                        }).format(room?.price - room?.discount)}{" "}
                         /per night
                       </Tag>
                     </Col>
@@ -1089,6 +1100,41 @@ const UpdateHotel = () => {
                   />
 
                   <Controller
+                    name="discount"
+                    control={control}
+                    // rules={{
+                    //   validate: {
+                    //     min: (value) =>
+                    //       value >= 100000 || "Minimum price is 100,000 VND",
+                    //     max: (value) =>
+                    //       value <= 100000000 ||
+                    //       "Maximum price is 100,000,000 VND",
+                    //   },
+                    // }}
+                    render={({ field, fieldState: { error } }) => (
+                      <Form.Item
+                        label="Discount"
+                        validateStatus={error ? "error" : ""}
+                        help={error?.message}
+                      >
+                        <InputNumber
+                          {...field}
+                          formatter={(value) =>
+                            new Intl.NumberFormat("vi-VN", {
+                              style: "currency",
+                              currency: "VND",
+                            }).format(value)
+                          }
+                          parser={(value) => value.replace(/[^\d]/g, "")}
+                          style={{
+                            width: "100%",
+                          }}
+                        />
+                      </Form.Item>
+                    )}
+                  />
+
+                  <Controller
                     name="type"
                     control={control}
                     rules={{ required: "Room type is required" }}
@@ -1178,6 +1224,23 @@ const UpdateHotel = () => {
                       <Form.Item label="Price / per night">
                         <InputNumber
                           value={selectedRoom?.price}
+                          formatter={(value) =>
+                            new Intl.NumberFormat("vi-VN", {
+                              style: "currency",
+                              currency: "VND",
+                            }).format(value)
+                          }
+                          parser={(value) => value.replace(/[^\d]/g, "")}
+                          style={{
+                            width: "100%",
+                          }}
+                          readOnly
+                        />
+                      </Form.Item>
+
+                      <Form.Item label="Discount">
+                        <InputNumber
+                          value={selectedRoom?.discount}
                           formatter={(value) =>
                             new Intl.NumberFormat("vi-VN", {
                               style: "currency",
@@ -1305,6 +1368,42 @@ const UpdateHotel = () => {
                       render={({ field, fieldState: { error } }) => (
                         <Form.Item
                           label="Price / per night"
+                          validateStatus={error ? "error" : ""}
+                          help={error?.message}
+                        >
+                          <InputNumber
+                            {...field}
+                            formatter={(value) =>
+                              new Intl.NumberFormat("vi-VN", {
+                                style: "currency",
+                                currency: "VND",
+                              }).format(value)
+                            }
+                            parser={(value) => value.replace(/[^\d]/g, "")}
+                            style={{
+                              width: "100%",
+                            }}
+                          />
+                        </Form.Item>
+                      )}
+                    />
+
+                    <Controller
+                      name="discountRoom"
+                      control={control}
+                      // rules={{
+                      //   required: "Price is required",
+                      //   validate: {
+                      //     min: (value) =>
+                      //       value >= 100000 || "Minimum price is 100,000 VND",
+                      //     max: (value) =>
+                      //       value <= 100000000 ||
+                      //       "Maximum price is 100,000,000 VND",
+                      //   },
+                      // }}
+                      render={({ field, fieldState: { error } }) => (
+                        <Form.Item
+                          label="Discount"
                           validateStatus={error ? "error" : ""}
                           help={error?.message}
                         >

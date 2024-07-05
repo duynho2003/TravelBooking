@@ -3,9 +3,9 @@ import { API_ROUTE } from "../../utils/Constants";
 
 const userApi = {
   getAllAccounts: async (panigation) => {
-    const { page, limit } = panigation;
+    const { page, limit, search, role, status } = panigation;
 
-    const url = `${API_ROUTE.GET_ALL_USERS}?page=${page}&limit=${limit}`;
+    const url = `${API_ROUTE.GET_ALL_USERS}?page=${page}&limit=${limit}&search=${search}&role=${role}&status=${status}`;
     try {
       const response = await axiosClient.get(url);
       return response;

@@ -182,6 +182,14 @@ const ViewAHotel = () => {
                   justify={"space-between"}
                 >
                   <Col xxl={11} xl={11} lg={12} md={12} sm={24} xs={24}>
+                    <Form.Item label="Region">
+                      <Input value={hotel?.regionName} readOnly />
+                    </Form.Item>
+
+                    <Form.Item label="Province">
+                      <Input value={hotel?.provinceName} readOnly />
+                    </Form.Item>
+
                     <Form.Item label="Name">
                       <Input value={hotel?.name} readOnly />
                     </Form.Item>
@@ -212,7 +220,7 @@ const ViewAHotel = () => {
                           width: "100%",
                         }}
                       >
-                        {hotel.thumbnailUrls.map((url, index) => (
+                        {hotel?.thumbnailUrls?.map((url, index) => (
                           <Col
                             xxl={6}
                             xl={6}

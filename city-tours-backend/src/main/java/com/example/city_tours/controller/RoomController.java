@@ -113,11 +113,12 @@ public class RoomController {
     @GetMapping("")
     public ResponseEntity<?> getAllHotels(
             @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "10") int limit
+            @RequestParam(defaultValue = "10") int limit,
+            @RequestParam(defaultValue = "") String search
     ) {
         try {
             // Call userService to get a page of accounts
-            List<GetAllHotelsResponseDto> responsePage = hotelService.getAllHotels(page, limit);
+            List<GetAllHotelsResponseDto> responsePage = hotelService.getAllHotels(page, limit, search);
 
             // Count total users
             long totalTours = hotelRepository.count();

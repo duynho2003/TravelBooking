@@ -3,10 +3,12 @@ package com.example.city_tours.config;
 import com.example.city_tours.entity.Permission;
 import com.example.city_tours.entity.Role;
 import com.example.city_tours.entity.User;
+import com.example.city_tours.entity.Website;
 import com.example.city_tours.enums.UserStatus;
 import com.example.city_tours.repository.PermissionRepository;
 import com.example.city_tours.repository.RoleRepository;
 import com.example.city_tours.repository.UserRepository;
+import com.example.city_tours.repository.WebsiteRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
@@ -14,6 +16,7 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -37,6 +40,8 @@ public class SetupDataLoader implements
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private WebsiteRepository websiteRepository;
 
     @Override
     @Transactional
@@ -44,6 +49,21 @@ public class SetupDataLoader implements
 
         if (alreadySetup) {
             return;
+        }
+
+        if (websiteRepository.count() == 0) {
+            Website website = new Website();
+            website.setName("City Tours");
+            website.setLogo("https://res.cloudinary.com/dbammk7wt/image/upload/v1719045841/uswrwksossehi7w7h9fy.png");
+            website.setEmail("citytours@gmail.com");
+            website.setPhone("0123456789");
+            website.setAddress("Hồ Chí Minh");
+            website.setWorkingDate("Monday - Sunday");
+            website.setWorkingTime("7h-17h");
+            website.setCreatedAt(LocalDateTime.now());
+            website.setUpdatedAt(LocalDateTime.now());
+
+            websiteRepository.save(website);
         }
 
         User existingAdmin = userRepository.findByUsername("admin");

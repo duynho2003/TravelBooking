@@ -118,15 +118,18 @@ public class TourController {
         }
     }
 
-    @PreAuthorize("hasAuthority('READ_TOUR')")
+//    @PreAuthorize("hasAuthority('READ_TOUR')")
     @GetMapping("")
     public ResponseEntity<?> getAllTours(
             @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "10") int limit
+            @RequestParam(defaultValue = "10") int limit,
+            @RequestParam(defaultValue = "") String search,
+            @RequestParam(defaultValue = "") String date,
+            @RequestParam(defaultValue = "") String status
     ) {
         try {
             // Call userService to get a page of accounts
-            List<GetAllToursResponseDto> responsePage = tourService.getAllTours(page, limit);
+            List<GetAllToursResponseDto> responsePage = tourService.getAllTours(page, limit, search, date, status);
 
             // Count total users
             long totalTours = tourRepository.count();
@@ -173,7 +176,7 @@ public class TourController {
         }
     }
 
-    @PreAuthorize("hasAuthority('READ_TOUR')")
+//    @PreAuthorize("hasAuthority('READ_TOUR')")
     @GetMapping("/{tourId}")
     public ResponseEntity<?> getTourById(@PathVariable Long tourId) {
         try {

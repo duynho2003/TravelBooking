@@ -9,10 +9,12 @@ import {
 } from "@ant-design/icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlaneDeparture } from "@fortawesome/free-solid-svg-icons";
+import { Link } from "react-router-dom";
+import badgeSave from "../../assets/images/badge_save.png";
 
 const { useBreakpoint } = Grid;
 
-export default function TopTours() {
+export default function TopTours({ tours }) {
   const screens = useBreakpoint();
 
   const customIcons = {
@@ -60,21 +62,20 @@ export default function TopTours() {
             color={"var(--gray-text)"}
             isUppercase={true}
           >
-            Paris{" "}
             <CustomText
               size={"30px"}
               weight={"700"}
               color={"var(--pink)"}
               isUppercase={true}
             >
-              top
+              Top
             </CustomText>{" "}
             tours
           </CustomText>
 
           <CustomText size={"20px"} weight={"400"} color={"var(--gray-dark)"}>
-            Quisque at tortor a libero posuere laoreet vitae sed arcu. Curabitur
-            consequat.
+            Specializing in creating personalized, unforgettable travel
+            experiences that guarantee a lifetime of memories.
           </CustomText>
         </Col>
       </Row>
@@ -87,881 +88,228 @@ export default function TopTours() {
         }}
       >
         {/* List tours */}
-        <Col
-          xxl={8}
-          xl={8}
-          lg={8}
-          md={8}
-          sm={24}
-          xs={24}
-          style={{
-            display: "flex",
-            justifyContent: "start",
-            alignItems: "start",
-            padding: "5px",
-          }}
-        >
-          <Card
-            hoverable
+        {tours?.map((tour) => (
+          <Col
+            key={tour?.id}
+            xxl={8}
+            xl={8}
+            lg={8}
+            md={8}
+            sm={24}
+            xs={24}
             style={{
-              width: "100%",
+              display: "flex",
+              justifyContent: "start",
+              alignItems: "start",
+              padding: "5px",
+              position: "relative",
             }}
           >
             <Col
-              xxl={24}
-              xl={24}
-              lg={24}
-              md={24}
-              sm={24}
-              xs={24}
               style={{
-                position: "relative",
-                overflow: "hidden",
-                borderTopLeftRadius: "5px",
-                borderTopRightRadius: "5px",
+                position: "absolute",
+                top: 5,
+                right: 5,
+                zIndex: 9,
+                backgroundImage: `url(${badgeSave})`,
+                backgroundSize: "contain",
+                backgroundPosition: "center",
+                backgroundRepeat: "no-repeat",
+                width: "70px",
+                height: "82px",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+                textAlign: "center",
+                paddingTop: "13px",
               }}
             >
-              <Image
-                src={item}
-                preview={false}
-                width={"100%"}
-                style={{
-                  borderTopLeftRadius: "5px",
-                  borderTopRightRadius: "5px",
-                  height: "280px",
-                  objectFit: "cover",
-                  transition: "transform 0.3s ease-in-out",
-                }}
-                className="image-hover-zoom"
-              />
-              <Col
-                style={{
-                  width: "100%",
-                  position: "absolute",
-                  bottom: 0,
-                  left: 0,
-                  background: `linear-gradient(to top, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0.1))`,
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "end",
-                  padding: "15px",
-                }}
-              >
-                <CustomText size={"15px"} weight={"500"} color={"var(--white)"}>
-                  <FontAwesomeIcon
-                    icon={faPlaneDeparture}
-                    style={{
-                      marginRight: "5px",
-                    }}
-                  />
-                  Historic Buildings
-                </CustomText>
-
-                <CustomText size={"20px"} weight={"500"} color={"var(--white)"}>
-                  $100
-                </CustomText>
-              </Col>
+              <CustomText size={"12px"} weight={"500"} color={"var(--white)"}>
+                SAVE
+              </CustomText>
+              <CustomText size={"13px"} weight={"700"} color={"var(--white)"}>
+                {((tour?.discount / tour?.price) * 100).toFixed(0)} %
+              </CustomText>
             </Col>
-
-            <Row
+            <Link
+              to={`/tours/${tour?.id}`}
               style={{
-                padding: "15px",
+                width: "100%",
               }}
             >
-              <Col
-                xxl={20}
-                xl={20}
-                lg={20}
-                md={20}
-                sm={20}
-                xs={20}
+              <Card
+                hoverable
                 style={{
                   width: "100%",
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "start",
-                  alignItems: "start",
-                  gap: "5px",
                 }}
               >
-                <CustomText
-                  size={"14px"}
-                  weight={"500"}
-                  color={"var(--gray-text)"}
-                >
-                  Arc Triomphe tours
-                </CustomText>
-                <Rate
-                  defaultValue={3}
-                  character={({ index = 0 }) => customIcons[index + 1]}
+                <Col
+                  xxl={24}
+                  xl={24}
+                  lg={24}
+                  md={24}
+                  sm={24}
+                  xs={24}
                   style={{
-                    fontSize: "15px",
+                    position: "relative",
+                    overflow: "hidden",
+                    borderTopLeftRadius: "5px",
+                    borderTopRightRadius: "5px",
                   }}
-                />
-              </Col>
-              <Col
-                xxl={4}
-                xl={4}
-                lg={4}
-                md={4}
-                sm={4}
-                xs={4}
-                style={{
-                  width: "100%",
-                  textAlign: "right",
-                }}
-              >
-                <CustomText
-                  size={"30px"}
-                  weight={"500"}
-                  color={"var(--gray-light)"}
-                  link={"/sss"}
                 >
-                  <Tooltip
-                    title="Add to wishlist"
-                    overlayInnerStyle={{
-                      borderRadius: "3px",
-                      fontFamily: "Montserrat",
-                    }}
-                    color="var(--pink)"
-                  >
-                    <HeartOutlined />
-                  </Tooltip>
-                </CustomText>
-              </Col>
-            </Row>
-          </Card>
-        </Col>
-
-        <Col
-          xxl={8}
-          xl={8}
-          lg={8}
-          md={8}
-          sm={24}
-          xs={24}
-          style={{
-            display: "flex",
-            justifyContent: "start",
-            alignItems: "start",
-            padding: "5px",
-          }}
-        >
-          <Card
-            hoverable
-            style={{
-              width: "100%",
-            }}
-          >
-            <Col
-              xxl={24}
-              xl={24}
-              lg={24}
-              md={24}
-              sm={24}
-              xs={24}
-              style={{
-                position: "relative",
-                overflow: "hidden",
-                borderTopLeftRadius: "5px",
-                borderTopRightRadius: "5px",
-              }}
-            >
-              <Image
-                src={item}
-                preview={false}
-                width={"100%"}
-                style={{
-                  borderTopLeftRadius: "5px",
-                  borderTopRightRadius: "5px",
-                  height: "280px",
-                  objectFit: "cover",
-                  transition: "transform 0.3s ease-in-out",
-                }}
-                className="image-hover-zoom"
-              />
-              <Col
-                style={{
-                  width: "100%",
-                  position: "absolute",
-                  bottom: 0,
-                  left: 0,
-                  background: `linear-gradient(to top, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0.1))`,
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "end",
-                  padding: "15px",
-                }}
-              >
-                <CustomText size={"15px"} weight={"500"} color={"var(--white)"}>
-                  <FontAwesomeIcon
-                    icon={faPlaneDeparture}
+                  <Image
+                    src={tour?.thumbnail}
+                    preview={false}
+                    width={"100%"}
                     style={{
-                      marginRight: "5px",
+                      borderTopLeftRadius: "5px",
+                      borderTopRightRadius: "5px",
+                      height: "280px",
+                      objectFit: "cover",
+                      transition: "transform 0.3s ease-in-out",
                     }}
+                    className="image-hover-zoom"
                   />
-                  Historic Buildings
-                </CustomText>
-
-                <CustomText size={"20px"} weight={"500"} color={"var(--white)"}>
-                  $100
-                </CustomText>
-              </Col>
-            </Col>
-
-            <Row
-              style={{
-                padding: "15px",
-              }}
-            >
-              <Col
-                xxl={20}
-                xl={20}
-                lg={20}
-                md={20}
-                sm={20}
-                xs={20}
-                style={{
-                  width: "100%",
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "start",
-                  alignItems: "start",
-                  gap: "5px",
-                }}
-              >
-                <CustomText
-                  size={"14px"}
-                  weight={"500"}
-                  color={"var(--gray-text)"}
-                >
-                  Arc Triomphe tours
-                </CustomText>
-                <Rate
-                  defaultValue={3}
-                  character={({ index = 0 }) => customIcons[index + 1]}
-                  style={{
-                    fontSize: "15px",
-                  }}
-                />
-              </Col>
-              <Col
-                xxl={4}
-                xl={4}
-                lg={4}
-                md={4}
-                sm={4}
-                xs={4}
-                style={{
-                  width: "100%",
-                  textAlign: "right",
-                }}
-              >
-                <CustomText
-                  size={"30px"}
-                  weight={"500"}
-                  color={"var(--gray-light)"}
-                  link={"/sss"}
-                >
-                  <Tooltip
-                    title="Add to wishlist"
-                    overlayInnerStyle={{
-                      borderRadius: "3px",
-                      fontFamily: "Montserrat",
-                    }}
-                    color="var(--pink)"
-                  >
-                    <HeartOutlined />
-                  </Tooltip>
-                </CustomText>
-              </Col>
-            </Row>
-          </Card>
-        </Col>
-
-        <Col
-          xxl={8}
-          xl={8}
-          lg={8}
-          md={8}
-          sm={24}
-          xs={24}
-          style={{
-            display: "flex",
-            justifyContent: "start",
-            alignItems: "start",
-            padding: "5px",
-          }}
-        >
-          <Card
-            hoverable
-            style={{
-              width: "100%",
-            }}
-          >
-            <Col
-              xxl={24}
-              xl={24}
-              lg={24}
-              md={24}
-              sm={24}
-              xs={24}
-              style={{
-                position: "relative",
-                overflow: "hidden",
-                borderTopLeftRadius: "5px",
-                borderTopRightRadius: "5px",
-              }}
-            >
-              <Image
-                src={item}
-                preview={false}
-                width={"100%"}
-                style={{
-                  borderTopLeftRadius: "5px",
-                  borderTopRightRadius: "5px",
-                  height: "280px",
-                  objectFit: "cover",
-                  transition: "transform 0.3s ease-in-out",
-                }}
-                className="image-hover-zoom"
-              />
-              <Col
-                style={{
-                  width: "100%",
-                  position: "absolute",
-                  bottom: 0,
-                  left: 0,
-                  background: `linear-gradient(to top, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0.1))`,
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "end",
-                  padding: "15px",
-                }}
-              >
-                <CustomText size={"15px"} weight={"500"} color={"var(--white)"}>
-                  <FontAwesomeIcon
-                    icon={faPlaneDeparture}
+                  <Col
                     style={{
-                      marginRight: "5px",
+                      width: "100%",
+                      position: "absolute",
+                      bottom: 0,
+                      left: 0,
+                      background: `linear-gradient(to top, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0.1))`,
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "end",
+                      padding: "15px",
                     }}
-                  />
-                  Historic Buildings
-                </CustomText>
-
-                <CustomText size={"20px"} weight={"500"} color={"var(--white)"}>
-                  $100
-                </CustomText>
-              </Col>
-            </Col>
-
-            <Row
-              style={{
-                padding: "15px",
-              }}
-            >
-              <Col
-                xxl={20}
-                xl={20}
-                lg={20}
-                md={20}
-                sm={20}
-                xs={20}
-                style={{
-                  width: "100%",
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "start",
-                  alignItems: "start",
-                  gap: "5px",
-                }}
-              >
-                <CustomText
-                  size={"14px"}
-                  weight={"500"}
-                  color={"var(--gray-text)"}
-                >
-                  Arc Triomphe tours
-                </CustomText>
-                <Rate
-                  defaultValue={3}
-                  character={({ index = 0 }) => customIcons[index + 1]}
-                  style={{
-                    fontSize: "15px",
-                  }}
-                />
-              </Col>
-              <Col
-                xxl={4}
-                xl={4}
-                lg={4}
-                md={4}
-                sm={4}
-                xs={4}
-                style={{
-                  width: "100%",
-                  textAlign: "right",
-                }}
-              >
-                <CustomText
-                  size={"30px"}
-                  weight={"500"}
-                  color={"var(--gray-light)"}
-                  link={"/sss"}
-                >
-                  <Tooltip
-                    title="Add to wishlist"
-                    overlayInnerStyle={{
-                      borderRadius: "3px",
-                      fontFamily: "Montserrat",
-                    }}
-                    color="var(--pink)"
                   >
-                    <HeartOutlined />
-                  </Tooltip>
-                </CustomText>
-              </Col>
-            </Row>
-          </Card>
-        </Col>
+                    <CustomText
+                      size={"15px"}
+                      weight={"500"}
+                      color={"var(--white)"}
+                    >
+                      <FontAwesomeIcon
+                        icon={faPlaneDeparture}
+                        style={{
+                          marginRight: "5px",
+                        }}
+                      />
+                      {tour?.name}
+                    </CustomText>
 
-        <Col
-          xxl={8}
-          xl={8}
-          lg={8}
-          md={8}
-          sm={24}
-          xs={24}
-          style={{
-            display: "flex",
-            justifyContent: "start",
-            alignItems: "start",
-            padding: "5px",
-          }}
-        >
-          <Card
-            hoverable
-            style={{
-              width: "100%",
-            }}
-          >
-            <Col
-              xxl={24}
-              xl={24}
-              lg={24}
-              md={24}
-              sm={24}
-              xs={24}
-              style={{
-                position: "relative",
-                overflow: "hidden",
-                borderTopLeftRadius: "5px",
-                borderTopRightRadius: "5px",
-              }}
-            >
-              <Image
-                src={item}
-                preview={false}
-                width={"100%"}
-                style={{
-                  borderTopLeftRadius: "5px",
-                  borderTopRightRadius: "5px",
-                  height: "280px",
-                  objectFit: "cover",
-                  transition: "transform 0.3s ease-in-out",
-                }}
-                className="image-hover-zoom"
-              />
-              <Col
-                style={{
-                  width: "100%",
-                  position: "absolute",
-                  bottom: 0,
-                  left: 0,
-                  background: `linear-gradient(to top, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0.1))`,
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "end",
-                  padding: "15px",
-                }}
-              >
-                <CustomText size={"15px"} weight={"500"} color={"var(--white)"}>
-                  <FontAwesomeIcon
-                    icon={faPlaneDeparture}
+                    <Col
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                      }}
+                    >
+                      <CustomText
+                        size={"20px"}
+                        weight={"500"}
+                        color={"var(--white)"}
+                      >
+                        {new Intl.NumberFormat("vi-VN", {
+                          style: "currency",
+                          currency: "VND",
+                        }).format(tour?.price - tour?.discount)}
+                      </CustomText>
+
+                      <CustomText
+                        size={"12px"}
+                        weight={"500"}
+                        color={"var(--gray-light)"}
+                        isItalic={true}
+                        isStrikethrough={true}
+                      >
+                        {new Intl.NumberFormat("vi-VN", {
+                          style: "currency",
+                          currency: "VND",
+                        }).format(tour?.price)}
+                      </CustomText>
+                    </Col>
+                  </Col>
+                </Col>
+
+                <Row
+                  style={{
+                    padding: "15px",
+                  }}
+                >
+                  <Col
+                    xxl={20}
+                    xl={20}
+                    lg={20}
+                    md={20}
+                    sm={20}
+                    xs={20}
                     style={{
-                      marginRight: "5px",
+                      width: "100%",
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "start",
+                      alignItems: "start",
+                      gap: "5px",
                     }}
-                  />
-                  Historic Buildings
-                </CustomText>
-
-                <CustomText size={"20px"} weight={"500"} color={"var(--white)"}>
-                  $100
-                </CustomText>
-              </Col>
-            </Col>
-
-            <Row
-              style={{
-                padding: "15px",
-              }}
-            >
-              <Col
-                xxl={20}
-                xl={20}
-                lg={20}
-                md={20}
-                sm={20}
-                xs={20}
-                style={{
-                  width: "100%",
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "start",
-                  alignItems: "start",
-                  gap: "5px",
-                }}
-              >
-                <CustomText
-                  size={"14px"}
-                  weight={"500"}
-                  color={"var(--gray-text)"}
-                >
-                  Arc Triomphe tours
-                </CustomText>
-                <Rate
-                  defaultValue={3}
-                  character={({ index = 0 }) => customIcons[index + 1]}
-                  style={{
-                    fontSize: "15px",
-                  }}
-                />
-              </Col>
-              <Col
-                xxl={4}
-                xl={4}
-                lg={4}
-                md={4}
-                sm={4}
-                xs={4}
-                style={{
-                  width: "100%",
-                  textAlign: "right",
-                }}
-              >
-                <CustomText
-                  size={"30px"}
-                  weight={"500"}
-                  color={"var(--gray-light)"}
-                  link={"/sss"}
-                >
-                  <Tooltip
-                    title="Add to wishlist"
-                    overlayInnerStyle={{
-                      borderRadius: "3px",
-                      fontFamily: "Montserrat",
-                    }}
-                    color="var(--pink)"
                   >
-                    <HeartOutlined />
-                  </Tooltip>
-                </CustomText>
-              </Col>
-            </Row>
-          </Card>
-        </Col>
+                    <CustomText
+                      size={"14px"}
+                      weight={"500"}
+                      color={"var(--gray-text)"}
+                    >
+                      Tourist destinations: {tour?.locations}
+                    </CustomText>
+                    <CustomText
+                      size={"14px"}
+                      weight={"500"}
+                      color={"var(--gray-text)"}
+                    >
+                      Departure at {tour?.startTime} at {tour?.depart}
+                    </CustomText>
 
-        <Col
-          xxl={8}
-          xl={8}
-          lg={8}
-          md={8}
-          sm={24}
-          xs={24}
-          style={{
-            display: "flex",
-            justifyContent: "start",
-            alignItems: "start",
-            padding: "5px",
-          }}
-        >
-          <Card
-            hoverable
-            style={{
-              width: "100%",
-            }}
-          >
-            <Col
-              xxl={24}
-              xl={24}
-              lg={24}
-              md={24}
-              sm={24}
-              xs={24}
-              style={{
-                position: "relative",
-                overflow: "hidden",
-                borderTopLeftRadius: "5px",
-                borderTopRightRadius: "5px",
-              }}
-            >
-              <Image
-                src={item}
-                preview={false}
-                width={"100%"}
-                style={{
-                  borderTopLeftRadius: "5px",
-                  borderTopRightRadius: "5px",
-                  height: "280px",
-                  objectFit: "cover",
-                  transition: "transform 0.3s ease-in-out",
-                }}
-                className="image-hover-zoom"
-              />
-              <Col
-                style={{
-                  width: "100%",
-                  position: "absolute",
-                  bottom: 0,
-                  left: 0,
-                  background: `linear-gradient(to top, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0.1))`,
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "end",
-                  padding: "15px",
-                }}
-              >
-                <CustomText size={"15px"} weight={"500"} color={"var(--white)"}>
-                  <FontAwesomeIcon
-                    icon={faPlaneDeparture}
+                    <Rate
+                      defaultValue={tour?.rating}
+                      character={({ index = 0 }) => customIcons[index + 1]}
+                      style={{
+                        fontSize: "15px",
+                      }}
+                    />
+                  </Col>
+                  <Col
+                    xxl={4}
+                    xl={4}
+                    lg={4}
+                    md={4}
+                    sm={4}
+                    xs={4}
                     style={{
-                      marginRight: "5px",
+                      width: "100%",
+                      textAlign: "right",
                     }}
-                  />
-                  Historic Buildings
-                </CustomText>
-
-                <CustomText size={"20px"} weight={"500"} color={"var(--white)"}>
-                  $100
-                </CustomText>
-              </Col>
-            </Col>
-
-            <Row
-              style={{
-                padding: "15px",
-              }}
-            >
-              <Col
-                xxl={20}
-                xl={20}
-                lg={20}
-                md={20}
-                sm={20}
-                xs={20}
-                style={{
-                  width: "100%",
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "start",
-                  alignItems: "start",
-                  gap: "5px",
-                }}
-              >
-                <CustomText
-                  size={"14px"}
-                  weight={"500"}
-                  color={"var(--gray-text)"}
-                >
-                  Arc Triomphe tours
-                </CustomText>
-                <Rate
-                  defaultValue={3}
-                  character={({ index = 0 }) => customIcons[index + 1]}
-                  style={{
-                    fontSize: "15px",
-                  }}
-                />
-              </Col>
-              <Col
-                xxl={4}
-                xl={4}
-                lg={4}
-                md={4}
-                sm={4}
-                xs={4}
-                style={{
-                  width: "100%",
-                  textAlign: "right",
-                }}
-              >
-                <CustomText
-                  size={"30px"}
-                  weight={"500"}
-                  color={"var(--gray-light)"}
-                  link={"/sss"}
-                >
-                  <Tooltip
-                    title="Add to wishlist"
-                    overlayInnerStyle={{
-                      borderRadius: "3px",
-                      fontFamily: "Montserrat",
-                    }}
-                    color="var(--pink)"
                   >
-                    <HeartOutlined />
-                  </Tooltip>
-                </CustomText>
-              </Col>
-            </Row>
-          </Card>
-        </Col>
-
-        <Col
-          xxl={8}
-          xl={8}
-          lg={8}
-          md={8}
-          sm={24}
-          xs={24}
-          style={{
-            display: "flex",
-            justifyContent: "start",
-            alignItems: "start",
-            padding: "5px",
-          }}
-        >
-          <Card
-            hoverable
-            style={{
-              width: "100%",
-            }}
-          >
-            <Col
-              xxl={24}
-              xl={24}
-              lg={24}
-              md={24}
-              sm={24}
-              xs={24}
-              style={{
-                position: "relative",
-                overflow: "hidden",
-                borderTopLeftRadius: "5px",
-                borderTopRightRadius: "5px",
-              }}
-            >
-              <Image
-                src={item}
-                preview={false}
-                width={"100%"}
-                style={{
-                  borderTopLeftRadius: "5px",
-                  borderTopRightRadius: "5px",
-                  height: "280px",
-                  objectFit: "cover",
-                  transition: "transform 0.3s ease-in-out",
-                }}
-                className="image-hover-zoom"
-              />
-              <Col
-                style={{
-                  width: "100%",
-                  position: "absolute",
-                  bottom: 0,
-                  left: 0,
-                  background: `linear-gradient(to top, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0.1))`,
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "end",
-                  padding: "15px",
-                }}
-              >
-                <CustomText size={"15px"} weight={"500"} color={"var(--white)"}>
-                  <FontAwesomeIcon
-                    icon={faPlaneDeparture}
-                    style={{
-                      marginRight: "5px",
-                    }}
-                  />
-                  Historic Buildings
-                </CustomText>
-
-                <CustomText size={"20px"} weight={"500"} color={"var(--white)"}>
-                  $100
-                </CustomText>
-              </Col>
-            </Col>
-
-            <Row
-              style={{
-                padding: "15px",
-              }}
-            >
-              <Col
-                xxl={20}
-                xl={20}
-                lg={20}
-                md={20}
-                sm={20}
-                xs={20}
-                style={{
-                  width: "100%",
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "start",
-                  alignItems: "start",
-                  gap: "5px",
-                }}
-              >
-                <CustomText
-                  size={"14px"}
-                  weight={"500"}
-                  color={"var(--gray-text)"}
-                >
-                  Arc Triomphe tours
-                </CustomText>
-                <Rate
-                  defaultValue={3}
-                  character={({ index = 0 }) => customIcons[index + 1]}
-                  style={{
-                    fontSize: "15px",
-                  }}
-                />
-              </Col>
-              <Col
-                xxl={4}
-                xl={4}
-                lg={4}
-                md={4}
-                sm={4}
-                xs={4}
-                style={{
-                  width: "100%",
-                  textAlign: "right",
-                }}
-              >
-                <CustomText
-                  size={"30px"}
-                  weight={"500"}
-                  color={"var(--gray-light)"}
-                  link={"/sss"}
-                >
-                  <Tooltip
-                    title="Add to wishlist"
-                    overlayInnerStyle={{
-                      borderRadius: "3px",
-                      fontFamily: "Montserrat",
-                    }}
-                    color="var(--pink)"
-                  >
-                    <HeartOutlined />
-                  </Tooltip>
-                </CustomText>
-              </Col>
-            </Row>
-          </Card>
-        </Col>
+                    <CustomText
+                      size={"30px"}
+                      weight={"500"}
+                      color={"var(--gray-light)"}
+                      link={"/sss"}
+                    >
+                      <Tooltip
+                        title="Add to wishlist"
+                        overlayInnerStyle={{
+                          borderRadius: "3px",
+                          fontFamily: "Montserrat",
+                        }}
+                        color="var(--pink)"
+                      >
+                        <HeartOutlined />
+                      </Tooltip>
+                    </CustomText>
+                  </Col>
+                </Row>
+              </Card>
+            </Link>
+          </Col>
+        ))}
       </Row>
 
       {/* Button view more */}

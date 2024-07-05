@@ -51,4 +51,8 @@ public class Hotel {
 
     private LocalDateTime updatedAt;
 
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "province_id")
+    private Province province;
+
 }

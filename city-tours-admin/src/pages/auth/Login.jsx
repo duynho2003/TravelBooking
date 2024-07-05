@@ -41,29 +41,29 @@ function Login() {
           const token = action?.payload?.data?.token;
           Cookies.set("token", token);
           notification.success({
-            message: "Đăng nhập thành công",
-            description: "Đăng nhập vào hệ thống thành công.",
+            message: "Login successful",
+            description: "Logged into the system successfully.",
           });
           navigate("/admin/website/view");
         } else {
           const error = action?.payload?.error.message || "Lỗi không xác định.";
           notification.error({
-            message: "Lỗi đăng nhập",
+            message: "Login error",
             description: error,
           });
         }
       } else if (login.rejected.match(action)) {
         const error = action?.payload?.error.message || "Lỗi không xác định.";
         notification.error({
-          message: "Lỗi đăng nhập",
+          message: "Login error",
           description: error,
         });
       }
     } catch (error) {
       notification.error({
-        message: "Lỗi hệ thống",
+        message: "System error",
         description:
-          "Máy chủ không thực hiện được yêu cầu hợp lệ do lỗi với máy chủ.",
+          "The server couldn't fulfill a valid request due to an issue with the server.",
       });
     } finally {
       setLoading(false);

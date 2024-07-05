@@ -1,5 +1,6 @@
 package com.example.city_tours.dto.response.Room;
 
+import com.example.city_tours.dto.response.Tour.GetTourRoomBookingResponseDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,21 +16,15 @@ import java.util.List;
 public class GetRoomByIdResponseDto {
 
     private Long id;
-
     private String roomNumber;
-
     private String type;
-
     private Double price;
-
+    private Double discount;
     private String bookedStatus;
-
     private String activeStatus;
-
     private LocalDateTime createdAt;
-
     private LocalDateTime updatedAt;
-
+    private List<GetTourRoomBookingResponseDto> tourRoomBookings;
     private List<String> imageUrls;
 
 }

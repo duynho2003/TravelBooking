@@ -1,8 +1,10 @@
 package com.example.city_tours.config;
 
 import com.example.city_tours.entity.BlacklistToken;
+import com.example.city_tours.entity.Customer;
 import com.example.city_tours.entity.User;
 import com.example.city_tours.repository.BlacklistTokenRepository;
+import com.example.city_tours.repository.CustomerRepository;
 import com.example.city_tours.repository.UserRepository;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
@@ -31,11 +33,14 @@ public class JwtTokenProvider {
     private long jwtExpirationDate;
     private final UserRepository userRepository;
     private final BlacklistTokenRepository blacklistTokenRepository;
+    private final CustomerRepository customerRepository;
 
     public JwtTokenProvider(UserRepository userRepository,
-                            BlacklistTokenRepository blacklistTokenRepository) {
+                            BlacklistTokenRepository blacklistTokenRepository,
+                            CustomerRepository customerRepository) {
         this.userRepository = userRepository;
         this.blacklistTokenRepository = blacklistTokenRepository;
+        this.customerRepository = customerRepository;
     }
 
     public String generateToken(Authentication authentication) {
@@ -47,6 +52,19 @@ public class JwtTokenProvider {
         Long id = user.getId();
         String email = user.getEmail();
         String status = user.getStatus().toString();
+
+        Customer customer = customerRepository.findByUserId(id);
+
+        String customerName = "";
+        String phone = "";
+        String address = "";
+
+        if (customer != null) {
+            customerName = customer.getName() != null ? customer.getName() : "";
+            phone = customer.getPhone() != null ? customer.getPhone() : "";
+            address = customer.getAddress() != null ? customer.getAddress() : "";
+        }
+
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
         List<String> authoritiesList = authorities.stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList());
 
@@ -55,6 +73,9 @@ public class JwtTokenProvider {
                 .claim("id", id)
                 .claim("email", email)
                 .claim("status", status)
+                .claim("customerName", customerName)
+                .claim("phone", phone)
+                .claim("address", address)
                 .claim("authorities", authoritiesList)
                 .issuedAt(new Date())
                 .expiration(exprireDate)

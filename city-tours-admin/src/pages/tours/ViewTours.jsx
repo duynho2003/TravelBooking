@@ -34,11 +34,12 @@ import { QuestionCircleOutlined } from "@ant-design/icons";
 
 const { Option } = Select;
 const { Text } = Typography;
+const { Search } = Input;
 
 const ViewTours = () => {
   // Constants
   const INIT_PAGE = 1;
-  const INIT_LIMIT = 6;
+  const INIT_LIMIT = 5;
 
   // Redux State
   const dispatch = useDispatch();
@@ -50,10 +51,16 @@ const ViewTours = () => {
   const error = useSelector((state) => state.tours?.error);
 
   // Local State
+  const [search, setSearch] = useState("");
+  const [activeStatus, setActiveStatus] = useState("");
+
   const [pageSize, setPageSize] = useState(INIT_LIMIT);
   const [pagination, setPagination] = useState({
     page: INIT_PAGE,
     limit: pageSize,
+    search: search,
+    date: "",
+    status: activeStatus,
   });
   // const [isModalOpenChangeStatus, setIsModalOpenChangeStatus] = useState(false);
   // const [selectedUserId, setSelectedUserId] = useState(null);
@@ -142,20 +149,32 @@ const ViewTours = () => {
   // };
 
   const handleTableChange = (pagination) => {
-    const { current, pageSize } = pagination;
+    const { current, pageSize, date } = pagination;
 
     setPagination({
       page: current,
       limit: pageSize,
+      search: search,
+      date: date || "",
+      status: activeStatus,
     });
+
+    console.log("Next page");
+    console.log("search: ", search);
   };
 
   const handlePageSizeChange = (value) => {
     setPageSize(value);
+
     setPagination({
       page: INIT_PAGE,
       limit: value,
+      search: search,
+      date: "",
+      status: activeStatus,
     });
+
+    console.log("Change page");
   };
 
   const handleNavigateViewTour = (tourId) => {
@@ -206,18 +225,18 @@ const ViewTours = () => {
     {
       title: (
         <>
-          Name <FontAwesomeIcon icon={faCaretDown} />
+          Code <FontAwesomeIcon icon={faCaretDown} />
         </>
       ),
-      dataIndex: "name",
+      dataIndex: "code",
     },
     {
       title: (
         <>
-          Address <FontAwesomeIcon icon={faCaretDown} />
+          Name <FontAwesomeIcon icon={faCaretDown} />
         </>
       ),
-      dataIndex: "address",
+      dataIndex: "name",
     },
     {
       title: (
@@ -370,6 +389,38 @@ const ViewTours = () => {
     },
   ];
 
+  const onSearch = (value) => {
+    console.log(value);
+
+    setPagination((prev) => ({
+      ...prev,
+      search: value,
+      page: INIT_PAGE,
+    }));
+
+    setSearch(value);
+  };
+
+  const onChangeDate = (value) => {
+    console.log(value);
+    setPagination((prev) => ({
+      ...prev,
+      date: value,
+      page: INIT_PAGE,
+    }));
+  };
+
+  const onChangeStatus = (value) => {
+    console.log(value);
+    setPagination((prev) => ({
+      ...prev,
+      status: value,
+      page: INIT_PAGE,
+    }));
+
+    setActiveStatus(value);
+  };
+
   return (
     <>
       {/* Show loading */}
@@ -391,9 +442,7 @@ const ViewTours = () => {
             <Col
               xl={24}
               style={{
-                borderBottom: "1px solid var(--border)",
                 padding: "0 0 20px 0",
-                marginBottom: "10px",
                 display: "flex",
                 justifyContent: "space-between",
                 alignItems: "center",
@@ -434,6 +483,53 @@ const ViewTours = () => {
                 </Link>
               </Button>
             </Col>
+
+            <Col
+              xl={24}
+              style={{
+                borderBottom: "1px solid var(--border)",
+                padding: "0 0 20px 0",
+                marginBottom: "10px",
+                display: "flex",
+                justifyContent: "end",
+                alignItems: "center",
+                gap: "20px",
+              }}
+            >
+              <Search
+                placeholder="Search name and address"
+                onSearch={onSearch}
+                style={{
+                  width: 300,
+                }}
+              />
+
+              {/* <Select
+                onChange={onChangeRole}
+                style={{
+                  width: "150px",
+                }}
+                defaultValue={""}
+              >
+                <Option value={""}>All Role</Option>
+                <Option value={"ROLE_ADMIN"}>Admin</Option>
+                <Option value={"ROLE_STAFF"}>Staff</Option>
+                <Option value={"ROLE_CUSTOMER"}>Customer</Option>
+              </Select> */}
+
+              <Select
+                onChange={onChangeStatus}
+                style={{
+                  width: "150px",
+                }}
+                defaultValue={""}
+              >
+                <Option value={""}>All Status</Option>
+                <Option value={"ACTIVE"}>Active</Option>
+                <Option value={"IN_ACTIVE"}>In Active</Option>
+              </Select>
+            </Col>
+
             <Col xl={24}>
               <Table
                 columns={columns}
@@ -467,7 +563,6 @@ const ViewTours = () => {
                     <Option value={3}>3 / page</Option>
                     <Option value={4}>4 / page</Option>
                     <Option value={5}>5 / page</Option>
-                    <Option value={6}>6 / page</Option>
                   </Select>
                 </Col>
               </Row>

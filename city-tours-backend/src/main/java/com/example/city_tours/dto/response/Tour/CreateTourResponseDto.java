@@ -18,12 +18,19 @@ import java.util.Set;
 public class CreateTourResponseDto {
 
     private Long id;
+    private String code;
     private String name;
     private String description;
-    private String address;
+    private Double price;
+    private Double discount;
+    private String locations;
+    private String depart;
+    private String startTime;
+    private int adults;
+    private int children;
+    private int baby;
     private Double rating;
     private int numberOfRating;
-    private Double price;
     private String thumbnail;
     private String bookedStatus;
     private String activeStatus;

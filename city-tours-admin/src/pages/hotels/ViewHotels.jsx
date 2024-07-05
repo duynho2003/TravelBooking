@@ -34,6 +34,7 @@ import { QuestionCircleOutlined } from "@ant-design/icons";
 
 const { Option } = Select;
 const { Text } = Typography;
+const { Search } = Input;
 
 const ViewHotels = () => {
   // Constants
@@ -50,10 +51,12 @@ const ViewHotels = () => {
   const error = useSelector((state) => state.hotels?.error);
 
   // Local State
+  const [search, setSearch] = useState("");
   const [pageSize, setPageSize] = useState(INIT_LIMIT);
   const [pagination, setPagination] = useState({
     page: INIT_PAGE,
     limit: pageSize,
+    search: search,
   });
   // const [isModalOpenChangeStatus, setIsModalOpenChangeStatus] = useState(false);
   // const [selectedUserId, setSelectedUserId] = useState(null);
@@ -147,6 +150,7 @@ const ViewHotels = () => {
     setPagination({
       page: current,
       limit: pageSize,
+      search: search,
     });
   };
 
@@ -155,6 +159,7 @@ const ViewHotels = () => {
     setPagination({
       page: INIT_PAGE,
       limit: value,
+      search: search,
     });
   };
 
@@ -165,26 +170,6 @@ const ViewHotels = () => {
   const handleNavigateUpdateHotel = (hotelId) => {
     navigate(`/admin/hotels/update/${hotelId}`);
   };
-
-  const confirm = async (tourId) => {
-    // try {
-    //   await dispatch(deleteTour(tourId));
-    //   notification.success({
-    //     message: "Tour Deletion Confirmation",
-    //     description: "Successfully deleted the tour.",
-    //   });
-    //   dispatch(getAllTours(pagination));
-    // } catch (error) {
-    //   // Xử lý lỗi nếu cần thiết
-    //   console.error("Error deleting user:", error);
-    //   notification.error({
-    //     message: "Tour Deletion Failed",
-    //     description: "Failed to delete the tour.",
-    //   });
-    // }
-  };
-
-  const cancel = (e) => {};
 
   // Sort by desc
   const sortedHotels = hotels?.slice().sort((a, b) => {
@@ -245,7 +230,15 @@ const ViewHotels = () => {
         </>
       ),
       dataIndex: "createdAt",
-      render: (createdAt) => new Date(createdAt).toLocaleDateString(),
+      render: (text, record) => {
+        const createdAt = record?.createdAt;
+        if (!createdAt) return null;
+
+        const dateObject = new Date(createdAt);
+        const formattedDate = dateObject.toLocaleString("vi-VN");
+
+        return formattedDate;
+      },
     },
     {
       title: (
@@ -331,6 +324,18 @@ const ViewHotels = () => {
     },
   ];
 
+  const onSearch = (value) => {
+    console.log(value);
+
+    setPagination((prev) => ({
+      ...prev,
+      search: value,
+      page: INIT_PAGE,
+    }));
+
+    setSearch(value);
+  };
+
   return (
     <>
       {/* Show loading */}
@@ -352,9 +357,7 @@ const ViewHotels = () => {
             <Col
               xl={24}
               style={{
-                borderBottom: "1px solid var(--border)",
                 padding: "0 0 20px 0",
-                marginBottom: "10px",
                 display: "flex",
                 justifyContent: "space-between",
                 alignItems: "center",
@@ -394,6 +397,26 @@ const ViewHotels = () => {
                   </CustomText>
                 </Link>
               </Button>
+            </Col>
+            <Col
+              xl={24}
+              style={{
+                borderBottom: "1px solid var(--border)",
+                padding: "0 0 20px 0",
+                marginBottom: "10px",
+                display: "flex",
+                justifyContent: "end",
+                alignItems: "center",
+                gap: "20px",
+              }}
+            >
+              <Search
+                placeholder="Search name and address"
+                onSearch={onSearch}
+                style={{
+                  width: 300,
+                }}
+              />
             </Col>
             <Col xl={24}>
               <Table

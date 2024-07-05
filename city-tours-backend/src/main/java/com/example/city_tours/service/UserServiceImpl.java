@@ -11,10 +11,13 @@ import com.example.city_tours.exception.ResourceNotFoundException;
 import com.example.city_tours.exception.UsernameAlreadyExistsException;
 import com.example.city_tours.repository.RoleRepository;
 import com.example.city_tours.repository.UserRepository;
+import jakarta.persistence.criteria.Predicate;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -178,13 +181,39 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public List<GetAllAccountsResponseDto> getAllAccounts(int page, int limit) {
+    public List<GetAllAccountsResponseDto> getAllAccounts(int page, int limit, String search, String role, String status) {
         // Calculate the offset based on page and limit
         int offset = (page - 1) * limit;
 
         // Fetch users from the repository with pagination
         Pageable pageable = PageRequest.of(page - 1, limit);
-        Page<User> userPage = userRepository.findAll(pageable);
+
+        // Create Specification for dynamic query based on search, role, and status parameters
+        Specification<User> spec = (root, query, cb) -> {
+            Predicate predicate = cb.conjunction(); // Start with an "AND" conjunction
+
+            // Add condition to search for username or email if search parameter is provided
+            if (search != null && !search.isEmpty()) {
+                Predicate usernamePredicate = cb.like(cb.lower(root.get("username")), "%" + search.toLowerCase() + "%");
+                Predicate emailPredicate = cb.like(cb.lower(root.get("email")), "%" + search.toLowerCase() + "%");
+                predicate = cb.or(usernamePredicate, emailPredicate);
+            }
+
+            // Add condition to filter by role if role parameter is provided
+            if (role != null && !role.isEmpty()) {
+                predicate = cb.and(predicate, cb.equal(root.join("roles").get("name"), role));
+            }
+
+            // Add condition to filter by status if status parameter is provided
+            if (status != null && !status.isEmpty()) {
+                predicate = cb.and(predicate, cb.equal(root.get("status"), UserStatus.valueOf(status.toUpperCase())));
+            }
+
+            return predicate;
+        };
+
+        // Fetch users from the repository with pagination and dynamic query
+        Page<User> userPage = userRepository.findAll(spec, pageable);
 
         // Retrieve the content from the fetched page
         List<User> users = userPage.getContent();

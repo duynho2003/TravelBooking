@@ -15,19 +15,13 @@ import java.util.List;
 public class UpdateRoomResponseDto {
 
     private Long id;
-
     private String roomNumber;
-
     private String type;
-
     private Double price;
-
+    private Double discount;
     private String bookedStatus;
-
     private String activeStatus;
-
     private LocalDateTime updatedAt;
-
     private List<String> imageUrls;
 
 }

@@ -131,3 +131,51 @@
 :where(.css-dev-only-do-not-override-3rel02).ant-tag {
   margin-inline-end: 0 !important;
 }
+
+.ant-timeline.ant-timeline-label .ant-timeline-item-label {
+  width: calc(30% - 12px) !important;
+  text-align: end;
+}
+
+:where(.css-dev-only-do-not-override-3rel02).ant-timeline.ant-timeline-alternate
+  .ant-timeline-item-tail,
+:where(.css-dev-only-do-not-override-3rel02).ant-timeline.ant-timeline-right
+  .ant-timeline-item-tail,
+:where(.css-dev-only-do-not-override-3rel02).ant-timeline.ant-timeline-label
+  .ant-timeline-item-tail,
+:where(.css-dev-only-do-not-override-3rel02).ant-timeline.ant-timeline-alternate
+  .ant-timeline-item-head,
+:where(.css-dev-only-do-not-override-3rel02).ant-timeline.ant-timeline-right
+  .ant-timeline-item-head,
+:where(.css-dev-only-do-not-override-3rel02).ant-timeline.ant-timeline-label
+  .ant-timeline-item-head,
+:where(.css-dev-only-do-not-override-3rel02).ant-timeline.ant-timeline-alternate
+  .ant-timeline-item-head-custom,
+:where(.css-dev-only-do-not-override-3rel02).ant-timeline.ant-timeline-right
+  .ant-timeline-item-head-custom,
+:where(.css-dev-only-do-not-override-3rel02).ant-timeline.ant-timeline-label
+  .ant-timeline-item-head-custom {
+  inset-inline-start: 31% !important;
+}
+
+:where(.css-dev-only-do-not-override-3rel02).ant-timeline.ant-timeline-alternate
+  .ant-timeline-item-left
+  .ant-timeline-item-content,
+:where(.css-dev-only-do-not-override-3rel02).ant-timeline.ant-timeline-right
+  .ant-timeline-item-left
+  .ant-timeline-item-content,
+:where(.css-dev-only-do-not-override-3rel02).ant-timeline.ant-timeline-label
+  .ant-timeline-item-left
+  .ant-timeline-item-content {
+  inset-inline-start: calc(35% - 4px);
+  text-align: start;
+}
+
+.ant-timeline .ant-timeline-item-content {
+  margin-inline-start: 0px !important;
+  width: calc(67% - 12px) !important;
+}
+
+.ant-timeline-item .ant-timeline-item-last .ant-timeline-item-left {
+  padding-bottom: 0 !important;
+}
