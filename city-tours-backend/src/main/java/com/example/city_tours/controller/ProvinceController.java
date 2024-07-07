@@ -175,11 +175,10 @@ public class ProvinceController {
 //        }
 //    }
 //
-    @PreAuthorize("hasAuthority('READ_ACCOUNT')")
     @GetMapping("")
     public ResponseEntity<?> getAllProvinces(
             @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "10") int limit
+            @RequestParam(defaultValue = "30") int limit
 //            @RequestParam(defaultValue = "") String search,
 //            @RequestParam(defaultValue = "") String paymentStatus
 //            @RequestParam(defaultValue = "") String status

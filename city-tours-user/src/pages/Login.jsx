@@ -20,6 +20,8 @@ import CustomText from "../components/common/CustomText";
 import { login } from "../features/auth/AuthSlice";
 import { useDispatch } from "react-redux";
 import Cookies from "js-cookie";
+import { getInfoCustomer } from "../features/customer/CustomerSlice";
+import { decodeToken } from "react-jwt";
 
 const { useBreakpoint } = Grid;
 
@@ -54,6 +56,11 @@ export default function Login() {
             message: "Login successful",
             description: "Logged into the system successfully.",
           });
+          const decodeUserId = decodeToken(token);
+
+          const userId = decodeUserId?.id;
+
+          // dispatch(getInfoCustomer(userId));
           navigate("/");
         } else {
           const error = action?.payload?.error.message || "Lỗi không xác định.";

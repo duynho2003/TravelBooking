@@ -5,45 +5,37 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { getWebsiteInfo } from "../features/website/WebsiteSlice";
 import Loading from "../components/common/Loading";
+import Cookies from "js-cookie";
+import { getInfoCustomer } from "../features/customer/CustomerSlice";
 
 export default function MainLayout() {
   // Constants
-  const ID_INFO_WEBSITE = 15;
+  const ID_INFO_WEBSITE = 1;
 
   // Redux State
   const dispatch = useDispatch();
+  const userId = useSelector((state) => state.auth?.info?.id);
   const websiteInfo = useSelector((state) => state.website?.info);
-  const isLoading = useSelector((state) => state.website?.isLoading);
-  const error = useSelector((state) => state.website?.error);
-
-  // Local State
-  const [showContent, setShowContent] = useState(false);
 
   useEffect(() => {
     dispatch(getWebsiteInfo(ID_INFO_WEBSITE));
 
-    if (!isLoading) {
-      setTimeout(() => {
-        setShowContent(true);
-      }, 1000);
-    }
+    // localStorage.setItem("wishlist", []);
   }, [dispatch]);
+
+  useEffect(() => {
+    if (userId) {
+      dispatch(getInfoCustomer(userId));
+    }
+  }, [dispatch, userId]);
 
   return (
     <>
-      {/* Show loading */}
-      {!showContent && <Loading />}
-
-      {/* Show error */}
-      {error && <p>{error}</p>}
-
-      {showContent && (
-        <>
-          <Header websiteInfo={websiteInfo} />
-          <Outlet />
-          <Footer websiteInfo={websiteInfo} />
-        </>
-      )}
+      <>
+        <Header websiteInfo={websiteInfo} />
+        <Outlet />
+        <Footer websiteInfo={websiteInfo} />
+      </>
     </>
   );
 }

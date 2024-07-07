@@ -299,7 +299,7 @@ export default function CheckoutSuccess() {
                           weight={"400"}
                           color={"var(--gray-text)"}
                         >
-                          Booking Tour Successful
+                          Payment Successful
                         </CustomText>
                       ) : (
                         <CustomText
@@ -307,7 +307,7 @@ export default function CheckoutSuccess() {
                           weight={"400"}
                           color={"var(--gray-text)"}
                         >
-                          Booking Tour Failed
+                          Payment Failed
                         </CustomText>
                       )
                     }

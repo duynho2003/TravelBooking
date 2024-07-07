@@ -13,6 +13,18 @@ const customerApi = {
       return { error };
     }
   },
+
+  getInfoCustomer: async (customerId) => {
+    const url = `${API_ROUTE.GET_INFO_CUSTOMER}${customerId}`;
+    try {
+      const response = await axiosClient.get(url);
+      console.log("response Api: ", response);
+      return response;
+    } catch (error) {
+      console.log("response Api error: ", error);
+      return { error };
+    }
+  },
 };
 
 export default customerApi;

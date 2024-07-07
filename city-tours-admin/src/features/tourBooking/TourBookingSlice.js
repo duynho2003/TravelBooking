@@ -21,6 +21,26 @@ export const getAllTourBookings = createAsyncThunk(
   }
 );
 
+export const getAllRoomBookings = createAsyncThunk(
+  "tourBookings/getAllRoomBookings",
+  async (panigation) => {
+    try {
+      const response = await tourBookingApi.getAllRoomBookings(panigation);
+      console.log("response slice: ", response);
+
+      if (response?.error) {
+        console.log("response slice error: ", response.error);
+        return { error: response.error };
+      }
+
+      return response.data;
+    } catch (error) {
+      console.log("response slice error: ", error);
+      return { error };
+    }
+  }
+);
+
 // export const getAccountById = createAsyncThunk(
 //   "users/getAccountById",
 //   async (userId) => {
@@ -105,6 +125,7 @@ const tourBookingSlice = createSlice({
   name: "tourBookings",
   initialState: {
     list: [],
+    roomBookingsList: null,
     selectedTourBooking: null,
     page: null,
     limit: null,
@@ -140,6 +161,34 @@ const tourBookingSlice = createSlice({
     });
 
     builder.addCase(getAllTourBookings.rejected, (state, action) => {
+      state.isLoading = false;
+      state.error = action.error.message;
+    });
+
+    // Get all room bookings
+    builder.addCase(getAllRoomBookings.pending, (state) => {
+      state.isLoading = true;
+    });
+
+    builder.addCase(getAllRoomBookings.fulfilled, (state, action) => {
+      state.isLoading = false;
+
+      if (action.payload.error) {
+        state.message = action.payload.error.message;
+        state.error = action.payload.error.moreInfo;
+      } else {
+        state.message = null;
+        state.error = null;
+      }
+
+      state.roomBookingsList = action.payload.data;
+      state.page = action.payload.page;
+      state.limit = action.payload.limit;
+      state.skip = action.payload.skip;
+      state.totals = action.payload.totals;
+    });
+
+    builder.addCase(getAllRoomBookings.rejected, (state, action) => {
       state.isLoading = false;
       state.error = action.error.message;
     });

@@ -1,6 +1,7 @@
 package com.example.city_tours.repository;
 
 import com.example.city_tours.entity.Customer;
+import com.example.city_tours.entity.RoomBooking;
 import com.example.city_tours.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

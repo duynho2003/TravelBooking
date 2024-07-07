@@ -6,6 +6,7 @@ import com.example.city_tours.dto.response.Tour.CreateTourResponseDto;
 import com.example.city_tours.dto.response.Tour.GetAllToursResponseDto;
 import com.example.city_tours.dto.response.Tour.GetTourByIdResponseDto;
 import com.example.city_tours.dto.response.Tour.UpdateTourResponseDto;
+import com.example.city_tours.dto.response.User.PageResponseDto;
 
 import java.util.List;
 
@@ -17,7 +18,7 @@ public interface TourService {
 
     void deleteTour(Long tourId);
 
-    List<GetAllToursResponseDto> getAllTours(int page, int limit, String search, String date, String status);
+    PageResponseDto getAllTours(int page, int limit, String search, String date, String status, Double startPrice, Double endPrice, String review);
 
     GetTourByIdResponseDto getTourById(Long tourId);
 

@@ -68,7 +68,11 @@ public class WebSecurityConfig {
                             authorize.requestMatchers(HttpMethod.GET, "/api/v1/tours/{tourId}").permitAll();
                             authorize.requestMatchers(HttpMethod.GET, "/api/v1/hotels").permitAll();
                             authorize.requestMatchers(HttpMethod.GET, "/api/v1/hotels/{hotelId}").permitAll();
+                            authorize.requestMatchers(HttpMethod.GET, "/api/v1/rooms/{roomId}").permitAll();
                             authorize.requestMatchers("/api/v1/payments/**").permitAll();
+                            authorize.requestMatchers(HttpMethod.GET, "/api/v1/hotelReviews").permitAll();
+                            authorize.requestMatchers(HttpMethod.GET, "/api/v1/hotelReviews/{hotelId}").permitAll();
+                            authorize.requestMatchers(HttpMethod.GET, "/api/v1/provinces").permitAll();
                             authorize.anyRequest().authenticated();
                         }).httpBasic(Customizer.withDefaults());
 

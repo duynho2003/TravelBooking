@@ -2,11 +2,12 @@ import {
   faAngleDown,
   faArrowRightFromBracket,
   faBagShopping,
-  faHeart,
   faPhone,
   faSearch,
   faTrashCan,
+  faUserPlus,
 } from "@fortawesome/free-solid-svg-icons";
+import { faHeart } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Col, Row, Grid, Image, Menu, Badge, Dropdown, Button } from "antd";
 import CustomText from "./CustomText";
@@ -18,7 +19,8 @@ import { faUser } from "@fortawesome/free-regular-svg-icons";
 import Cookies from "js-cookie";
 import authApi from "../../services/auth/AuthApi";
 import { initInfoBeforeReload, logout } from "../../features/auth/AuthSlice";
-import { useEffect } from "react";
+import { logoutCustomer } from "../../features/customer/CustomerSlice";
+import { useEffect, useState } from "react";
 
 const { useBreakpoint } = Grid;
 
@@ -47,16 +49,16 @@ export default function Header({ websiteInfo }) {
         </>
       ),
       key: "Home",
-      children: [
-        {
-          key: "1",
-          label: "Home version 1",
-        },
-        {
-          key: "2",
-          label: "Home version 2",
-        },
-      ],
+      // children: [
+      //   {
+      //     key: "1",
+      //     label: "Home version 1",
+      //   },
+      //   {
+      //     key: "2",
+      //     label: "Home version 2",
+      //   },
+      // ],
     },
 
     {
@@ -77,12 +79,19 @@ export default function Header({ websiteInfo }) {
       key: "Tours",
       children: [
         {
-          key: "3",
-          label: "Tours 1",
-        },
-        {
-          key: "4",
-          label: "Tours 2",
+          key: "2",
+          label: (
+            <>
+              <CustomText
+                size={"13px"}
+                weight={"400"}
+                color={"var(--black-text)"}
+                link={`/tours/list?minPrice=0&maxPrice=5000000&review=`}
+              >
+                All Tours List
+              </CustomText>
+            </>
+          ),
         },
       ],
     },
@@ -106,11 +115,18 @@ export default function Header({ websiteInfo }) {
       children: [
         {
           key: "5",
-          label: "Hotels 1",
-        },
-        {
-          key: "6",
-          label: "Hotels 2",
+          label: (
+            <>
+              <CustomText
+                size={"13px"}
+                weight={"400"}
+                color={"var(--black-text)"}
+                link={"/hotels/list"}
+              >
+                All Hotels List
+              </CustomText>
+            </>
+          ),
         },
       ],
     },
@@ -465,6 +481,7 @@ export default function Header({ websiteInfo }) {
 
   const handleLogout = async () => {
     dispatch(logout());
+    dispatch(logoutCustomer());
 
     await authApi.logout();
 
@@ -591,7 +608,7 @@ export default function Header({ websiteInfo }) {
               </CustomText>
             )}
 
-            <CustomText
+            {/* <CustomText
               size={"11px"}
               weight={"600"}
               color={"var(--black-text)"}
@@ -604,6 +621,21 @@ export default function Header({ websiteInfo }) {
                 }}
               />
               Withlist
+            </CustomText> */}
+
+            <CustomText
+              size={"11px"}
+              weight={"600"}
+              color={"var(--black-text)"}
+              link={"/register"}
+            >
+              <FontAwesomeIcon
+                icon={faUserPlus}
+                style={{
+                  marginRight: "3px",
+                }}
+              />
+              Register
             </CustomText>
           </Col>
         </Row>
@@ -699,7 +731,7 @@ export default function Header({ websiteInfo }) {
               <FontAwesomeIcon icon={faSearch} />
             </CustomText>
 
-            <Dropdown
+            {/* <Dropdown
               menu={{
                 items,
               }}
@@ -715,7 +747,18 @@ export default function Header({ websiteInfo }) {
                   <FontAwesomeIcon icon={faBagShopping} />
                 </CustomText>
               </Badge>
-            </Dropdown>
+            </Dropdown> */}
+
+            {/* <Badge count={wishlistCount}> */}
+            <CustomText
+              size={"21px"}
+              weight={"600"}
+              color={"var(--gray-text)"}
+              link={"/wishlist"}
+            >
+              <FontAwesomeIcon icon={faHeart} />
+            </CustomText>
+            {/* </Badge> */}
           </Col>
         </Row>
       </Row>

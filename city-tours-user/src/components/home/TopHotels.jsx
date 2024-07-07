@@ -1,4 +1,4 @@
-import { Col, Row, Grid, Image, Card, Rate, Button, Tooltip } from "antd";
+import { Col, Row, Grid, Image, Card, Rate, Button, Tooltip, Tag } from "antd";
 import item from "../../assets/images/hotels.jpg";
 import CustomText from "../common/CustomText";
 import { HeartOutlined } from "@ant-design/icons";
@@ -8,11 +8,51 @@ import {
   faHotel,
   faPlaneDeparture,
 } from "@fortawesome/free-solid-svg-icons";
+import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 const { useBreakpoint } = Grid;
 
 export default function TopHotels({ hotels }) {
   const screens = useBreakpoint();
+
+  const [wishlist, setWishlist] = useState([]);
+
+  useEffect(() => {
+    const getWishlistFromLocalStorage = () => {
+      if (localStorage.getItem("wishlist")) {
+        const data = JSON.parse(localStorage.getItem("wishlist"));
+        setWishlist(data);
+        console.log("wishlist: ", data);
+      }
+    };
+
+    getWishlistFromLocalStorage();
+  }, []);
+
+  const handleAddWishlist = (hotelName) => {
+    // Add tourId to wishlist
+    const hotel = hotels?.find((hotel) => hotel?.name === hotelName);
+
+    console.log("tour: ", hotel);
+
+    // Check if tour is already in wishlist
+    const isWishlist = wishlist?.some((item) => item.name === hotelName);
+    if (isWishlist) {
+      alert("Item is already in wishlist");
+      return;
+    }
+
+    // Add tour to wishlist state
+    setWishlist([...wishlist, hotel]);
+
+    // Update localStorage
+    const updatedWishlist = [...wishlist, hotel];
+
+    localStorage.setItem("wishlist", JSON.stringify(updatedWishlist));
+
+    console.log("Updated wishlist: ", updatedWishlist);
+  };
 
   return (
     <Row
@@ -98,70 +138,76 @@ export default function TopHotels({ hotels }) {
                 width: "100%",
               }}
             >
-              <Col
-                xxl={24}
-                xl={24}
-                lg={24}
-                md={24}
-                sm={24}
-                xs={24}
+              <Link
+                to={`/hotels/${hotel?.id}`}
                 style={{
-                  position: "relative",
-                  overflow: "hidden",
-                  borderTopLeftRadius: "5px",
-                  borderTopRightRadius: "5px",
+                  width: "100%",
                 }}
               >
-                <Image
-                  src={hotel?.thumbnailUrls?.[0]}
-                  preview={false}
-                  width={"100%"}
+                <Col
+                  xxl={24}
+                  xl={24}
+                  lg={24}
+                  md={24}
+                  sm={24}
+                  xs={24}
                   style={{
+                    position: "relative",
+                    overflow: "hidden",
                     borderTopLeftRadius: "5px",
                     borderTopRightRadius: "5px",
-                    height: "280px",
-                    objectFit: "cover",
-                    transition: "transform 0.3s ease-in-out",
-                  }}
-                  className="image-hover-zoom"
-                />
-                <Col
-                  style={{
-                    width: "100%",
-                    position: "absolute",
-                    bottom: 0,
-                    left: 0,
-                    background: `linear-gradient(to top, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0.1))`,
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "end",
-                    padding: "15px",
                   }}
                 >
-                  <CustomText
-                    size={"15px"}
-                    weight={"500"}
-                    color={"var(--white)"}
+                  <Image
+                    src={hotel?.thumbnailUrls?.[0]}
+                    preview={false}
+                    width={"100%"}
+                    style={{
+                      borderTopLeftRadius: "5px",
+                      borderTopRightRadius: "5px",
+                      height: "280px",
+                      objectFit: "cover",
+                      transition: "transform 0.3s ease-in-out",
+                    }}
+                    className="image-hover-zoom"
+                  />
+                  <Col
+                    style={{
+                      width: "100%",
+                      position: "absolute",
+                      bottom: 0,
+                      left: 0,
+                      background: `linear-gradient(to top, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0.1))`,
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "end",
+                      padding: "15px",
+                    }}
                   >
-                    <FontAwesomeIcon
-                      icon={faHotel}
-                      style={{
-                        marginRight: "5px",
-                      }}
-                    />
-                    {hotel?.name}
-                  </CustomText>
+                    <CustomText
+                      size={"15px"}
+                      weight={"500"}
+                      color={"var(--white)"}
+                    >
+                      <FontAwesomeIcon
+                        icon={faHotel}
+                        style={{
+                          marginRight: "5px",
+                        }}
+                      />
+                      {hotel?.name}
+                    </CustomText>
 
-                  {/* <CustomText
+                    {/* <CustomText
                     size={"20px"}
                     weight={"500"}
                     color={"var(--white)"}
                   >
                     $100
                   </CustomText> */}
+                  </Col>
                 </Col>
-              </Col>
-
+              </Link>
               <Row
                 style={{
                   padding: "15px",
@@ -190,9 +236,31 @@ export default function TopHotels({ hotels }) {
                   >
                     {hotel?.address}
                   </CustomText>
+                  <CustomText
+                    size={"13px"}
+                    weight={"400"}
+                    color={"var(--gray-text)"}
+                  >
+                    Type rooms:{" "}
+                    {[...new Set(hotel?.rooms?.map((room) => room?.type))].map(
+                      (type, index) => (
+                        <Tag color="var(--green-dark)" key={index}>
+                          <CustomText
+                            size={"12px"}
+                            weight={"400"}
+                            color={"var(--white)"}
+                          >
+                            {type}
+                          </CustomText>
+                        </Tag>
+                      )
+                    )}
+                  </CustomText>
+
                   <Rate
+                    disabled
                     allowHalf
-                    defaultValue={hotel?.rating}
+                    value={hotel?.rating}
                     style={{
                       fontSize: "15px",
                     }}
@@ -214,7 +282,7 @@ export default function TopHotels({ hotels }) {
                     size={"30px"}
                     weight={"500"}
                     color={"var(--gray-light)"}
-                    link={"/sss"}
+                    onClick={() => handleAddWishlist(hotel?.name)}
                   >
                     <Tooltip
                       title="Add to wishlist"
@@ -260,6 +328,7 @@ export default function TopHotels({ hotels }) {
             weight={"600"}
             color={"var(--white)"}
             isButton={true}
+            link={`/hotels/list?review=`}
           >
             View all Hotels
           </CustomText>

@@ -1,4 +1,4 @@
-import { Col, Row, Grid, Image, Card, Rate, Button, Tooltip } from "antd";
+import { Col, Row, Grid, Image, Card, Rate, Button, Tooltip, Tag } from "antd";
 import item from "../../assets/images/item.webp";
 import CustomText from "../common/CustomText";
 import {
@@ -8,9 +8,15 @@ import {
   HeartOutlined,
 } from "@ant-design/icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlaneDeparture } from "@fortawesome/free-solid-svg-icons";
+import {
+  faChild,
+  faPersonBreastfeeding,
+  faPlaneDeparture,
+} from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
 import badgeSave from "../../assets/images/badge_save.png";
+import { faUser } from "@fortawesome/free-regular-svg-icons";
+import { useEffect, useState } from "react";
 
 const { useBreakpoint } = Grid;
 
@@ -23,6 +29,44 @@ export default function TopTours({ tours }) {
     3: <MehOutlined />,
     4: <SmileOutlined />,
     5: <SmileOutlined />,
+  };
+
+  const [wishlist, setWishlist] = useState([]);
+
+  useEffect(() => {
+    const getWishlistFromLocalStorage = () => {
+      if (localStorage.getItem("wishlist")) {
+        const data = JSON.parse(localStorage.getItem("wishlist"));
+        setWishlist(data);
+        console.log("wishlist: ", data);
+      }
+    };
+
+    getWishlistFromLocalStorage();
+  }, []);
+
+  const handleAddWishlist = (tourId) => {
+    // Add tourId to wishlist
+    const tour = tours?.find((tour) => tour?.id === tourId);
+
+    console.log("tour: ", tour);
+
+    // Check if tour is already in wishlist
+    const isWishlist = wishlist?.some((item) => item.id === tourId);
+    if (isWishlist) {
+      alert("Item is already in wishlist");
+      return;
+    }
+
+    // Add tour to wishlist state
+    setWishlist([...wishlist, tour], console.log("wishlist: ", wishlist));
+
+    // Update localStorage
+    const updatedWishlist = [...wishlist, tour];
+
+    localStorage.setItem("wishlist", JSON.stringify(updatedWishlist));
+
+    console.log("Updated wishlist: ", updatedWishlist);
   };
 
   return (
@@ -132,14 +176,15 @@ export default function TopTours({ tours }) {
                 {((tour?.discount / tour?.price) * 100).toFixed(0)} %
               </CustomText>
             </Col>
-            <Link
-              to={`/tours/${tour?.id}`}
+
+            <Card
+              hoverable
               style={{
                 width: "100%",
               }}
             >
-              <Card
-                hoverable
+              <Link
+                to={`/tours/${tour?.id}`}
                 style={{
                   width: "100%",
                 }}
@@ -230,26 +275,38 @@ export default function TopTours({ tours }) {
                     </Col>
                   </Col>
                 </Col>
-
-                <Row
+              </Link>
+              <Row
+                style={{
+                  padding: "15px",
+                }}
+              >
+                <Col
+                  xxl={20}
+                  xl={20}
+                  lg={20}
+                  md={20}
+                  sm={20}
+                  xs={20}
                   style={{
-                    padding: "15px",
+                    width: "100%",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "start",
+                    alignItems: "start",
+                    gap: "5px",
                   }}
                 >
+                  <CustomText
+                    size={"14px"}
+                    weight={"500"}
+                    color={"var(--gray-text)"}
+                  >
+                    Tourist destinations: {tour?.locations}
+                  </CustomText>
                   <Col
-                    xxl={20}
-                    xl={20}
-                    lg={20}
-                    md={20}
-                    sm={20}
-                    xs={20}
                     style={{
-                      width: "100%",
-                      display: "flex",
-                      flexDirection: "column",
-                      justifyContent: "start",
-                      alignItems: "start",
-                      gap: "5px",
+                      marginBottom: "4px",
                     }}
                   >
                     <CustomText
@@ -257,57 +314,80 @@ export default function TopTours({ tours }) {
                       weight={"500"}
                       color={"var(--gray-text)"}
                     >
-                      Tourist destinations: {tour?.locations}
-                    </CustomText>
-                    <CustomText
-                      size={"14px"}
-                      weight={"500"}
-                      color={"var(--gray-text)"}
-                    >
-                      Departure at {tour?.startTime} at {tour?.depart}
-                    </CustomText>
-
-                    <Rate
-                      defaultValue={tour?.rating}
-                      character={({ index = 0 }) => customIcons[index + 1]}
-                      style={{
-                        fontSize: "15px",
-                      }}
-                    />
-                  </Col>
-                  <Col
-                    xxl={4}
-                    xl={4}
-                    lg={4}
-                    md={4}
-                    sm={4}
-                    xs={4}
-                    style={{
-                      width: "100%",
-                      textAlign: "right",
-                    }}
-                  >
-                    <CustomText
-                      size={"30px"}
-                      weight={"500"}
-                      color={"var(--gray-light)"}
-                      link={"/sss"}
-                    >
-                      <Tooltip
-                        title="Add to wishlist"
-                        overlayInnerStyle={{
-                          borderRadius: "3px",
-                          fontFamily: "Montserrat",
-                        }}
-                        color="var(--pink)"
+                      Remaining seats:
+                    </CustomText>{" "}
+                    <Tag color="var(--green-dark)">
+                      <CustomText
+                        size={"12px"}
+                        weight={"400"}
+                        color={"var(--white)"}
                       >
-                        <HeartOutlined />
-                      </Tooltip>
-                    </CustomText>
+                        <FontAwesomeIcon icon={faUser} /> ({tour?.adults})
+                      </CustomText>
+                    </Tag>
+                    <Tag color="var(--green-dark)">
+                      <CustomText
+                        size={"12px"}
+                        weight={"400"}
+                        color={"var(--white)"}
+                      >
+                        <FontAwesomeIcon icon={faChild} /> ({tour?.children})
+                      </CustomText>
+                    </Tag>
+                    <Tag color="var(--green-dark)">
+                      <CustomText
+                        size={"12px"}
+                        weight={"400"}
+                        color={"var(--white)"}
+                      >
+                        <FontAwesomeIcon icon={faPersonBreastfeeding} /> (
+                        {tour?.baby})
+                      </CustomText>
+                    </Tag>
                   </Col>
-                </Row>
-              </Card>
-            </Link>
+
+                  <Rate
+                    disabled
+                    defaultValue={tour?.rating}
+                    character={({ index = 0 }) => customIcons[index + 1]}
+                    style={{
+                      fontSize: "15px",
+                    }}
+                  />
+                </Col>
+                <Col
+                  xxl={4}
+                  xl={4}
+                  lg={4}
+                  md={4}
+                  sm={4}
+                  xs={4}
+                  style={{
+                    width: "100%",
+                    textAlign: "right",
+                  }}
+                >
+                  <CustomText
+                    size={"30px"}
+                    weight={"500"}
+                    color={"var(--gray-light)"}
+                    // link={"/sss"}
+                    onClick={() => handleAddWishlist(tour?.id)}
+                  >
+                    <Tooltip
+                      title="Add to wishlist"
+                      overlayInnerStyle={{
+                        borderRadius: "3px",
+                        fontFamily: "Montserrat",
+                      }}
+                      color="var(--pink)"
+                    >
+                      <HeartOutlined />
+                    </Tooltip>
+                  </CustomText>
+                </Col>
+              </Row>
+            </Card>
           </Col>
         ))}
       </Row>
@@ -338,6 +418,7 @@ export default function TopTours({ tours }) {
             weight={"600"}
             color={"var(--white)"}
             isButton={true}
+            link={`/tours/list?minPrice=0&maxPrice=5000000&review=`}
           >
             View all Tours
           </CustomText>

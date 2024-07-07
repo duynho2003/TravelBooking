@@ -50,4 +50,16 @@ export const API_ROUTE = {
 
   // Customer
   CREATE_CUSTOMER: "v1/customers",
+
+  GET_INFO_CUSTOMER: "v1/users/",
+
+  // Review
+  CREATE_HOTEL_REVIEW: "v1/hotelReviews/create",
+
+  GET_ALL_HOTEL_REVIEW: "v1/hotelReviews",
+
+  GET_HOTEL_REVIEW_BY_HOTEL_ID: "v1/hotelReviews/",
+
+  // Provinces
+  GET_ALL_PROVINCES: "v1/provinces",
 };

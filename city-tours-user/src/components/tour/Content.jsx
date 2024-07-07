@@ -140,6 +140,38 @@ export default function Content({ tour }) {
     }
   };
 
+  const [wishlist, setWishlist] = useState([]);
+
+  // useEffect for loading data
+  useEffect(() => {
+    const getWishlistFromLocalStorage = () => {
+      const data = JSON.parse(localStorage.getItem("wishlist")) || [];
+      setWishlist(data);
+      console.log("wishlist: ", data);
+    };
+
+    getWishlistFromLocalStorage();
+  }, [dispatch]);
+
+  const handleAddWishlist = (tourId) => {
+    // Check if tour is already in wishlist
+    const isWishlist = wishlist?.some((item) => item.id === tourId);
+    if (isWishlist) {
+      alert("Tour is already in wishlist");
+      return;
+    }
+
+    // Add tour to wishlist state
+    setWishlist([...wishlist, tour], console.log("wishlist: ", wishlist));
+
+    // Update localStorage
+    const updatedWishlist = [...wishlist, tour];
+
+    localStorage.setItem("wishlist", JSON.stringify(updatedWishlist));
+
+    console.log("Updated wishlist: ", updatedWishlist);
+  };
+
   return (
     <>
       <Row
@@ -566,6 +598,7 @@ export default function Content({ tour }) {
                   >
                     {tour?.numberOfRating} Reviews{" "}
                     <Rate
+                      disabled
                       value={tour?.numberOfRating}
                       character={({ index = 0 }) => customIcons[index + 1]}
                       style={{
@@ -1302,7 +1335,6 @@ export default function Content({ tour }) {
                 </Button>
 
                 <Button
-                  htmlType="submit"
                   size="large"
                   // className="hover-button"
                   style={{
@@ -1313,6 +1345,7 @@ export default function Content({ tour }) {
                     borderRadius: "3px",
                     cursor: "pointer",
                   }}
+                  onClick={() => handleAddWishlist(tour?.id)}
                 >
                   <CustomText
                     size={"14px"}
@@ -1327,7 +1360,7 @@ export default function Content({ tour }) {
                         marginRight: "5px",
                       }}
                     />
-                    Add to whislist (Updating)
+                    Add to whislist
                   </CustomText>
                 </Button>
               </Row>

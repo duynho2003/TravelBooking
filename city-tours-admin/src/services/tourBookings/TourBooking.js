@@ -14,6 +14,18 @@ const tourBookingApi = {
     }
   },
 
+  getAllRoomBookings: async (panigation) => {
+    const { page, limit } = panigation;
+
+    const url = `${API_ROUTE.GET_ALL_ROOM_BOOKINGS}?page=${page}&limit=${limit}`;
+    try {
+      const response = await axiosClient.get(url);
+      return response;
+    } catch (error) {
+      return { error };
+    }
+  },
+
   // getAccountById: async (userId) => {
   //   const url = `${API_ROUTE.GET_USER_BY_ID}${userId}`;
   //   try {

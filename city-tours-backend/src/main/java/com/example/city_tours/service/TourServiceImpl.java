@@ -8,6 +8,7 @@ import com.example.city_tours.dto.response.Tour.GetTourByIdResponseDto;
 import com.example.city_tours.dto.response.Tour.UpdateTourResponseDto;
 import com.example.city_tours.dto.response.User.GetAccountByIdResponseDto;
 import com.example.city_tours.dto.response.User.GetAllAccountsResponseDto;
+import com.example.city_tours.dto.response.User.PageResponseDto;
 import com.example.city_tours.entity.*;
 import com.example.city_tours.enums.ActiveStatus;
 import com.example.city_tours.enums.BookedStatus;
@@ -243,9 +244,7 @@ public class TourServiceImpl implements TourService{
     }
 
     @Override
-    public List<GetAllToursResponseDto> getAllTours(int page, int limit, String search, String date, String status) {
-        // Calculate the offset based on page and limit
-        int offset = (page - 1) * limit;
+    public PageResponseDto getAllTours(int page, int limit, String search, String date, String status, Double startPrice, Double endPrice, String review) {
 
         // Fetch tours from the repository with pagination
         Pageable pageable = PageRequest.of(page - 1, limit);
@@ -269,10 +268,28 @@ public class TourServiceImpl implements TourService{
                 predicate = cb.and(predicate, cb.equal(root.get("activeStatus"), ActiveStatus.valueOf(status.toUpperCase())));
             }
 
+            // Add condition to filter by price range if startPrice and endPrice parameters are provided
+            if (startPrice != null && endPrice != null) {
+                predicate = cb.and(predicate, cb.between(root.get("price"), startPrice, endPrice));
+            }
+
+            // Add condition to search for username or email if search parameter is provided
+            if (review != null && !review.isEmpty()) {
+                double reviewValue = Double.parseDouble(review);
+                double upperReviewValue = reviewValue + 0.9;
+                Predicate ratingPredicate = cb.between(root.get("rating").as(Double.class), reviewValue, upperReviewValue);
+                predicate = cb.and(predicate, ratingPredicate);
+            }
+
             return predicate;
         };
 
         Page<Tour> tourPage = tourRepository.findAll(spec, pageable);
+
+        // Retrieve the total number of tours
+        long totalTours = tourPage.getTotalElements();
+
+        System.out.println("totalTours: " + totalTours);
 
         // Retrieve the content from the fetched page
         List<Tour> tours = tourPage.getContent();
@@ -297,6 +314,9 @@ public class TourServiceImpl implements TourService{
             responseDto.setPrice(tour.getPrice());
             responseDto.setDiscount(tour.getDiscount());
             responseDto.setDepart(tour.getDepart());
+            responseDto.setAdults(tour.getAdults());
+//            responseDto.setChildren(tour.getChildren());
+            responseDto.setBaby(tour.getBaby());
             responseDto.setLocations(tour.getLocations());
             responseDto.setThumbnail(tour.getThumbnail());
             responseDto.setStartTime(tour.getStartTime());
@@ -317,6 +337,7 @@ public class TourServiceImpl implements TourService{
                 savedSchedule.setId(schedule.getId());
                 savedSchedule.setDayOfWeek(schedule.getDayOfWeek());
                 savedSchedule.setDate(schedule.getDate());
+                savedSchedule.setActivities(schedule.getActivities());
 
                 schedules.add(savedSchedule);
             }
@@ -326,8 +347,19 @@ public class TourServiceImpl implements TourService{
             responseDtoList.add(responseDto);
         }
 
+        // Calculate skip (number of records skipped)
+        int skip = (page - 1) * limit;
+
+        // Prepare the response structure
+        PageResponseDto<GetAllToursResponseDto> pageResponseDto = new PageResponseDto<>();
+        pageResponseDto.setData(responseDtoList);
+        pageResponseDto.setPage(page);
+        pageResponseDto.setLimit(limit);
+        pageResponseDto.setSkip(skip);
+        pageResponseDto.setTotals(totalTours);
+
         // Return the responseDtoList
-        return responseDtoList;
+        return pageResponseDto;
     }
 
     @Override

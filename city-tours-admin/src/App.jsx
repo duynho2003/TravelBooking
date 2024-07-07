@@ -28,6 +28,7 @@ import CreateRegion from "./pages/region/CreateRegion";
 import ViewRegions from "./pages/region/ViewRegions";
 import UpdateRegion from "./pages/region/UpdateRegion";
 import ViewTourBookings from "./pages/tourBookings/ViewTourBookings";
+import ViewRoomBookings from "./pages/tourBookings/ViewRoomBookings";
 
 function App() {
   // Redux State
@@ -76,8 +77,9 @@ function App() {
             <Route path="tours/create" element={<CreateTour />} />
             <Route path="tours/update/:tourId" element={<UpdateTour />} />
 
-            {/* Tour Bookings management */}
+            {/* Bookings management */}
             <Route path="tourBookings/view" element={<ViewTourBookings />} />
+            <Route path="roomBookings/view" element={<ViewRoomBookings />} />
 
             {/* Transactions management */}
             <Route path="transactions/view" element={<ViewTransactions />} />

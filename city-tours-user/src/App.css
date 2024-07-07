@@ -21,14 +21,23 @@
 }
 
 .ant-select-selector {
-  border: 1px solid var(--gray-dark) !important;
-  background: var(--gray-dark) !important;
+  border: 1px solid var(--border) !important;
+  /* background: var(--gray-dark) !important; */
 }
 
 .ant-select-single .ant-select-selector {
-  color: var(--gray-light) !important;
+  /* color: var(--gray-light) !important; */
   font-size: 14px;
   border-radius: 2px !important;
+}
+
+.ant-select {
+  font-family: "Montserrat", sans-serif !important;
+}
+
+.ant-select-single .ant-select-selector {
+  font-family: "Montserrat", sans-serif !important;
+  color: var(--gray-light) !important;
 }
 
 .ant-col {
@@ -141,4 +150,25 @@
   > tr
   > td {
   background: #ffffff;
+}
+
+:where(.css-dev-only-do-not-override-zg0ahe).ant-slider {
+  font-family: "Montserrat", sans-serif !important;
+}
+
+.ant-slider .ant-slider-rail {
+  background-color: var(--bg-gray-light) !important;
+}
+
+:where(.css-dev-only-do-not-override-zg0ahe).ant-slider .ant-slider-track {
+  background-color: var(--pink) !important;
+}
+
+.ant-pagination .ant-pagination-item-active a {
+  color: var(--white) !important;
+}
+
+.ant-pagination .ant-pagination-item-active {
+  background-color: var(--green-dark);
+  border-color: var(--green-dark);
 }

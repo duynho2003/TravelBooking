@@ -125,25 +125,14 @@ public class TourController {
             @RequestParam(defaultValue = "10") int limit,
             @RequestParam(defaultValue = "") String search,
             @RequestParam(defaultValue = "") String date,
-            @RequestParam(defaultValue = "") String status
+            @RequestParam(defaultValue = "") String status,
+            @RequestParam(defaultValue = "0") Double startPrice,
+            @RequestParam(defaultValue = "10000000") Double endPrice,
+            @RequestParam(defaultValue = "") String review
     ) {
         try {
             // Call userService to get a page of accounts
-            List<GetAllToursResponseDto> responsePage = tourService.getAllTours(page, limit, search, date, status);
-
-            // Count total users
-            long totalTours = tourRepository.count();
-
-            // Calculate skip (number of records skipped)
-            int skip = (page - 1) * limit;
-
-            // Prepare the response structure
-            PageResponseDto<GetAllToursResponseDto> pageResponseDto = new PageResponseDto<>();
-            pageResponseDto.setData(responsePage);
-            pageResponseDto.setPage(page);
-            pageResponseDto.setLimit(limit);
-            pageResponseDto.setSkip(skip);
-            pageResponseDto.setTotals(totalTours);
+            PageResponseDto responsePage = tourService.getAllTours(page, limit, search, date, status, startPrice, endPrice, review);
 
             // Return success response
             return ResponseEntity
@@ -151,7 +140,7 @@ public class TourController {
                     .body(new ApiSuccessResponse<>(
                             HttpStatus.OK.value(),
                             "Get all tours successfully",
-                            pageResponseDto
+                            responsePage
                     ));
         } catch (ResourceNotFoundException e) {
             // Return error response for resource not found

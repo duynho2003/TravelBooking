@@ -2,14 +2,19 @@ package com.example.city_tours.service;
 
 import com.example.city_tours.dto.request.User.CreateAccountRequestDto;
 import com.example.city_tours.dto.request.User.UpdateAccountRequestDto;
+import com.example.city_tours.dto.response.Customer.CreateCustomerResponseDto;
+import com.example.city_tours.dto.response.RoomBooking.GetRoomBookingResponseDto;
 import com.example.city_tours.dto.response.User.*;
+import com.example.city_tours.entity.Customer;
 import com.example.city_tours.entity.Role;
+import com.example.city_tours.entity.RoomBooking;
 import com.example.city_tours.entity.User;
 import com.example.city_tours.enums.UserStatus;
 import com.example.city_tours.exception.EmailAlreadyExistsException;
 import com.example.city_tours.exception.ResourceNotFoundException;
 import com.example.city_tours.exception.UsernameAlreadyExistsException;
 import com.example.city_tours.repository.RoleRepository;
+import com.example.city_tours.repository.RoomBookingRepository;
 import com.example.city_tours.repository.UserRepository;
 import jakarta.persistence.criteria.Predicate;
 import lombok.AllArgsConstructor;
@@ -34,6 +39,7 @@ public class UserServiceImpl implements UserService{
     private final PasswordEncoder passwordEncoder;
 
     private final RoleRepository roleRepository;
+    private final RoomBookingRepository roomBookingRepository;
 
     @Override
     public CreateAccountResponseDto createAccount(CreateAccountRequestDto createAccountRequestDto) {
@@ -176,6 +182,44 @@ public class UserServiceImpl implements UserService{
         responseDto.setStatus(user.getStatus().toString());
         responseDto.setCreateAt(user.getCreatedAt());
         responseDto.setUpdatedAt(user.getUpdatedAt());
+
+        if (user.getCustomer() != null) {
+            CreateCustomerResponseDto createCustomerResponseDto = new CreateCustomerResponseDto();
+
+            createCustomerResponseDto.setId(user.getCustomer().getId());
+            createCustomerResponseDto.setUserId(user.getId());
+            createCustomerResponseDto.setName(user.getCustomer().getName());
+            createCustomerResponseDto.setPhone(user.getCustomer().getPhone());
+            createCustomerResponseDto.setAddress(user.getCustomer().getAddress());
+
+            responseDto.setCustomer(createCustomerResponseDto);
+
+            Customer customer = user.getCustomer();
+
+            List<RoomBooking> roomBookings = roomBookingRepository.findByCustomerId(customer.getId());
+
+            Set<GetRoomBookingResponseDto> roomBookingsDto = new HashSet<>();
+
+            for (RoomBooking roomBooking : roomBookings) {
+                GetRoomBookingResponseDto bookingResponseDto = new GetRoomBookingResponseDto();
+
+                bookingResponseDto.setId(roomBooking.getId());
+                bookingResponseDto.setDate(roomBooking.getDate());
+                bookingResponseDto.setStartHour(roomBooking.getStartHour());
+                bookingResponseDto.setEndHour(roomBooking.getEndHour());
+                bookingResponseDto.setPrice(roomBooking.getPrice());
+                bookingResponseDto.setReviewStatus(roomBooking.getReviewStatus().toString());
+                bookingResponseDto.setRoomType(roomBooking.getRoomType());
+                bookingResponseDto.setCustomerId(roomBooking.getCustomer().getId());
+                bookingResponseDto.setRoomId(roomBooking.getRoom().getId());
+                bookingResponseDto.setCreatedAt(roomBooking.getCreatedAt());
+                bookingResponseDto.setUpdatedAt(roomBooking.getUpdatedAt());
+
+                roomBookingsDto.add(bookingResponseDto);
+            }
+
+            responseDto.setRoomBookings(roomBookingsDto);
+        }
 
         return responseDto;
     }

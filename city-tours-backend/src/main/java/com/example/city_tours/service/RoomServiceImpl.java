@@ -5,6 +5,7 @@ import com.example.city_tours.dto.request.Room.UpdateRoomRequestDto;
 import com.example.city_tours.dto.response.Room.CreateRoomResponseDto;
 import com.example.city_tours.dto.response.Room.GetRoomByIdResponseDto;
 import com.example.city_tours.dto.response.Room.UpdateRoomResponseDto;
+import com.example.city_tours.dto.response.RoomBooking.GetRoomBookingResponseDto;
 import com.example.city_tours.dto.response.Tour.GetTourRoomBookingResponseDto;
 import com.example.city_tours.entity.*;
 import com.example.city_tours.enums.ActiveStatus;
@@ -30,6 +31,7 @@ public class RoomServiceImpl implements RoomService{
     private final RoomRepository roomRepository;
     private final RoomImageRepository roomImageRepository;
     private final TourRoomBookingRepository tourRoomBookingRepository;
+    private final RoomBookingRepository roomBookingRepository;
 
     @Override
     public CreateRoomResponseDto createRoom(Long hotelId, CreateRoomRequestDto requestDto) {
@@ -388,6 +390,24 @@ public class RoomServiceImpl implements RoomService{
 
         // Set tour room bookings to roomDto
         responseDto.setTourRoomBookings(tourRoomBookingDtos);
+
+        List<RoomBooking> roomBookings = roomBookingRepository.findByRoom(room);
+
+        List<GetRoomBookingResponseDto> roomBookingDtos = new ArrayList<>();
+        for (RoomBooking roomBooking : roomBookings) {
+            GetRoomBookingResponseDto roomBookingDto = new GetRoomBookingResponseDto();
+            roomBookingDto.setId(roomBooking.getId());
+            roomBookingDto.setDate(roomBooking.getDate());
+            roomBookingDto.setStartHour(roomBooking.getStartHour());
+            roomBookingDto.setEndHour(roomBooking.getEndHour());
+            roomBookingDto.setPrice(roomBooking.getPrice());
+            roomBookingDto.setCreatedAt(roomBooking.getCreatedAt());
+            roomBookingDto.setUpdatedAt(roomBooking.getUpdatedAt());
+            roomBookingDtos.add(roomBookingDto);
+        }
+
+        // Set tour room bookings to roomDto
+        responseDto.setRoomBookings(roomBookingDtos);
 
         return responseDto;
     }

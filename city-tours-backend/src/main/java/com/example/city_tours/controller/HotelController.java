@@ -118,33 +118,19 @@ public class HotelController {
     public ResponseEntity<?> getAllHotels(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int limit,
-            @RequestParam(defaultValue = "") String search
+            @RequestParam(defaultValue = "") String search,
+            @RequestParam(defaultValue = "") String review
     ) {
         try {
-            // Call userService to get a page of accounts
-            List<GetAllHotelsResponseDto> responsePage = hotelService.getAllHotels(page, limit, search);
-
-            // Count total users
-            long totalTours = hotelRepository.count();
-
-            // Calculate skip (number of records skipped)
-            int skip = (page - 1) * limit;
-
-            // Prepare the response structure
-            PageResponseDto<GetAllHotelsResponseDto> pageResponseDto = new PageResponseDto<>();
-            pageResponseDto.setData(responsePage);
-            pageResponseDto.setPage(page);
-            pageResponseDto.setLimit(limit);
-            pageResponseDto.setSkip(skip);
-            pageResponseDto.setTotals(totalTours);
+            PageResponseDto responsePage = hotelService.getAllHotels(page, limit, search, review);
 
             // Return success response
             return ResponseEntity
                     .status(HttpStatus.OK)
                     .body(new ApiSuccessResponse<>(
                             HttpStatus.OK.value(),
-                            "Get all tours successfully",
-                            pageResponseDto
+                            "Get all hotels successfully",
+                            responsePage
                     ));
         } catch (ResourceNotFoundException e) {
             // Return error response for resource not found
@@ -169,7 +155,6 @@ public class HotelController {
         }
     }
 
-    @PreAuthorize("hasAuthority('READ_TOUR')")
     @GetMapping("/{hotelId}")
     public ResponseEntity<?> getHotelById(@PathVariable Long hotelId) {
         try {

@@ -512,60 +512,6 @@ const UpdateTour = () => {
     }
   };
 
-  // const disabledTime = (disabledTimes) => {
-  //   return (current) => {
-  //     const currentDate = current.format("YYYY-MM-DD");
-  //     const currentDisabledTimes = disabledTimes.find(
-  //       (item) => item.date === currentDate
-  //     );
-
-  //     if (currentDisabledTimes) {
-  //       const { times } = currentDisabledTimes;
-  //       const disabledHours = [];
-
-  //       times.forEach(({ startHour, endHour }) => {
-  //         for (let hour = startHour; hour <= endHour; hour++) {
-  //           disabledHours.push(hour);
-  //         }
-  //       });
-
-  //       return {
-  //         disabledHours: () => disabledHours,
-  //       };
-  //     }
-
-  //     return {};
-  //   };
-  // };
-
-  // const disabledTime = (tourRoomBookings) => {
-  //   return (current) => {
-  //     const currentDate = current.format("YYYY-MM-DD");
-  //     const booking = tourRoomBookings.find(
-  //       (booking) => booking.date === currentDate
-  //     );
-
-  //     if (booking) {
-  //       const { startHour, endHour } = booking;
-  //       const disabledHours = [];
-
-  //       for (
-  //         let hour = parseInt(startHour.slice(0, 2));
-  //         hour <= parseInt(endHour.slice(0, 2));
-  //         hour++
-  //       ) {
-  //         disabledHours.push(hour);
-  //       }
-
-  //       return {
-  //         disabledHours: () => disabledHours,
-  //       };
-  //     }
-
-  //     return {};
-  //   };
-  // };
-
   const disabledTime = (tourRoomBookings) => {
     return (current) => {
       const currentDate = current.format("YYYY-MM-DD");

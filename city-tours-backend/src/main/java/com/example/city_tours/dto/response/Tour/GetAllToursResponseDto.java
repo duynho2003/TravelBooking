@@ -25,6 +25,9 @@ public class GetAllToursResponseDto {
     private Double discount;
     private String locations;
     private String depart;
+    private int adults;
+    private int children;
+    private int baby;
     private String code;
     private String thumbnail;
     private String startTime;

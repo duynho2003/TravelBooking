@@ -181,6 +181,7 @@ const hotelSlice = createSlice({
     list: [],
     selectedHotel: null,
     selectedRoom: null,
+    roomBooking: null,
     page: null,
     limit: null,
     skip: null,
@@ -188,7 +189,12 @@ const hotelSlice = createSlice({
     isLoading: false,
     error: null,
   },
-  reducers: {},
+  reducers: {
+    // Room booking
+    roomBooking: (state, action) => {
+      state.roomBooking = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     // Get all tours
     builder.addCase(getAllHotels.pending, (state) => {
@@ -343,6 +349,8 @@ const hotelSlice = createSlice({
     // });
   },
 });
+
+export const { roomBooking } = hotelSlice.actions;
 
 const { reducer } = hotelSlice;
 

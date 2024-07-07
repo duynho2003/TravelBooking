@@ -22,15 +22,40 @@ export const createCustomer = createAsyncThunk(
   }
 );
 
+export const getInfoCustomer = createAsyncThunk(
+  "customers/getInfoCustomer",
+  async (customerId) => {
+    try {
+      const response = await customerApi.getInfoCustomer(customerId);
+      console.log("response slice: ", response);
+
+      if (response?.error) {
+        console.log("response slice error: ", response.error);
+        return { error: response.error };
+      }
+
+      return response.data;
+    } catch (error) {
+      console.log("response slice error: ", error);
+
+      return { error };
+    }
+  }
+);
+
 const customerSlice = createSlice({
-  name: "customers",
+  name: "customer",
   initialState: {
     info: null,
     loading: false,
     message: "",
     error: null,
   },
-  reducers: {},
+  reducers: {
+    logoutCustomer: (state, action) => {
+      state.info = null;
+    },
+  },
   extraReducers: (builder) => {
     // Create customer
     builder.addCase(createCustomer.pending, (state) => {
@@ -47,8 +72,6 @@ const customerSlice = createSlice({
         state.message = null;
         state.error = null;
       }
-
-      state.info = action.payload;
     });
 
     builder.addCase(createCustomer.rejected, (state, action) => {
@@ -56,8 +79,27 @@ const customerSlice = createSlice({
       state.loading = false;
       state.error = action.error.message;
     });
+
+    // Get info customer
+    builder.addCase(getInfoCustomer.pending, (state) => {
+      state.loading = true;
+    });
+
+    builder.addCase(getInfoCustomer.fulfilled, (state, action) => {
+      state.loading = false;
+
+      state.info = action.payload;
+    });
+
+    builder.addCase(getInfoCustomer.rejected, (state, action) => {
+      state.info = [];
+      state.loading = false;
+      state.error = action.error.message;
+    });
   },
 });
+
+export const { logoutCustomer } = customerSlice.actions;
 
 const { reducer } = customerSlice;
 

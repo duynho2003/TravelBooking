@@ -146,7 +146,6 @@ public class UserController {
         }
     }
 
-    @PreAuthorize("hasAuthority('READ_ACCOUNT')")
     @GetMapping("/{userId}")
     public ResponseEntity<?> getAccountById(@PathVariable Long userId) {
         try {

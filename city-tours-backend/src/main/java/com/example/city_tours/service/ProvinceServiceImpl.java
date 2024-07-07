@@ -282,6 +282,7 @@ public List<GetAllProvincesResponseDto> getAllProvinces(int page, int limit) {
                 responseDto.setId(province.getId());
                 responseDto.setName(province.getName());
                 responseDto.setThumbnail(province.getThumbnail());
+                responseDto.setQuantityHotels(province.getHotels().size());
 
                 // Set hotels for the province
                 Set<GetHotelByIdResponseDto> hotelsDto = province.getHotels().stream()
@@ -339,6 +340,8 @@ public List<GetAllProvincesResponseDto> getAllProvinces(int page, int limit) {
                 return responseDto;
             })
             .collect(Collectors.toList());
+
+    responseDtoList.sort(Comparator.comparingInt(GetAllProvincesResponseDto::getQuantityHotels).reversed());
 
     // Return the responseDtoList
     return responseDtoList;

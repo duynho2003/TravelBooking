@@ -180,12 +180,17 @@ export default function AdminLayout() {
     {
       key: "/admin/tourBookings",
       icon: <FontAwesomeIcon icon={faCreditCard} />,
-      label: "Tour Bookings",
+      label: "Bookings",
       children: [
         {
           key: "/admin/tourBookings/view",
           label: <Link to="/admin/tourBookings/view">View tour bookings</Link>,
           path: "/admin/tourBookings/view",
+        },
+        {
+          key: "/admin/roomBookings/view",
+          label: <Link to="/admin/roomBookings/view">View room bookings</Link>,
+          path: "/admin/roomBookings/view",
         },
         // {
         //   key: `/admin/tours/view/${tourId}`,

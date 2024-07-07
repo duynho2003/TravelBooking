@@ -31,6 +31,7 @@ import Loading from "../../components/common/Loading";
 import CustomText from "../../components/common/CustomText";
 import { Link, useNavigate } from "react-router-dom";
 import { QuestionCircleOutlined } from "@ant-design/icons";
+import axios from "axios";
 
 const { Option } = Select;
 const { Text } = Typography;
@@ -47,8 +48,10 @@ const ViewTours = () => {
   const tours = useSelector((state) => state.tours?.list);
   const totalPages = useSelector((state) => state.tours?.totals);
   const currentPage = useSelector((state) => state.tours?.page);
-  const isLoading = useSelector((state) => state.tours?.loading);
+  const isLoading = useSelector((state) => state.tours?.isLoading);
   const error = useSelector((state) => state.tours?.error);
+
+  console.log("tours: ", tours);
 
   // Local State
   const [search, setSearch] = useState("");
@@ -59,7 +62,6 @@ const ViewTours = () => {
     page: INIT_PAGE,
     limit: pageSize,
     search: search,
-    date: "",
     status: activeStatus,
   });
   // const [isModalOpenChangeStatus, setIsModalOpenChangeStatus] = useState(false);
@@ -149,13 +151,12 @@ const ViewTours = () => {
   // };
 
   const handleTableChange = (pagination) => {
-    const { current, pageSize, date } = pagination;
+    const { current, pageSize } = pagination;
 
     setPagination({
       page: current,
       limit: pageSize,
       search: search,
-      date: date || "",
       status: activeStatus,
     });
 
@@ -170,7 +171,6 @@ const ViewTours = () => {
       page: INIT_PAGE,
       limit: value,
       search: search,
-      date: "",
       status: activeStatus,
     });
 
@@ -209,9 +209,11 @@ const ViewTours = () => {
   const cancel = (e) => {};
 
   // Sort by desc
-  const sortedTours = tours?.slice().sort((a, b) => {
+  const sortedTours = tours?.slice()?.sort((a, b) => {
     return b.id - a.id;
   });
+
+  console.log("sortedTours: ", sortedTours);
 
   const columns = [
     {
@@ -421,6 +423,45 @@ const ViewTours = () => {
     setActiveStatus(value);
   };
 
+  const data = [
+    {
+      id: 1,
+      name: "Tour Hà Giang",
+      description: "Tour Hà Giang",
+      rating: 0.0,
+      numberOfRating: 0,
+      price: 3000000.0,
+      discount: 400000.0,
+      locations: "Hà Giang",
+      depart: "Hồ Chí Minh",
+      adults: 10,
+      // children: 2,
+      baby: 2,
+      code: "BZZLAWPY240707192443",
+      // thumbnail:
+      //   "https://res.cloudinary.com/dbammk7wt/image/upload/v1720355084/oauq4c8odfslkwmluntc.jpg",
+      // startTime: "00:00:00",
+      // bookedStatus: "NOT_BOOKED",
+      // activeStatus: "ACTIVE",
+      // createdAt: "2024-07-07T19:24:43.778755",
+      // updateAt: "2024-07-07T19:24:43.778755",
+      // schedules: [
+      //   {
+      //     id: 1,
+      //     dayOfWeek: "Monday",
+      //     date: "2024-07-08",
+      //     activities: null,
+      //   },
+      //   {
+      //     id: 2,
+      //     dayOfWeek: "Tuesday",
+      //     date: "2024-07-09",
+      //     activities: null,
+      //   },
+      // ],
+    },
+  ];
+
   return (
     <>
       {/* Show loading */}
@@ -544,7 +585,7 @@ const ViewTours = () => {
                 onChange={handleTableChange}
               />
 
-              <Row justify="end">
+              {/* <Row justify="end">
                 <Col
                   style={{
                     marginTop: "4px",
@@ -565,7 +606,7 @@ const ViewTours = () => {
                     <Option value={5}>5 / page</Option>
                   </Select>
                 </Col>
-              </Row>
+              </Row> */}
             </Col>
           </Row>
         </>

@@ -1,5 +1,7 @@
 package com.example.city_tours.dto.response.User;
 
+import com.example.city_tours.dto.response.Customer.CreateCustomerResponseDto;
+import com.example.city_tours.dto.response.RoomBooking.GetRoomBookingResponseDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,5 +24,7 @@ public class GetAccountByIdResponseDto {
     private String status;
     private LocalDateTime createAt;
     private LocalDateTime updatedAt;
+    private CreateCustomerResponseDto customer;
+    private Set<GetRoomBookingResponseDto> roomBookings;
     
 }

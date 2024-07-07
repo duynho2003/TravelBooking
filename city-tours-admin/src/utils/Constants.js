@@ -63,8 +63,10 @@ export const API_ROUTE = {
   // Tour Room Booking
   TOUR_ROOM_BOOKING: "/v1/tourRoomBookings/create",
 
-  // Tour Booking
+  // Booking
   GET_ALL_TOUR_BOOKINGS: "/v1/tourBookings",
+
+  GET_ALL_ROOM_BOOKINGS: "/v1/roomBookings",
 
   // Transactions
   GET_ALL_TRANSACTIONS: "v1/transactions",

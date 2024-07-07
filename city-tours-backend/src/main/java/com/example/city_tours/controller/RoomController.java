@@ -109,63 +109,61 @@ public class RoomController {
         }
     }
 
-    @PreAuthorize("hasAuthority('READ_HOTEL')")
-    @GetMapping("")
-    public ResponseEntity<?> getAllHotels(
-            @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "10") int limit,
-            @RequestParam(defaultValue = "") String search
-    ) {
-        try {
-            // Call userService to get a page of accounts
-            List<GetAllHotelsResponseDto> responsePage = hotelService.getAllHotels(page, limit, search);
+//    @GetMapping("")
+//    public ResponseEntity<?> getAllHotels(
+//            @RequestParam(defaultValue = "1") int page,
+//            @RequestParam(defaultValue = "10") int limit,
+//            @RequestParam(defaultValue = "") String search
+//    ) {
+//        try {
+//            // Call userService to get a page of accounts
+//            List<GetAllHotelsResponseDto> responsePage = hotelService.getAllHotels(page, limit, search);
+//
+//            // Count total users
+//            long totalTours = hotelRepository.count();
+//
+//            // Calculate skip (number of records skipped)
+//            int skip = (page - 1) * limit;
+//
+//            // Prepare the response structure
+//            PageResponseDto<GetAllHotelsResponseDto> pageResponseDto = new PageResponseDto<>();
+//            pageResponseDto.setData(responsePage);
+//            pageResponseDto.setPage(page);
+//            pageResponseDto.setLimit(limit);
+//            pageResponseDto.setSkip(skip);
+//            pageResponseDto.setTotals(totalTours);
+//
+//            // Return success response
+//            return ResponseEntity
+//                    .status(HttpStatus.OK)
+//                    .body(new ApiSuccessResponse<>(
+//                            HttpStatus.OK.value(),
+//                            "Get all tours successfully",
+//                            pageResponseDto
+//                    ));
+//        } catch (ResourceNotFoundException e) {
+//            // Return error response for resource not found
+//            return ResponseEntity
+//                    .status(HttpStatus.NOT_FOUND)
+//                    .body(new ApiErrorResponse(
+//                            HttpStatus.NOT_FOUND.value(),
+//                            e.getMessage(),
+//                            ErrorCode.NOT_FOUND,
+//                            "http://localhost:5050/docs/errors/1015"
+//                    ));
+//        } catch (ServerErrorException e) {
+//            // Return error response for server error
+//            return ResponseEntity
+//                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+//                    .body(new ApiErrorResponse(
+//                            HttpStatus.INTERNAL_SERVER_ERROR.value(),
+//                            e.getMessage(),
+//                            ErrorCode.INTERNAL_SERVER_ERROR,
+//                            "http://localhost:5050/docs/errors/1012"
+//                    ));
+//        }
+//    }
 
-            // Count total users
-            long totalTours = hotelRepository.count();
-
-            // Calculate skip (number of records skipped)
-            int skip = (page - 1) * limit;
-
-            // Prepare the response structure
-            PageResponseDto<GetAllHotelsResponseDto> pageResponseDto = new PageResponseDto<>();
-            pageResponseDto.setData(responsePage);
-            pageResponseDto.setPage(page);
-            pageResponseDto.setLimit(limit);
-            pageResponseDto.setSkip(skip);
-            pageResponseDto.setTotals(totalTours);
-
-            // Return success response
-            return ResponseEntity
-                    .status(HttpStatus.OK)
-                    .body(new ApiSuccessResponse<>(
-                            HttpStatus.OK.value(),
-                            "Get all tours successfully",
-                            pageResponseDto
-                    ));
-        } catch (ResourceNotFoundException e) {
-            // Return error response for resource not found
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
-                    .body(new ApiErrorResponse(
-                            HttpStatus.NOT_FOUND.value(),
-                            e.getMessage(),
-                            ErrorCode.NOT_FOUND,
-                            "http://localhost:5050/docs/errors/1015"
-                    ));
-        } catch (ServerErrorException e) {
-            // Return error response for server error
-            return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ApiErrorResponse(
-                            HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                            e.getMessage(),
-                            ErrorCode.INTERNAL_SERVER_ERROR,
-                            "http://localhost:5050/docs/errors/1012"
-                    ));
-        }
-    }
-
-    @PreAuthorize("hasAuthority('READ_TOUR')")
     @GetMapping("/{roomId}")
     public ResponseEntity<?> getRoomById(@PathVariable Long roomId) {
         try {

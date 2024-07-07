@@ -7,7 +7,9 @@ import com.example.city_tours.dto.response.Hotel.GetAllHotelsResponseDto;
 import com.example.city_tours.dto.response.Hotel.GetHotelByIdResponseDto;
 import com.example.city_tours.dto.response.Hotel.UpdateHotelResponseDto;
 import com.example.city_tours.dto.response.Room.RoomResponseDto;
+import com.example.city_tours.dto.response.Tour.GetAllToursResponseDto;
 import com.example.city_tours.dto.response.Tour.GetTourRoomBookingResponseDto;
+import com.example.city_tours.dto.response.User.PageResponseDto;
 import com.example.city_tours.entity.*;
 import com.example.city_tours.enums.ActiveStatus;
 import com.example.city_tours.exception.ResourceNotFoundException;
@@ -166,7 +168,7 @@ public class HotelServiceImpl implements HotelService{
     }
 
     @Override
-    public List<GetAllHotelsResponseDto> getAllHotels(int page, int limit, String search) {
+    public PageResponseDto getAllHotels(int page, int limit, String search, String review) {
         // Calculate the offset based on page and limit
         int offset = (page - 1) * limit;
 
@@ -183,10 +185,20 @@ public class HotelServiceImpl implements HotelService{
                 predicate = cb.or(namePredicate, addressPredicate);
             }
 
+            // Add condition to search for username or email if search parameter is provided
+            if (review != null && !review.isEmpty()) {
+                double reviewValue = Double.parseDouble(review);
+                double upperReviewValue = reviewValue + 0.9;
+                Predicate ratingPredicate = cb.between(root.get("rating").as(Double.class), reviewValue, upperReviewValue);
+                predicate = cb.and(predicate, ratingPredicate);
+            }
+
             return predicate;
         };
 
         Page<Hotel> hotelPage = hotelRepository.findAll(spec, pageable);
+
+        long totalHotels = hotelPage.getTotalElements();
 
         // Retrieve the content from the fetched page
         List<Hotel> hotels = hotelPage.getContent();
@@ -284,8 +296,19 @@ public class HotelServiceImpl implements HotelService{
             responseDtoList.add(responseDto);
         }
 
+        // Calculate skip (number of records skipped)
+        int skip = (page - 1) * limit;
+
+        // Prepare the response structure
+        PageResponseDto<GetAllHotelsResponseDto> pageResponseDto = new PageResponseDto<>();
+        pageResponseDto.setData(responseDtoList);
+        pageResponseDto.setPage(page);
+        pageResponseDto.setLimit(limit);
+        pageResponseDto.setSkip(skip);
+        pageResponseDto.setTotals(totalHotels);
+
         // Return the responseDtoList
-        return responseDtoList;
+        return pageResponseDto;
     }
 
     @Override

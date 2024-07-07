@@ -18,6 +18,7 @@ public class GetAllProvincesResponseDto {
     private Long id;
     private String name;
     private String thumbnail;
+    private int quantityHotels;
     private Set<GetHotelByIdResponseDto> hotels;
 
 }

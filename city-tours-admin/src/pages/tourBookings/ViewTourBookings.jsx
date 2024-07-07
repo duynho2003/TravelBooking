@@ -146,7 +146,7 @@ const ViewTourBookings = () => {
         new Intl.NumberFormat("vi-VN", {
           style: "currency",
           currency: "VND",
-        }).format(record?.amount / 100),
+        }).format(record?.amount),
     },
 
     {

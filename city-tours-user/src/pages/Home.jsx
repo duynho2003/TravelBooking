@@ -5,10 +5,13 @@ import TopTours from "../components/home/TopTours";
 import TopHotels from "../components/home/TopHotels";
 import Plan from "../components/home/Plan";
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { getAllProvinces } from "../features/province/provinceSlice";
 import { getAllTours } from "../features/tour/TourSlice";
 import { getAllHotels } from "../features/hotel/HotelSlice";
 import { initInfoBeforeReload } from "../features/auth/AuthSlice";
+import Loading from "../components/common/Loading";
+import ProminentHotelAreas from "../components/home/ProminentHotelAreas";
 
 export default function Home() {
   // Constants
@@ -17,40 +20,49 @@ export default function Home() {
 
   // Redux State
   const dispatch = useDispatch();
+  const provinces = useSelector((state) => state.provinces?.list);
   const tours = useSelector((state) => state.tours?.list);
-  // const totalPages = useSelector((state) => state.tours?.totals);
-  // const currentPage = useSelector((state) => state.tours?.page);
-  // const isLoading = useSelector((state) => state.tours?.isLoading);
-  // const error = useSelector((state) => state.tours?.error);
-
   const hotels = useSelector((state) => state.hotels?.list);
-  // const totalPages = useSelector((state) => state.hotels?.totals);
-  // const currentPage = useSelector((state) => state.hotels?.page);
-  // const isLoading = useSelector((state) => state.hotels?.isLoading);
-  // const error = useSelector((state) => state.hotels?.error);
+
+  // Local State
+  const [showContent, setShowContent] = useState(false);
 
   // useEffect for loading data tour
   useEffect(() => {
-    dispatch(
-      getAllTours({
-        page: INIT_PAGE,
-        limit: INIT_LIMIT,
-      })
-    );
+    // Function to fetch provinces
+    const fetchProvinces = () => dispatch(getAllProvinces());
 
-    dispatch(
-      getAllHotels({
-        page: INIT_PAGE,
-        limit: INIT_LIMIT,
-      })
-    );
+    // Function to fetch tours
+    const fetchTours = () =>
+      dispatch(
+        getAllTours({
+          page: INIT_PAGE,
+          limit: INIT_LIMIT,
+          minPrice: "0",
+          maxPrice: "5000000",
+          review: "",
+        })
+      );
 
-    // Delay showing content after loading
-    // if (!isLoading) {
-    //   setTimeout(() => {
-    //     setShowContent(true);
-    //   }, 1000);
-    // }
+    // Function to fetch hotels
+    const fetchHotels = () =>
+      dispatch(
+        getAllHotels({ page: INIT_PAGE, limit: INIT_LIMIT, review: "" })
+      );
+
+    // Using Promise.all to wait for both requests to complete
+    Promise.all([fetchProvinces(), fetchTours(), fetchHotels()])
+      .then(() => {
+        scrollToTop();
+        // Both dispatches are successful
+        setTimeout(() => {
+          setShowContent(true); // Show content after 1 second delay
+        }, 1000);
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error.message);
+        // Handle errors here if needed
+      });
   }, [dispatch]);
 
   // useEffect loading info data
@@ -58,19 +70,35 @@ export default function Home() {
     dispatch(initInfoBeforeReload());
   }, [dispatch]);
 
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
+
   return (
     <>
-      <Row
-        style={{
-          width: "100%",
-          height: "110px",
-        }}
-      ></Row>
-      <CarouselSlider />
-      <Categories />
-      <TopTours tours={tours} />
-      <TopHotels hotels={hotels} />
-      <Plan />
+      {/* Show loading */}
+      {!showContent && <Loading />}
+
+      {/* Show content */}
+      {showContent && (
+        <>
+          <Row
+            style={{
+              width: "100%",
+              height: "110px",
+            }}
+          ></Row>
+          <CarouselSlider />
+          <Categories />
+          <ProminentHotelAreas provinces={provinces} />
+          <TopTours tours={tours} />
+          <TopHotels hotels={hotels} />
+          <Plan />
+        </>
+      )}
     </>
   );
 }

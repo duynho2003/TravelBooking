@@ -12,6 +12,7 @@ import com.example.city_tours.dto.response.Tour.CreateTourResponseDto;
 import com.example.city_tours.dto.response.Tour.GetAllToursResponseDto;
 import com.example.city_tours.dto.response.Tour.GetTourByIdResponseDto;
 import com.example.city_tours.dto.response.Tour.UpdateTourResponseDto;
+import com.example.city_tours.dto.response.User.PageResponseDto;
 import jakarta.transaction.Transactional;
 
 import java.util.List;
@@ -27,7 +28,7 @@ public interface HotelService {
     //
 //    void deleteTour(Long tourId);
 //
-    List<GetAllHotelsResponseDto> getAllHotels(int page, int limit, String search);
+    PageResponseDto getAllHotels(int page, int limit, String search, String review);
 
     GetHotelByIdResponseDto getHotelById(Long hotelId);
 

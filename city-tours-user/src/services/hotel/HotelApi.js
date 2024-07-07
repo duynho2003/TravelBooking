@@ -3,9 +3,9 @@ import { API_ROUTE } from "../../utils/Constants";
 
 const hotelApi = {
   getAllHotels: async (panigation) => {
-    const { page, limit } = panigation;
+    const { page, limit, review } = panigation;
 
-    const url = `${API_ROUTE.GET_ALL_HOTELS}?page=${page}&limit=${limit}`;
+    const url = `${API_ROUTE.GET_ALL_HOTELS}?page=${page}&limit=${limit}&review=${review}`;
     try {
       const response = await axiosClient.get(url);
       return response;

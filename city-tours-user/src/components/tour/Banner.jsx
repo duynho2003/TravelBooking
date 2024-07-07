@@ -89,6 +89,7 @@ export default function Banner({ tour }) {
                 <CustomText size={"14px"} weight={"500"} color={"var(--white)"}>
                   {tour?.address}
                   <Rate
+                    disabled
                     value={5}
                     character={({ index = 0 }) => customIcons[index + 1]}
                     style={{

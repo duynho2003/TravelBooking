@@ -478,6 +478,7 @@ const UpdateHotel = () => {
 
   // Submit update room
   const onSubmitUpdateRoom = async (data) => {
+    console.log("onSubmitUpdateRoom");
     try {
       setLoadingButtonUpdateRoom(true);
 
