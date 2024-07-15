@@ -2,12 +2,18 @@ import {
   faAngleDown,
   faArrowRightFromBracket,
   faBagShopping,
+  faHotel,
   faPhone,
+  faPlaneDeparture,
   faSearch,
   faTrashCan,
   faUserPlus,
 } from "@fortawesome/free-solid-svg-icons";
-import { faHeart } from "@fortawesome/free-regular-svg-icons";
+import {
+  faCircleUser,
+  faHeart,
+  faMoneyBill1,
+} from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Col, Row, Grid, Image, Menu, Badge, Dropdown, Button } from "antd";
 import CustomText from "./CustomText";
@@ -132,353 +138,6 @@ export default function Header({ websiteInfo }) {
     },
   ];
 
-  const items = [
-    {
-      key: "1",
-      label: (
-        <Link to="/">
-          <Row
-            style={{
-              width: "260px",
-            }}
-            justify={"space-between"}
-          >
-            <Col
-              xxl={18}
-              xl={18}
-              lg={18}
-              md={18}
-              sm={18}
-              xs={18}
-              style={{
-                display: "flex",
-                justifyContent: "start",
-                alignItems: "center",
-                gap: "5px",
-              }}
-            >
-              <Image
-                src={product}
-                preview={false}
-                style={{
-                  width: "50px",
-                  height: "50px",
-                  objectFit: "cover",
-                }}
-              />
-              <Col
-                xxl={24}
-                xl={24}
-                lg={24}
-                md={24}
-                sm={24}
-                xs={24}
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "start",
-                }}
-              >
-                <CustomText
-                  size={"13px"}
-                  weight={"500"}
-                  color={"var(--black-text)"}
-                >
-                  Product 1
-                </CustomText>
-                <CustomText
-                  size={"12px"}
-                  weight={"400"}
-                  color={"var(--gray-dark)"}
-                >
-                  1 x 36$
-                </CustomText>
-              </Col>
-            </Col>
-
-            <Col
-              xxl={4}
-              xl={4}
-              lg={4}
-              md={4}
-              sm={4}
-              xs={4}
-              style={{
-                display: "flex",
-                justifyContent: "end",
-                alignItems: "start",
-              }}
-            >
-              <FontAwesomeIcon
-                icon={faTrashCan}
-                style={{
-                  color: "var(--gray-light)",
-                }}
-              />
-            </Col>
-          </Row>
-        </Link>
-      ),
-    },
-
-    {
-      key: "2",
-      label: (
-        <Link to="/">
-          <Row
-            style={{
-              width: "260px",
-            }}
-            justify={"space-between"}
-          >
-            <Col
-              xxl={18}
-              xl={18}
-              lg={18}
-              md={18}
-              sm={18}
-              xs={18}
-              style={{
-                display: "flex",
-                justifyContent: "start",
-                alignItems: "center",
-                gap: "5px",
-              }}
-            >
-              <Image
-                src={product}
-                preview={false}
-                style={{
-                  width: "50px",
-                  height: "50px",
-                  objectFit: "cover",
-                }}
-              />
-              <Col
-                xxl={24}
-                xl={24}
-                lg={24}
-                md={24}
-                sm={24}
-                xs={24}
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "start",
-                }}
-              >
-                <CustomText
-                  size={"13px"}
-                  weight={"500"}
-                  color={"var(--black-text)"}
-                >
-                  Product 1
-                </CustomText>
-                <CustomText
-                  size={"12px"}
-                  weight={"400"}
-                  color={"var(--gray-dark)"}
-                >
-                  1 x 36$
-                </CustomText>
-              </Col>
-            </Col>
-
-            <Col
-              xxl={4}
-              xl={4}
-              lg={4}
-              md={4}
-              sm={4}
-              xs={4}
-              style={{
-                display: "flex",
-                justifyContent: "end",
-                alignItems: "start",
-              }}
-            >
-              <FontAwesomeIcon
-                icon={faTrashCan}
-                style={{
-                  color: "var(--gray-light)",
-                }}
-              />
-            </Col>
-          </Row>
-        </Link>
-      ),
-    },
-
-    {
-      key: "3",
-      label: (
-        <Link to="/">
-          <Row
-            style={{
-              width: "260px",
-              border: "1p solid var(--gray-light)",
-            }}
-            justify={"space-between"}
-          >
-            <Col
-              xxl={18}
-              xl={18}
-              lg={18}
-              md={18}
-              sm={18}
-              xs={18}
-              style={{
-                display: "flex",
-                justifyContent: "start",
-                alignItems: "center",
-                gap: "5px",
-              }}
-            >
-              <Image
-                src={product}
-                preview={false}
-                style={{
-                  width: "50px",
-                  height: "50px",
-                  objectFit: "cover",
-                }}
-              />
-              <Col
-                xxl={24}
-                xl={24}
-                lg={24}
-                md={24}
-                sm={24}
-                xs={24}
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "start",
-                }}
-              >
-                <CustomText
-                  size={"13px"}
-                  weight={"500"}
-                  color={"var(--black-text)"}
-                >
-                  Product 1
-                </CustomText>
-                <CustomText
-                  size={"12px"}
-                  weight={"400"}
-                  color={"var(--gray-dark)"}
-                >
-                  1 x 36$
-                </CustomText>
-              </Col>
-            </Col>
-
-            <Col
-              xxl={4}
-              xl={4}
-              lg={4}
-              md={4}
-              sm={4}
-              xs={4}
-              style={{
-                display: "flex",
-                justifyContent: "end",
-                alignItems: "start",
-              }}
-            >
-              <FontAwesomeIcon
-                icon={faTrashCan}
-                style={{
-                  color: "var(--gray-light)",
-                }}
-              />
-            </Col>
-          </Row>
-        </Link>
-      ),
-    },
-
-    {
-      key: "4",
-      label: (
-        <Row
-          style={{
-            width: "260px",
-            height: "40px",
-            border: "1p solid var(--gray-light)",
-          }}
-          justify={"space-between"}
-        >
-          <Col
-            xxl={24}
-            xl={24}
-            lg={24}
-            md={24}
-            sm={24}
-            xs={24}
-            style={{
-              display: "flex",
-              justifyContent: "end",
-              alignItems: "center",
-              gap: "5px",
-            }}
-          >
-            <CustomText size={"14px"} weight={"400"} color={"var(--gray-dark)"}>
-              Total:
-            </CustomText>
-            <CustomText
-              size={"16px"}
-              weight={"600"}
-              color={"var(--black-text)"}
-            >
-              120.00$
-            </CustomText>
-          </Col>
-        </Row>
-      ),
-    },
-
-    {
-      key: "5",
-      label: (
-        <Row
-          style={{
-            width: "260px",
-            height: "40px",
-            border: "1p solid var(--gray-light)",
-          }}
-          justify={"space-between"}
-        >
-          <Col
-            xxl={24}
-            xl={24}
-            lg={24}
-            md={24}
-            sm={24}
-            xs={24}
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <Button>
-              <CustomText size={"12px"} weight={"600"} color={"var(--red)"}>
-                GO TO CART
-              </CustomText>
-            </Button>
-
-            <Button>
-              <CustomText size={"12px"} weight={"600"} color={"var(--red)"}>
-                CHECKOUT
-              </CustomText>
-            </Button>
-          </Col>
-        </Row>
-      ),
-    },
-  ];
-
   const handleLogout = async () => {
     dispatch(logout());
     dispatch(logoutCustomer());
@@ -489,6 +148,76 @@ export default function Header({ websiteInfo }) {
 
     navigate("/login");
   };
+
+  const items = [
+    {
+      key: "1",
+      label: (
+        <Link to="/profile">
+          <CustomText size={"12px"} weight={"400"} color={"var(--gray-dark)"}>
+            <FontAwesomeIcon
+              icon={faCircleUser}
+              style={{
+                marginRight: "8px",
+              }}
+            />
+            Profile
+          </CustomText>
+        </Link>
+      ),
+    },
+    {
+      key: "2",
+      label: (
+        <Link to="/room/bookings">
+          <CustomText size={"12px"} weight={"400"} color={"var(--gray-dark)"}>
+            <FontAwesomeIcon
+              icon={faHotel}
+              style={{
+                marginRight: "8px",
+              }}
+            />
+            Room Bookings
+          </CustomText>
+        </Link>
+      ),
+    },
+    {
+      key: "3",
+      label: (
+        <Link to="/tour/bookings">
+          <CustomText size={"12px"} weight={"400"} color={"var(--gray-dark)"}>
+            <FontAwesomeIcon
+              icon={faPlaneDeparture}
+              style={{
+                marginRight: "8px",
+              }}
+            />
+            Tour Bookings
+          </CustomText>
+        </Link>
+      ),
+    },
+    {
+      key: "4",
+      label: (
+        <CustomText
+          size={"12px"}
+          weight={"400"}
+          color={"var(--gray-dark)"}
+          onClick={handleLogout}
+        >
+          <FontAwesomeIcon
+            icon={faArrowRightFromBracket}
+            style={{
+              marginRight: "8px",
+            }}
+          />
+          Logout
+        </CustomText>
+      ),
+    },
+  ];
 
   return (
     <Row
@@ -561,26 +290,30 @@ export default function Header({ websiteInfo }) {
           >
             {sub ? (
               <>
-                <CustomText
-                  size={"12px"}
-                  weight={"600"}
-                  color={"var(--black-text)"}
-                  // link={"/login"}
-                >
-                  <FontAwesomeIcon
-                    icon={faUser}
+                <Dropdown menu={{ items }} placement="bottomRight">
+                  <Button
                     style={{
-                      marginRight: "3px",
+                      border: "0",
+                      padding: "0",
                     }}
-                  />
-                  {sub}
-                </CustomText>
-
+                  >
+                    <CustomText
+                      size={"12px"}
+                      weight={"600"}
+                      color={"var(--black-text)"}
+                    >
+                      Hello, {sub}
+                    </CustomText>
+                  </Button>
+                </Dropdown>
+              </>
+            ) : (
+              <>
                 <CustomText
                   size={"12px"}
                   weight={"600"}
                   color={"var(--black-text)"}
-                  onClick={handleLogout}
+                  link={"/login"}
                 >
                   <FontAwesomeIcon
                     icon={faArrowRightFromBracket}
@@ -588,55 +321,25 @@ export default function Header({ websiteInfo }) {
                       marginRight: "3px",
                     }}
                   />
-                  Logout
+                  Sign In
+                </CustomText>
+
+                <CustomText
+                  size={"11px"}
+                  weight={"600"}
+                  color={"var(--black-text)"}
+                  link={"/register"}
+                >
+                  <FontAwesomeIcon
+                    icon={faUserPlus}
+                    style={{
+                      marginRight: "3px",
+                    }}
+                  />
+                  Register
                 </CustomText>
               </>
-            ) : (
-              <CustomText
-                size={"12px"}
-                weight={"600"}
-                color={"var(--black-text)"}
-                link={"/login"}
-              >
-                <FontAwesomeIcon
-                  icon={faArrowRightFromBracket}
-                  style={{
-                    marginRight: "3px",
-                  }}
-                />
-                Sign In
-              </CustomText>
             )}
-
-            {/* <CustomText
-              size={"11px"}
-              weight={"600"}
-              color={"var(--black-text)"}
-              link={"/withlist"}
-            >
-              <FontAwesomeIcon
-                icon={faHeart}
-                style={{
-                  marginRight: "3px",
-                }}
-              />
-              Withlist
-            </CustomText> */}
-
-            <CustomText
-              size={"11px"}
-              weight={"600"}
-              color={"var(--black-text)"}
-              link={"/register"}
-            >
-              <FontAwesomeIcon
-                icon={faUserPlus}
-                style={{
-                  marginRight: "3px",
-                }}
-              />
-              Register
-            </CustomText>
           </Col>
         </Row>
       </Row>

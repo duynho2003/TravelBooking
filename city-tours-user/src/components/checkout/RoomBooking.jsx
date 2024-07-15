@@ -67,9 +67,13 @@ const { useBreakpoint } = Grid;
 export default function RoomBooking({ tour }) {
   const roomBookingData = useSelector((state) => state.hotels?.roomBooking);
   const userId = useSelector((state) => state.auth?.info?.id);
-  const customerName = useSelector((state) => state.auth?.info?.customerName);
-  const phone = useSelector((state) => state.auth?.info?.phone);
-  const address = useSelector((state) => state.auth?.info?.address);
+  const customerName = useSelector(
+    (state) => state.customer?.info?.customer?.name
+  );
+  const phone = useSelector((state) => state.customer?.info?.customer?.phone);
+  const address = useSelector(
+    (state) => state.customer?.info?.customer?.address
+  );
 
   const [value, setValue] = useState(1);
   const [quantityAdults, setQuantityAdults] = useState(1);
@@ -107,8 +111,6 @@ export default function RoomBooking({ tour }) {
     setQuantityBaby(value);
   };
 
-  console.log(quantityAdults);
-
   // Handle event
   const handleAddCustomer = async () => {
     if (customerName === "" && phone === "" && address === "") {
@@ -138,7 +140,7 @@ export default function RoomBooking({ tour }) {
       date: roomBookingData?.date,
       startHour: roomBookingData?.startHour,
       endHour: roomBookingData?.endHour,
-      price: roomBookingData?.price,
+      price: roomBookingData?.totalAmount,
       roomType: roomBookingData?.type,
       bookingStatus: "SUCCESS",
     };
@@ -154,7 +156,7 @@ export default function RoomBooking({ tour }) {
   };
 
   const handleCreateOrder = async () => {
-    const amount = roomBookingData?.price;
+    const amount = roomBookingData?.totalAmount;
 
     const orderInfo = "BOOKING ROOM IN HOTEL";
     const urlVNPay = `http://localhost:5050/api/v1/payments/createOrder?amount=${amount}&orderInfo=${orderInfo}`;
@@ -716,7 +718,7 @@ export default function RoomBooking({ tour }) {
                       weight={"400"}
                       color={"var(--gray-text)"}
                     >
-                      {roomBookingData?.date}
+                      {roomBookingData?.startHour}
                     </CustomText>
                   </Col>
                 </Row>
@@ -759,7 +761,7 @@ export default function RoomBooking({ tour }) {
                       weight={"400"}
                       color={"var(--gray-text)"}
                     >
-                      {roomBookingData?.date}
+                      {roomBookingData?.endHour}
                     </CustomText>
                   </Col>
                 </Row>
@@ -893,7 +895,9 @@ export default function RoomBooking({ tour }) {
                       {new Intl.NumberFormat("vi-VN", {
                         style: "currency",
                         currency: "VND",
-                      }).format(roomBookingData?.price)}
+                      }).format(
+                        roomBookingData?.price + roomBookingData?.discount
+                      )}
                     </CustomText>
                   </Col>
                 </Row>
@@ -938,9 +942,7 @@ export default function RoomBooking({ tour }) {
                       {new Intl.NumberFormat("vi-VN", {
                         style: "currency",
                         currency: "VND",
-                      }).format(
-                        roomBookingData?.price - roomBookingData?.discount
-                      )}
+                      }).format(roomBookingData?.price)}
                     </CustomText>
                   </Col>
                 </Row>

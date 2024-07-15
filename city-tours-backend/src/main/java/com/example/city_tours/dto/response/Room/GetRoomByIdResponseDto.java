@@ -1,6 +1,7 @@
 package com.example.city_tours.dto.response.Room;
 
 import com.example.city_tours.dto.response.RoomBooking.GetRoomBookingResponseDto;
+import com.example.city_tours.dto.response.RoomHoliday.GetAllRoomHolidaysResponseDto;
 import com.example.city_tours.dto.response.Tour.GetTourRoomBookingResponseDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,12 +20,15 @@ public class GetRoomByIdResponseDto {
     private Long id;
     private String roomNumber;
     private String type;
-    private Double price;
+    private Double basePrice;
+    private Double weekendPrice;
     private Double discount;
+    private int numberOfResidents;
     private String bookedStatus;
     private String activeStatus;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private List<GetAllRoomHolidaysResponseDto> roomHolidays;
     private List<GetRoomBookingResponseDto> roomBookings;
     private List<GetTourRoomBookingResponseDto> tourRoomBookings;
     private List<String> imageUrls;

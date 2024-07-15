@@ -12,30 +12,30 @@ import Banner from "../components/checkout/Banner";
 import List from "../components/wishlist/List";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import Loading from "../components/common/Loading";
+import { getAllWishlistsByUserId } from "../features/wishlist/WishlistSlice";
 
 export default function Wishlist() {
   // Redux State
   const dispatch = useDispatch();
+  const userId = useSelector((state) => state.auth?.info?.id);
+  const wishlists = useSelector((state) => state.wishlists?.list);
 
   // Local State
-  const [wishlist, setWishlist] = useState([]);
   const [showContent, setShowContent] = useState(false);
 
   // useEffect for loading data
   useEffect(() => {
-    const getWishlistFromLocalStorage = () => {
-      if (localStorage.getItem("wishlist")) {
-        const data = JSON.parse(localStorage.getItem("wishlist"));
-        setWishlist(data);
-        console.log("wishlist: ", data);
-      }
+    dispatch(getAllWishlistsByUserId(userId))
+      .then(() => {
+        scrollToTop();
 
-      setTimeout(() => {
-        setShowContent(true);
-      }, 1000);
-    };
-
-    getWishlistFromLocalStorage();
+        setTimeout(() => {
+          setShowContent(true);
+        }, 1000);
+      })
+      .catch((error) => {
+        console.error(error.message);
+      });
   }, [dispatch]);
 
   const scrollToTop = () => {
@@ -59,7 +59,7 @@ export default function Wishlist() {
               height: "110px",
             }}
           ></Row>
-          <List wishlist={wishlist} setWishlist={setWishlist} />
+          <List userId={userId} wishlists={wishlists} />
         </>
       )}
     </>

@@ -4,24 +4,23 @@ import com.example.city_tours.dto.request.User.CreateAccountRequestDto;
 import com.example.city_tours.dto.request.User.UpdateAccountRequestDto;
 import com.example.city_tours.dto.response.Customer.CreateCustomerResponseDto;
 import com.example.city_tours.dto.response.RoomBooking.GetRoomBookingResponseDto;
+import com.example.city_tours.dto.response.TourBooking.GetAllTourBookingsResponseDto;
+import com.example.city_tours.dto.response.TourBooking.GetATourBookingResponseDto;
 import com.example.city_tours.dto.response.User.*;
-import com.example.city_tours.entity.Customer;
-import com.example.city_tours.entity.Role;
-import com.example.city_tours.entity.RoomBooking;
-import com.example.city_tours.entity.User;
+import com.example.city_tours.entity.*;
 import com.example.city_tours.enums.UserStatus;
 import com.example.city_tours.exception.EmailAlreadyExistsException;
 import com.example.city_tours.exception.ResourceNotFoundException;
 import com.example.city_tours.exception.UsernameAlreadyExistsException;
 import com.example.city_tours.repository.RoleRepository;
 import com.example.city_tours.repository.RoomBookingRepository;
+import com.example.city_tours.repository.TourBookingRepository;
 import com.example.city_tours.repository.UserRepository;
 import jakarta.persistence.criteria.Predicate;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -40,6 +39,7 @@ public class UserServiceImpl implements UserService{
 
     private final RoleRepository roleRepository;
     private final RoomBookingRepository roomBookingRepository;
+    private final TourBookingRepository tourBookingRepository;
 
     @Override
     public CreateAccountResponseDto createAccount(CreateAccountRequestDto createAccountRequestDto) {
@@ -176,7 +176,6 @@ public class UserServiceImpl implements UserService{
 
         responseDto.setId(user.getId());
         responseDto.setUsername(user.getUsername());
-        responseDto.setPassword(user.getPassword());
         responseDto.setEmail(user.getEmail());
         responseDto.setRoles(user.getRoles().stream().map(Role::getName).collect(Collectors.toSet()));
         responseDto.setStatus(user.getStatus().toString());
@@ -219,6 +218,32 @@ public class UserServiceImpl implements UserService{
             }
 
             responseDto.setRoomBookings(roomBookingsDto);
+
+            List<TourBooking> tourBookings = tourBookingRepository.findByCustomerId(customer.getId());
+
+            List<GetATourBookingResponseDto> responseDtoList = new ArrayList<>();
+
+            // Convert tours to GetAllAccountsResponseDto
+            for (TourBooking tourBooking : tourBookings) {
+                GetATourBookingResponseDto aTourBookingResponseDto = new GetATourBookingResponseDto();
+                aTourBookingResponseDto.setId(tourBooking.getId());
+                aTourBookingResponseDto.setAdults(tourBooking.getAdults());
+                aTourBookingResponseDto.setChildren(tourBooking.getChildren());
+                aTourBookingResponseDto.setBaby(tourBooking.getBaby());
+                aTourBookingResponseDto.setAmount(tourBooking.getAmount());
+                aTourBookingResponseDto.setBookingStatus(tourBooking.getBookingStatus().toString());
+                aTourBookingResponseDto.setTourId(tourBooking.getTour().getId());
+                aTourBookingResponseDto.setTourName(tourBooking.getTour().getName());
+                aTourBookingResponseDto.setCustomerId(tourBooking.getCustomer().getId());
+                aTourBookingResponseDto.setCustomerName(tourBooking.getCustomer().getName());
+                aTourBookingResponseDto.setCreatedAt(tourBooking.getCreatedAt());
+                aTourBookingResponseDto.setUpdatedAt(tourBooking.getUpdatedAt());
+
+                // Add responseDto to the list
+                responseDtoList.add(aTourBookingResponseDto);
+            }
+
+            responseDto.setTourBookings(responseDtoList);
         }
 
         return responseDto;

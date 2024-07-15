@@ -20,19 +20,13 @@ public class TourBooking {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private int adults;
-
     private int children;
-
     private int baby;
-
     private Double amount;
-
+    private String startTime;
     private BookingStatus bookingStatus;
-
     private LocalDateTime createdAt;
-
     private LocalDateTime updatedAt;
 
     @ManyToOne(fetch = FetchType.EAGER)

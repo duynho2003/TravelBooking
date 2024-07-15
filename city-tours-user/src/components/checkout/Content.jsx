@@ -67,10 +67,13 @@ const { useBreakpoint } = Grid;
 export default function Content({ tour }) {
   const tourBookingData = useSelector((state) => state.tours?.tourBooking);
   const userId = useSelector((state) => state.auth?.info?.id);
-  const customerName = useSelector((state) => state.auth?.info?.customerName);
-  const phone = useSelector((state) => state.auth?.info?.phone);
-  const address = useSelector((state) => state.auth?.info?.address);
-
+  const customerName = useSelector(
+    (state) => state.customer?.info?.customer?.name
+  );
+  const phone = useSelector((state) => state.customer?.info?.customer?.phone);
+  const address = useSelector(
+    (state) => state.customer?.info?.customer?.address
+  );
   const [value, setValue] = useState(1);
   const [quantityAdults, setQuantityAdults] = useState(1);
   const [quantityChildren, setQuantityChildren] = useState(0);
@@ -139,6 +142,7 @@ export default function Content({ tour }) {
     const dataBooking = {
       tourId: tourBookingData?.tourId,
       userId: userId,
+      startTime: tourBookingData?.startTime,
       adults: tourBookingData?.adults,
       children: tourBookingData?.children,
       baby: tourBookingData?.baby,
@@ -684,6 +688,49 @@ export default function Content({ tour }) {
                   borderBottomRightRadius: "3px",
                 }}
               >
+                {/* Start Time */}
+                <Row
+                  style={{
+                    width: "100%",
+                    padding: "10px 0",
+                    borderTop: "1px solid var(--border)",
+                    borderBottom: "1px solid var(--border)",
+                  }}
+                  justify={"space-between"}
+                >
+                  <Col
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "5px",
+                    }}
+                  >
+                    <CustomText
+                      size={"14px"}
+                      weight={"400"}
+                      color={"var(--gray-text)"}
+                    >
+                      Start Time
+                    </CustomText>
+                  </Col>
+
+                  <Col
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "5px",
+                    }}
+                  >
+                    <CustomText
+                      size={"14px"}
+                      weight={"400"}
+                      color={"var(--gray-text)"}
+                    >
+                      {tourBookingData?.startTime}
+                    </CustomText>
+                  </Col>
+                </Row>
+
                 {/* Adults */}
                 <Row
                   style={{

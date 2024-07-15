@@ -1,40 +1,25 @@
 package com.example.city_tours.service;
 
-import com.example.city_tours.dto.request.Tour.CreateTourRequestDto;
-import com.example.city_tours.dto.request.Tour.UpdateTourRequestDto;
 import com.example.city_tours.dto.request.TourRoomBooking.CreateTourRoomBookingRequestDto;
-import com.example.city_tours.dto.response.Tour.CreateTourResponseDto;
-import com.example.city_tours.dto.response.Tour.GetAllToursResponseDto;
-import com.example.city_tours.dto.response.Tour.GetTourByIdResponseDto;
-import com.example.city_tours.dto.response.Tour.UpdateTourResponseDto;
 import com.example.city_tours.dto.response.TourRoomBooking.CreateTourRoomBookingResponseDto;
 import com.example.city_tours.entity.Room;
-import com.example.city_tours.entity.Schedule;
 import com.example.city_tours.entity.Tour;
 import com.example.city_tours.entity.TourRoomBooking;
-import com.example.city_tours.enums.ActiveStatus;
-import com.example.city_tours.enums.BookedStatus;
 import com.example.city_tours.exception.ResourceNotFoundException;
 import com.example.city_tours.repository.RoomRepository;
-import com.example.city_tours.repository.ScheduleRepository;
 import com.example.city_tours.repository.TourRepository;
 import com.example.city_tours.repository.TourRoomBookingRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
 public class TourRoomBookingServiceImpl implements TourRoomBookingService{
 
     private final TourRepository tourRepository;
-    private final ScheduleRepository scheduleRepository;
     private final TourRoomBookingRepository tourRoomBookingRepository;
     private final RoomRepository roomRepository;
 

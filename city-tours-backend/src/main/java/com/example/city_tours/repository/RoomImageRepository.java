@@ -8,5 +8,4 @@ import java.util.List;
 public interface RoomImageRepository extends JpaRepository<RoomImage, Long> {
     List<RoomImage> findByRoomId(Long roomId);
 
-    void deleteAllByRoomId(Long roomId);
 }

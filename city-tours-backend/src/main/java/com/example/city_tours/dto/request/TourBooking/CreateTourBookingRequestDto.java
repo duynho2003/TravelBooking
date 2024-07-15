@@ -13,6 +13,7 @@ public class CreateTourBookingRequestDto {
 
     private Long tourId;
     private Long userId;
+    private String startTime;
     private int adults;
     private int children;
     private int baby;

@@ -16,8 +16,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     boolean existsByEmail(String email);
 
-    @Query(value = "SELECT u FROM User u ORDER BY u.id")
-    List<User> findAllWithPagination(int limit, int offset);
-
     Page<User> findAll(Specification<User> spec, Pageable pageable);
+
 }

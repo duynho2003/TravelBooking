@@ -2,7 +2,6 @@ package com.example.city_tours.entity;
 
 import com.example.city_tours.enums.ActiveStatus;
 import com.example.city_tours.enums.BookedStatus;
-import com.example.city_tours.enums.UserStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -27,11 +26,12 @@ public class Tour {
     private String name;
     @Column(columnDefinition = "LONGTEXT")
     private String description;
+    @Column(columnDefinition = "LONGTEXT")
+    private String detail;
     private Double price;
     private Double discount;
     private String locations;
     private String depart;
-    private String startTime;
     private Double rating;
     private int numberOfRating;
     private int adults;
@@ -43,11 +43,10 @@ public class Tour {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinTable(name = "tours_schedules",
-            joinColumns = @JoinColumn(name = "tour_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "schedule_id", referencedColumnName = "id"))
+    @OneToMany(mappedBy = "tour", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Set<TourTime> tourTimes;
 
-    private Set<Schedule> schedules;
+    @OneToMany(mappedBy = "tour", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Set<TourLocation> tourLocations;
 
 }

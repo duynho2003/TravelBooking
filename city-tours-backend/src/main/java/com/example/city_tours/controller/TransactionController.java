@@ -166,7 +166,7 @@ public class TransactionController {
 //        }
 //    }
 //
-    @PreAuthorize("hasAuthority('READ_ACCOUNT')")
+    @PreAuthorize("hasAnyRole('ROLE_STAFF', 'ROLE_ADMIN')")
     @GetMapping("")
     public ResponseEntity<?> getAllTransactions(
             @RequestParam(defaultValue = "1") int page,

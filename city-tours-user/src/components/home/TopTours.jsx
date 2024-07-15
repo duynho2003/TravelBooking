@@ -1,4 +1,15 @@
-import { Col, Row, Grid, Image, Card, Rate, Button, Tooltip, Tag } from "antd";
+import {
+  Col,
+  Row,
+  Grid,
+  Image,
+  Card,
+  Rate,
+  Button,
+  Tooltip,
+  Tag,
+  notification,
+} from "antd";
 import item from "../../assets/images/item.webp";
 import CustomText from "../common/CustomText";
 import {
@@ -13,15 +24,20 @@ import {
   faPersonBreastfeeding,
   faPlaneDeparture,
 } from "@fortawesome/free-solid-svg-icons";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import badgeSave from "../../assets/images/badge_save.png";
 import { faUser } from "@fortawesome/free-regular-svg-icons";
-import { useEffect, useState } from "react";
+import { createWishlist } from "../../features/wishlist/WishlistSlice";
+import { useDispatch } from "react-redux";
 
 const { useBreakpoint } = Grid;
 
-export default function TopTours({ tours }) {
+export default function TopTours({ userId, tours }) {
   const screens = useBreakpoint();
+
+  const navigate = useNavigate();
+
+  const dispatch = useDispatch();
 
   const customIcons = {
     1: <FrownOutlined />,
@@ -31,42 +47,67 @@ export default function TopTours({ tours }) {
     5: <SmileOutlined />,
   };
 
-  const [wishlist, setWishlist] = useState([]);
+  const handleAddWishlist = async (tourId) => {
+    if (!userId) {
+      alert("Please login before adding to wishlists");
+      navigate("/login");
+      return;
+    }
 
-  useEffect(() => {
-    const getWishlistFromLocalStorage = () => {
-      if (localStorage.getItem("wishlist")) {
-        const data = JSON.parse(localStorage.getItem("wishlist"));
-        setWishlist(data);
-        console.log("wishlist: ", data);
-      }
-    };
-
-    getWishlistFromLocalStorage();
-  }, []);
-
-  const handleAddWishlist = (tourId) => {
-    // Add tourId to wishlist
     const tour = tours?.find((tour) => tour?.id === tourId);
 
     console.log("tour: ", tour);
 
-    // Check if tour is already in wishlist
-    const isWishlist = wishlist?.some((item) => item.id === tourId);
-    if (isWishlist) {
-      alert("Item is already in wishlist");
-      return;
+    const newData = {
+      name: tour?.name,
+      rating: tour?.rating,
+      numberOfRating: tour?.numberOfRating,
+      price:
+        tour?.price - tour?.discount != null
+          ? (tour?.price - tour?.discount).toString()
+          : "",
+      description: tour?.description,
+      thumbnail: tour?.thumbnail,
+      type: "TOUR",
+      itemId: tour?.id,
+      userId: userId,
+    };
+
+    console.log("newData: ", newData);
+
+    try {
+      const action = await dispatch(createWishlist(newData));
+
+      console.log("action: ", action);
+
+      if (createWishlist.fulfilled.match(action)) {
+        if (action?.payload?.status === 201) {
+          notification.success({
+            message: "Add item to wishlist successful",
+            description: "Successfully added the item to your wishlist",
+          });
+        } else {
+          const error =
+            action?.payload?.error?.data?.message || "Unknown error";
+          notification.error({
+            message: "Add item to wishlist error",
+            description: error,
+          });
+        }
+      } else if (createWishlist.rejected.match(action)) {
+        const error = action?.payload?.error.message || "Unknown error";
+        notification.error({
+          message: "Add item to wishlist error",
+          description: error,
+        });
+      }
+    } catch (error) {
+      notification.error({
+        message: "System error",
+        description:
+          "The server couldn't fulfill a valid request due to an issue with the server.",
+      });
     }
-
-    // Add tour to wishlist state
-    setWishlist([...wishlist, tour], console.log("wishlist: ", wishlist));
-
-    // Update localStorage
-    const updatedWishlist = [...wishlist, tour];
-
-    localStorage.setItem("wishlist", JSON.stringify(updatedWishlist));
-
-    console.log("Updated wishlist: ", updatedWishlist);
   };
 
   return (
@@ -229,19 +270,21 @@ export default function TopTours({ tours }) {
                       padding: "15px",
                     }}
                   >
-                    <CustomText
-                      size={"15px"}
-                      weight={"500"}
-                      color={"var(--white)"}
-                    >
-                      <FontAwesomeIcon
-                        icon={faPlaneDeparture}
-                        style={{
-                          marginRight: "5px",
-                        }}
-                      />
-                      {tour?.name}
-                    </CustomText>
+                    <div className="truncated-text">
+                      <CustomText
+                        size={"15px"}
+                        weight={"500"}
+                        color={"var(--white)"}
+                      >
+                        <FontAwesomeIcon
+                          icon={faPlaneDeparture}
+                          style={{
+                            marginRight: "5px",
+                          }}
+                        />
+                        {tour?.name}
+                      </CustomText>
+                    </div>
 
                     <Col
                       style={{
@@ -331,7 +374,7 @@ export default function TopTours({ tours }) {
                         weight={"400"}
                         color={"var(--white)"}
                       >
-                        <FontAwesomeIcon icon={faChild} /> ({tour?.children})
+                        <FontAwesomeIcon icon={faChild} /> ({tour?.child})
                       </CustomText>
                     </Tag>
                     <Tag color="var(--green-dark)">

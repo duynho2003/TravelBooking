@@ -3,37 +3,22 @@ package com.example.city_tours.controller;
 import com.example.city_tours.common.ApiErrorResponse;
 import com.example.city_tours.common.ApiSuccessResponse;
 import com.example.city_tours.common.ErrorCode;
-import com.example.city_tours.dto.request.Tour.CreateScheduleDaysTimeRequestDto;
-import com.example.city_tours.dto.request.Tour.CreateScheduleRequestDto;
 import com.example.city_tours.dto.request.Tour.CreateTourRequestDto;
 import com.example.city_tours.dto.request.Tour.UpdateTourRequestDto;
-import com.example.city_tours.dto.request.Website.CreateInfoRequestDto;
-import com.example.city_tours.dto.request.Website.UpdateInfoRequestDto;
 import com.example.city_tours.dto.response.Tour.CreateTourResponseDto;
-import com.example.city_tours.dto.response.Tour.GetAllToursResponseDto;
 import com.example.city_tours.dto.response.Tour.GetTourByIdResponseDto;
 import com.example.city_tours.dto.response.Tour.UpdateTourResponseDto;
-import com.example.city_tours.dto.response.User.GetAccountByIdResponseDto;
-import com.example.city_tours.dto.response.User.GetAllAccountsResponseDto;
 import com.example.city_tours.dto.response.User.PageResponseDto;
-import com.example.city_tours.dto.response.Website.CreateInfoResponseDto;
-import com.example.city_tours.dto.response.Website.GetInfoResponseDto;
-import com.example.city_tours.dto.response.Website.UpdateInfoResponseDto;
-import com.example.city_tours.entity.Schedule;
+import com.example.city_tours.exception.ResourceCanNotBeDeletedException;
 import com.example.city_tours.exception.ResourceNotFoundException;
 import com.example.city_tours.exception.ServerErrorException;
 import com.example.city_tours.repository.TourRepository;
 import com.example.city_tours.service.TourService;
-import com.example.city_tours.service.WebsiteService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.util.*;
 
 @AllArgsConstructor
 @RestController
@@ -100,11 +85,21 @@ public class TourController {
             tourService.deleteTour(tourId);
 
             return ResponseEntity
-                    .status(HttpStatus.CREATED)
+                    .status(HttpStatus.OK)
                     .body(new ApiSuccessResponse<>(
-                            HttpStatus.CREATED.value(),
+                            HttpStatus.OK.value(),
                             "Deleted tour successfully",
                             null
+                    ));
+        } catch (ResourceCanNotBeDeletedException e) {
+            // Return error response for resource not found
+            return ResponseEntity
+                    .status(HttpStatus.CONFLICT)
+                    .body(new ApiErrorResponse(
+                            HttpStatus.CONFLICT.value(),
+                            e.getMessage(),
+                            ErrorCode.NOT_FOUND,
+                            "http://localhost:5050/docs/errors/1015"
                     ));
         } catch (ServerErrorException e) {
             return ResponseEntity
@@ -128,11 +123,12 @@ public class TourController {
             @RequestParam(defaultValue = "") String status,
             @RequestParam(defaultValue = "0") Double startPrice,
             @RequestParam(defaultValue = "10000000") Double endPrice,
-            @RequestParam(defaultValue = "") String review
+            @RequestParam(defaultValue = "") String review,
+            @RequestParam(defaultValue = "") String rating
     ) {
         try {
             // Call userService to get a page of accounts
-            PageResponseDto responsePage = tourService.getAllTours(page, limit, search, date, status, startPrice, endPrice, review);
+            PageResponseDto responsePage = tourService.getAllTours(page, limit, search, date, status, startPrice, endPrice, review, rating);
 
             // Return success response
             return ResponseEntity

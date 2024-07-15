@@ -28,7 +28,7 @@ public interface HotelService {
     //
 //    void deleteTour(Long tourId);
 //
-    PageResponseDto getAllHotels(int page, int limit, String search, String review);
+    PageResponseDto getAllHotels(int page, int limit, String search, String review, String rating);
 
     GetHotelByIdResponseDto getHotelById(Long hotelId);
 

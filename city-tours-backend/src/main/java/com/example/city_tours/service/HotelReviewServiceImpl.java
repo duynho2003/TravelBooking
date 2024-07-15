@@ -32,7 +32,6 @@ import java.util.stream.Collectors;
 public class HotelReviewServiceImpl implements HotelReviewService{
 
     private final TourRepository tourRepository;
-    private final ScheduleRepository scheduleRepository;
     private final TourRoomBookingRepository tourRoomBookingRepository;
     private final RoomRepository roomRepository;
     private final CustomerRepository customerRepository;

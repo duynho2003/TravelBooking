@@ -58,6 +58,7 @@ public class RoomBookingController {
         }
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_STAFF', 'ROLE_ADMIN')")
     @GetMapping("")
     public ResponseEntity<?> getAllRoomBookings(
             @RequestParam(defaultValue = "1") int page,
@@ -73,6 +74,48 @@ public class RoomBookingController {
                     .body(new ApiSuccessResponse<>(
                             HttpStatus.OK.value(),
                             "Get all room bookings successfully",
+                            responsePage
+                    ));
+        } catch (ResourceNotFoundException e) {
+            // Return error response for resource not found
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(new ApiErrorResponse(
+                            HttpStatus.NOT_FOUND.value(),
+                            e.getMessage(),
+                            ErrorCode.NOT_FOUND,
+                            "http://localhost:5050/docs/errors/1015"
+                    ));
+        } catch (ServerErrorException e) {
+            // Return error response for server error
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiErrorResponse(
+                            HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                            e.getMessage(),
+                            ErrorCode.INTERNAL_SERVER_ERROR,
+                            "http://localhost:5050/docs/errors/1012"
+                    ));
+        }
+    }
+
+    @PreAuthorize("hasAnyRole('ROLE_CUSTOMER', 'ROLE_STAFF', 'ROLE_ADMIN')")
+    @GetMapping("/{userId}")
+    public ResponseEntity<?> getAllRoomBookingsByUserId(
+            @PathVariable Long userId,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int limit
+    ) {
+        try {
+            // Call userService to get a page of accounts
+            PageResponseDto responsePage = roomBookingService.getRoomBookingsByUserId(userId, page, limit);
+
+            // Return success response
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(new ApiSuccessResponse<>(
+                            HttpStatus.OK.value(),
+                            "Get all room bookings by userId successfully",
                             responsePage
                     ));
         } catch (ResourceNotFoundException e) {

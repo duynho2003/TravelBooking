@@ -22,22 +22,22 @@ public class Room {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String roomNumber;
-
     private String type;
-
-    private Double price;
-
+    private Double basePrice;
+    private Double weekendPrice;
     private Double discount;
-
+    private int numberOfResidents;
     private BookedStatus bookedStatus;
-
     private ActiveStatus activeStatus;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "room_id")
     private Set<RoomImage> images;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "room_id")
+    private Set<RoomHoliday> roomHolidays;
 
     @ManyToMany(mappedBy = "rooms")
     private Set<Hotel> hotels;

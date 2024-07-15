@@ -17,9 +17,11 @@ export default function Home() {
   // Constants
   const INIT_PAGE = 1;
   const INIT_LIMIT = 6;
+  const RATING_DESC = "increment";
 
   // Redux State
   const dispatch = useDispatch();
+  const userId = useSelector((state) => state.auth?.info?.id);
   const provinces = useSelector((state) => state.provinces?.list);
   const tours = useSelector((state) => state.tours?.list);
   const hotels = useSelector((state) => state.hotels?.list);
@@ -41,13 +43,19 @@ export default function Home() {
           minPrice: "0",
           maxPrice: "5000000",
           review: "",
+          rating: RATING_DESC,
         })
       );
 
     // Function to fetch hotels
     const fetchHotels = () =>
       dispatch(
-        getAllHotels({ page: INIT_PAGE, limit: INIT_LIMIT, review: "" })
+        getAllHotels({
+          page: INIT_PAGE,
+          limit: INIT_LIMIT,
+          review: "",
+          rating: RATING_DESC,
+        })
       );
 
     // Using Promise.all to wait for both requests to complete
@@ -94,8 +102,8 @@ export default function Home() {
           <CarouselSlider />
           <Categories />
           <ProminentHotelAreas provinces={provinces} />
-          <TopTours tours={tours} />
-          <TopHotels hotels={hotels} />
+          <TopTours userId={userId} tours={tours} />
+          <TopHotels userId={userId} hotels={hotels} />
           <Plan />
         </>
       )}

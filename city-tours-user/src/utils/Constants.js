@@ -51,6 +51,8 @@ export const API_ROUTE = {
   // Customer
   CREATE_CUSTOMER: "v1/customers",
 
+  UPDATE_CUSTOMER: "v1/customers/",
+
   GET_INFO_CUSTOMER: "v1/users/",
 
   // Review
@@ -62,4 +64,20 @@ export const API_ROUTE = {
 
   // Provinces
   GET_ALL_PROVINCES: "v1/provinces",
+
+  // Wishlists
+  GET_ALL_WISHLISTS_BY_USERID: "v1/wishlists/",
+
+  CREATE_WISHLIST: "v1/wishlists",
+
+  DELETE_WISHLIST: "v1/wishlists/",
+
+  // Room Bookings
+  GET_ALL_ROOM_BOOKINGS_BY_USERID: "v1/roomBookings/",
+
+  GET_ALL_TOUR_BOOKINGS_BY_USERID: "v1/tourBookings/",
 };
+
+export const GOONG_MAP_KEY = "aYbfxXr0PAM8A6PWL0QzxozzhVW2Jh5u8cpatpVN";
+
+export const API_KEY = "SCaIqymW5vCSNG158cOMc3VYYi6HOlsLCjfKwBgL";

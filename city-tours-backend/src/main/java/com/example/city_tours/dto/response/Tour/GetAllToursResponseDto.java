@@ -1,6 +1,7 @@
 package com.example.city_tours.dto.response.Tour;
 
-import com.example.city_tours.entity.Schedule;
+import com.example.city_tours.dto.response.TourLocation.GetATourLocationResponseDto;
+import com.example.city_tours.dto.response.TourTime.GetATourTimeResponseDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,7 +9,6 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Set;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -26,7 +26,7 @@ public class GetAllToursResponseDto {
     private String locations;
     private String depart;
     private int adults;
-    private int children;
+    private int child;
     private int baby;
     private String code;
     private String thumbnail;
@@ -35,6 +35,7 @@ public class GetAllToursResponseDto {
     private String activeStatus;
     private LocalDateTime createdAt;
     private LocalDateTime updateAt;
-    private List<Schedule> schedules;
+    private List<GetATourTimeResponseDto> tourTimes;
+    private List<GetATourLocationResponseDto> tourLocations;
 
 }

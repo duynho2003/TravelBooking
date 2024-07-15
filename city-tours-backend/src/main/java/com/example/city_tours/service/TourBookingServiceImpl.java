@@ -5,9 +5,11 @@ import com.example.city_tours.dto.request.TourBooking.UpdateTourBookingRequestDt
 import com.example.city_tours.dto.request.TourRoomBooking.CreateTourRoomBookingRequestDto;
 import com.example.city_tours.dto.response.Tour.GetAllToursResponseDto;
 import com.example.city_tours.dto.response.TourBooking.CreateTourBookingResponseDto;
+import com.example.city_tours.dto.response.TourBooking.GetAllTourBookingsByUserIdResponseDto;
 import com.example.city_tours.dto.response.TourBooking.GetAllTourBookingsResponseDto;
 import com.example.city_tours.dto.response.TourBooking.UpdateTourBookingResponseDto;
 import com.example.city_tours.dto.response.TourRoomBooking.CreateTourRoomBookingResponseDto;
+import com.example.city_tours.dto.response.User.PageResponseDto;
 import com.example.city_tours.entity.*;
 import com.example.city_tours.enums.ActiveStatus;
 import com.example.city_tours.enums.BookingStatus;
@@ -33,7 +35,6 @@ import java.util.stream.Collectors;
 public class TourBookingServiceImpl implements TourBookingService{
 
     private final TourRepository tourRepository;
-    private final ScheduleRepository scheduleRepository;
     private final TourRoomBookingRepository tourRoomBookingRepository;
     private final RoomRepository roomRepository;
     private final CustomerRepository customerRepository;
@@ -67,6 +68,7 @@ public class TourBookingServiceImpl implements TourBookingService{
 
         TourBooking tourBooking = new TourBooking();
 
+        tourBooking.setStartTime(requestDto.getStartTime());
         tourBooking.setAdults(requestDto.getAdults());
         tourBooking.setChildren(requestDto.getChildren());
         tourBooking.setBaby(requestDto.getBaby());
@@ -82,6 +84,7 @@ public class TourBookingServiceImpl implements TourBookingService{
         CreateTourBookingResponseDto tourBookingResponseDto = new CreateTourBookingResponseDto();
 
         tourBookingResponseDto.setId(savedTourBooking.getId());
+        tourBookingResponseDto.setStartTime(savedTourBooking.getStartTime());
         tourBookingResponseDto.setAdults(savedTourBooking.getAdults());
         tourBookingResponseDto.setChildren(savedTourBooking.getChildren());
         tourBookingResponseDto.setBaby(savedTourBooking.getBaby());
@@ -237,14 +240,29 @@ public class TourBookingServiceImpl implements TourBookingService{
 //    }
 //
     @Override
-    public List<GetAllTourBookingsResponseDto> getAllTourBookings(int page, int limit) {
-        // Calculate the offset based on page and limit
-        int offset = (page - 1) * limit;
-
+    public PageResponseDto getAllTourBookings(int page, int limit, String tourName, Integer tourId) {
         // Fetch tours from the repository with pagination
         Pageable pageable = PageRequest.of(page - 1, limit);
 
-        Page<TourBooking> tourBookingPage = tourBookingRepository.findAll(pageable);
+        Specification<Tour> spec = (root, query, cb) -> {
+            Predicate predicate = cb.conjunction(); // Start with an "AND" conjunction
+
+            if (tourName != null && !tourName.isEmpty()) {
+                Predicate tourNamePredicate = cb.like(cb.lower(root.get("tour").get("name")), "%" + tourName.toLowerCase() + "%");
+                predicate = cb.and(predicate, tourNamePredicate);
+            }
+
+            if (tourId != null) {
+                Predicate tourIdPredicate = cb.equal(root.get("tour").get("id"), tourId);
+                predicate = cb.and(predicate, tourIdPredicate);
+            }
+
+            return predicate;
+        };
+
+        Page<TourBooking> tourBookingPage = tourBookingRepository.findAll(spec, pageable);
+
+        long totalTourBookings = tourBookingPage.getTotalElements();
 
         // Retrieve the content from the fetched page
         List<TourBooking> tourBookings = tourBookingPage.getContent();
@@ -277,8 +295,91 @@ public class TourBookingServiceImpl implements TourBookingService{
             responseDtoList.add(responseDto);
         }
 
+        int skip = (page - 1) * limit;
+
+        // Prepare the response structure
+        PageResponseDto<GetAllTourBookingsResponseDto> pageResponseDto = new PageResponseDto<>();
+        pageResponseDto.setData(responseDtoList);
+        pageResponseDto.setPage(page);
+        pageResponseDto.setLimit(limit);
+        pageResponseDto.setSkip(skip);
+        pageResponseDto.setTotals(totalTourBookings);
+
         // Return the responseDtoList
-        return responseDtoList;
+        return pageResponseDto;
+    }
+
+    @Override
+    public PageResponseDto getAllTourBookingsByUserId(Long userId, int page, int limit) {
+        Optional<User> optionalUser = userRepository.findById(userId);
+
+        if (!optionalUser.isPresent()) {
+            throw new ResourceNotFoundException("User not found");
+        }
+
+        User user = optionalUser.get();
+
+        Optional<Customer> optionalCustomer = customerRepository.findById(user.getCustomer().getId());
+
+        if (!optionalCustomer.isPresent()) {
+            throw new ResourceNotFoundException("Customer not found");
+        }
+
+        Customer customer = optionalCustomer.get();
+
+        // Fetch tours from the repository with pagination
+        Pageable pageable = PageRequest.of(page - 1, limit);
+
+        Page<TourBooking> tourBookingPage = tourBookingRepository.findAllByCustomerId(customer.getId(), pageable);
+
+        long totalTourBookings = tourBookingPage.getTotalElements();
+
+        // Retrieve the content from the fetched page
+        List<TourBooking> tourBookings = tourBookingPage.getContent();
+
+        // Check if the fetched list of users is empty
+        if (tourBookings.isEmpty()) {
+            throw new ResourceNotFoundException("No tour bookings found");
+        }
+
+        // Initialize the responseDtoList
+        List<GetAllTourBookingsByUserIdResponseDto> responseDtoList = new ArrayList<>();
+
+        // Convert tours to GetAllAccountsResponseDto
+        for (TourBooking tourBooking : tourBookings) {
+            GetAllTourBookingsByUserIdResponseDto responseDto = new GetAllTourBookingsByUserIdResponseDto();
+            responseDto.setId(tourBooking.getId());
+            responseDto.setAdults(tourBooking.getAdults());
+            responseDto.setChildren(tourBooking.getChildren());
+            responseDto.setBaby(tourBooking.getBaby());
+            responseDto.setAmount(tourBooking.getAmount());
+            responseDto.setBookingStatus(tourBooking.getBookingStatus().toString());
+            responseDto.setTourId(tourBooking.getTour().getId());
+            responseDto.setTourName(tourBooking.getTour().getName());
+            responseDto.setCustomerId(tourBooking.getCustomer().getId());
+            responseDto.setCustomerName(tourBooking.getCustomer().getName());
+            responseDto.setCreatedAt(tourBooking.getCreatedAt());
+            responseDto.setUpdatedAt(tourBooking.getUpdatedAt());
+            responseDto.setTourCode(tourBooking.getTour().getCode());
+            responseDto.setThumbnail(tourBooking.getTour().getThumbnail());
+            responseDto.setLocations(tourBooking.getTour().getLocations());
+
+            // Add responseDto to the list
+            responseDtoList.add(responseDto);
+        }
+
+        int skip = (page - 1) * limit;
+
+        // Prepare the response structure
+        PageResponseDto<GetAllTourBookingsByUserIdResponseDto> pageResponseDto = new PageResponseDto<>();
+        pageResponseDto.setData(responseDtoList);
+        pageResponseDto.setPage(page);
+        pageResponseDto.setLimit(limit);
+        pageResponseDto.setSkip(skip);
+        pageResponseDto.setTotals(totalTourBookings);
+
+        // Return the responseDtoList
+        return pageResponseDto;
     }
 
 //

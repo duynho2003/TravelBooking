@@ -36,155 +36,6 @@ public class ProvinceServiceImpl implements ProvinceService{
     private final RegionRepository regionRepository;
     private final ProvinceRepository provinceRepository;
 
-//    @Override
-//    public CreateRegionResponseDto createRegion(CreateRegionRequestDto requestDto) {
-//
-//        Region region = new Region();
-//
-//        region.setName(requestDto.getName());
-//
-//        Set<Province> provinces = new HashSet<>();
-//
-//        for (CreateProvinceRequestDto createProvinceRequestDto : requestDto.getProvinces()) {
-//            Province province = new Province();
-//
-//            province.setName(createProvinceRequestDto.getName());
-//            province.setThumbnail("123.jpg");
-//
-//            provinces.add(province);
-//        }
-//
-//        region.setProvinces(provinces);
-//
-//        Region savedRegion = regionRepository.save(region);
-//
-//        CreateRegionResponseDto responseDto = new CreateRegionResponseDto();
-//
-//        responseDto.setId(savedRegion.getId());
-//        responseDto.setName(savedRegion.getName());
-//
-//        Set<CreateProvinceResponseDto> provincesDto = new HashSet<>();
-//
-//        for (Province province : savedRegion.getProvinces()) {
-//            CreateProvinceResponseDto createProvinceResponseDto = new CreateProvinceResponseDto();
-//
-//            createProvinceResponseDto.setId(province.getId());
-//            createProvinceResponseDto.setName(province.getName());
-//            createProvinceResponseDto.setThumbnail(province.getThumbnail());
-//
-//            provincesDto.add(createProvinceResponseDto);
-//        }
-//
-//        responseDto.setProvinces(provincesDto);
-//
-//        return responseDto;
-//    }
-
-//    @Override
-//    public GetRegionByIdResponseDto getRegionById(Long regionId) {
-//
-//        Optional<Region> optionalRegion = regionRepository.findById(regionId);
-//
-//        if (!optionalRegion.isPresent()) {
-//            throw new ResourceNotFoundException("Region not found");
-//        }
-//
-//        Region region = optionalRegion.get();
-//
-//        GetRegionByIdResponseDto responseDto = new GetRegionByIdResponseDto();
-//
-//        responseDto.setId(region.getId());
-//        responseDto.setName(region.getName());
-//
-//        Set<CreateProvinceResponseDto> provincesDto = new HashSet<>();
-//
-//        for (Province province : region.getProvinces()) {
-//            CreateProvinceResponseDto createProvinceResponseDto = new CreateProvinceResponseDto();
-//
-//            createProvinceResponseDto.setId(province.getId());
-//            createProvinceResponseDto.setName(province.getName());
-//            createProvinceResponseDto.setThumbnail(province.getThumbnail());
-//
-//            provincesDto.add(createProvinceResponseDto);
-//        }
-//
-//        responseDto.setProvinces(provincesDto);
-//
-//        return responseDto;
-//    }
-
-
-//    @Override
-//    public UpdateAccountResponseDto updateAccount(Long userId, UpdateAccountRequestDto updateAccountRequestDto) {
-//
-//        Optional<User> userOptional = userRepository.findById(userId);
-//
-//        if (!userOptional.isPresent()) {
-//            throw new ResourceNotFoundException("User not found");
-//        }
-//
-//        User user = userOptional.get();
-//
-//        user.setUsername(updateAccountRequestDto.getUsername());
-//        user.setEmail(updateAccountRequestDto.getEmail());
-//
-//        if (updateAccountRequestDto.getStatus() != null) {
-//            user.setStatus(UserStatus.valueOf(updateAccountRequestDto.getStatus().toUpperCase()));
-//        } else {
-//            throw new IllegalArgumentException("No enum");
-//        }
-//
-//        user.setUpdatedAt(LocalDateTime.now());
-//
-//        Set<Role> roles = new HashSet<>();
-//
-//        for (String roleName : updateAccountRequestDto.getRoles()) {
-//            Role role = roleRepository.findByName(roleName);
-//
-//            if (role == null) {
-//                role = new Role();
-//                role.setName(roleName);
-//                roleRepository.save(role);
-//            }
-//
-//            roles.add(role);
-//        }
-//
-//        user.setRoles(roles);
-//
-//        userRepository.save(user);
-//
-//        UpdateAccountResponseDto responseDto = new UpdateAccountResponseDto();
-//
-//        responseDto.setId(user.getId());
-//        responseDto.setUsername(user.getUsername());
-//        responseDto.setEmail(user.getEmail());
-//        responseDto.setRoles(user.getRoles().stream().map(Role::getName).collect(Collectors.toSet()));
-//        responseDto.setStatus(user.getStatus().toString());
-//        responseDto.setUpdatedAt(user.getUpdatedAt());
-//
-//        return responseDto;
-//    }
-//
-//    @Override
-//    public void deleteAccount(Long userId) {
-//
-//        Optional<User> userOptional = userRepository.findById(userId);
-//
-//        if (!userOptional.isPresent()) {
-//            throw new ResourceNotFoundException("Account not found");
-//        }
-//
-//        User user = userOptional.get();
-//
-//        user.setRoles(new HashSet<>());
-//
-//        userRepository.save(user);
-//
-//        userRepository.deleteById(userId);
-//
-//    }
-//
     @Override
     public GetProvinceByIdResponseDto getProvinceById(Long provinceId) {
 
@@ -222,7 +73,10 @@ public class ProvinceServiceImpl implements ProvinceService{
                                 roomDto.setId(room.getId());
                                 roomDto.setRoomNumber(room.getRoomNumber());
                                 roomDto.setType(room.getType());
-                                roomDto.setPrice(room.getPrice());
+                                roomDto.setBasePrice(room.getBasePrice());
+                                roomDto.setWeekendPrice(room.getWeekendPrice());
+                                roomDto.setDiscount(room.getDiscount());
+                                roomDto.setNumberOfResidents(room.getNumberOfResidents());
                                 roomDto.setBookedStatus(room.getBookedStatus().toString());
                                 roomDto.setActiveStatus(room.getActiveStatus().toString());
                                 roomDto.setCreatedAt(room.getCreatedAt());
@@ -305,7 +159,10 @@ public List<GetAllProvincesResponseDto> getAllProvinces(int page, int limit) {
                                         roomDto.setId(room.getId());
                                         roomDto.setRoomNumber(room.getRoomNumber());
                                         roomDto.setType(room.getType());
-                                        roomDto.setPrice(room.getPrice());
+                                        roomDto.setBasePrice(room.getBasePrice());
+                                        roomDto.setWeekendPrice(room.getWeekendPrice());
+                                        roomDto.setDiscount(room.getDiscount());
+                                        roomDto.setNumberOfResidents(room.getNumberOfResidents());
                                         roomDto.setBookedStatus(room.getBookedStatus().toString());
                                         roomDto.setActiveStatus(room.getActiveStatus().toString());
                                         roomDto.setCreatedAt(room.getCreatedAt());

@@ -23,6 +23,9 @@ public interface RoomService {
     @Transactional
     void deleteRoomImagesByRoomId(Long roomId);
 
+    @Transactional
+    void deleteRoomHolidaysByRoomId(Long roomId);
+
 //    UpdateTourResponseDto updateTour(Long tourId, UpdateTourRequestDto updateTourRequestDto);
 //
     void deleteRoom(Long roomId);

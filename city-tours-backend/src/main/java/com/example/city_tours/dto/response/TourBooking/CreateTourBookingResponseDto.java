@@ -16,6 +16,7 @@ public class CreateTourBookingResponseDto {
     private Long id;
     private Long tourId;
     private Long customerId;
+    private String startTime;
     private int adults;
     private int children;
     private int baby;

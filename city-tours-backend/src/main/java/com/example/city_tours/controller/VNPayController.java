@@ -19,14 +19,12 @@ public class VNPayController {
     @PostMapping("/createOrder")
     public String createOrder(@RequestParam("amount") int orderTotal,
                               @RequestParam("orderInfo") String orderInfo,
-//                              @RequestParam("bankCode") String bankCode,
                               HttpServletRequest request){
         String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + "4200";
         String vnpayUrl = vnPayService.createOrder(request, orderTotal, orderInfo, baseUrl);
         return vnpayUrl;
     }
 
-    // Sau khi hoàn tất thanh toán, VNPAY sẽ chuyển hướng trình duyệt về URL này
     @GetMapping("/vnpay-payment-return")
     public String paymentCompleted(HttpServletRequest request, Model model){
         int paymentStatus = vnPayService.orderReturn(request);

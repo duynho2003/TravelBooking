@@ -7,6 +7,8 @@ import com.example.city_tours.dto.response.Hotel.GetAllHotelsResponseDto;
 import com.example.city_tours.dto.response.Hotel.GetHotelByIdResponseDto;
 import com.example.city_tours.dto.response.Hotel.UpdateHotelResponseDto;
 import com.example.city_tours.dto.response.Room.RoomResponseDto;
+import com.example.city_tours.dto.response.RoomHoliday.CreateRoomHolidayResponseDto;
+import com.example.city_tours.dto.response.RoomHoliday.GetAllRoomHolidaysResponseDto;
 import com.example.city_tours.dto.response.Tour.GetAllToursResponseDto;
 import com.example.city_tours.dto.response.Tour.GetTourRoomBookingResponseDto;
 import com.example.city_tours.dto.response.User.PageResponseDto;
@@ -20,6 +22,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -31,8 +34,6 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class HotelServiceImpl implements HotelService{
 
-    private final TourRepository tourRepository;
-    private final ScheduleRepository scheduleRepository;
     private final HotelRepository hotelRepository;
     private final HotelImageRepository hotelImageRepository;
     private final TourRoomBookingRepository tourRoomBookingRepository;
@@ -168,12 +169,7 @@ public class HotelServiceImpl implements HotelService{
     }
 
     @Override
-    public PageResponseDto getAllHotels(int page, int limit, String search, String review) {
-        // Calculate the offset based on page and limit
-        int offset = (page - 1) * limit;
-
-        // Fetch tours from the repository with pagination
-        Pageable pageable = PageRequest.of(page - 1, limit);
+    public PageResponseDto getAllHotels(int page, int limit, String search, String review, String rating) {
 
         Specification<Hotel> spec = (root, query, cb) -> {
             Predicate predicate = cb.conjunction(); // Start with an "AND" conjunction
@@ -195,6 +191,18 @@ public class HotelServiceImpl implements HotelService{
 
             return predicate;
         };
+
+        Sort sort = Sort.unsorted();
+        if ("increment".equalsIgnoreCase(rating)) {
+            sort = Sort.by("rating").descending();
+        } else if ("decrement".equalsIgnoreCase(rating)) {
+            sort = Sort.by("rating").ascending();
+        }
+
+        // Fetch tours from the repository with pagination
+        Pageable pageable = PageRequest.of(page - 1, limit, sort);
+
+        System.out.println("pageable: " + pageable);
 
         Page<Hotel> hotelPage = hotelRepository.findAll(spec, pageable);
 
@@ -241,11 +249,23 @@ public class HotelServiceImpl implements HotelService{
                 roomDto.setId(room.getId());
                 roomDto.setRoomNumber(room.getRoomNumber());
                 roomDto.setType(room.getType());
-                roomDto.setPrice(room.getPrice());
+                roomDto.setBasePrice(room.getBasePrice());
+                roomDto.setWeekendPrice(room.getWeekendPrice());
                 roomDto.setDiscount(room.getDiscount());
+                roomDto.setNumberOfResidents(room.getNumberOfResidents());
                 roomDto.setBookedStatus(room.getBookedStatus().toString());
                 roomDto.setActiveStatus(room.getActiveStatus().toString());
                 roomDto.setCreatedAt(room.getCreatedAt());
+
+                List<GetAllRoomHolidaysResponseDto> roomHolidayResponseDtos = new ArrayList<>();
+                for (RoomHoliday roomHoliday : room.getRoomHolidays()) {
+                    GetAllRoomHolidaysResponseDto roomHolidayDto = new GetAllRoomHolidaysResponseDto();
+                    roomHolidayDto.setId(roomHoliday.getId());
+                    roomHolidayDto.setDate(roomHoliday.getDate());
+                    roomHolidayDto.setPrice(roomHoliday.getPrice());
+                    roomHolidayResponseDtos.add(roomHolidayDto);
+                }
+                roomDto.setRoomHolidays(roomHolidayResponseDtos);
 
                 // Khai báo một danh sách để lưu trữ URL hình ảnh
                 List<String> imageUrls = new ArrayList<>();
@@ -351,11 +371,23 @@ public class HotelServiceImpl implements HotelService{
             roomDto.setId(room.getId());
             roomDto.setRoomNumber(room.getRoomNumber());
             roomDto.setType(room.getType());
-            roomDto.setPrice(room.getPrice());
+            roomDto.setBasePrice(room.getBasePrice());
+            roomDto.setWeekendPrice(room.getWeekendPrice());
             roomDto.setDiscount(room.getDiscount());
+            roomDto.setNumberOfResidents(room.getNumberOfResidents());
             roomDto.setBookedStatus(room.getBookedStatus().toString());
             roomDto.setActiveStatus(room.getActiveStatus().toString());
             roomDto.setCreatedAt(room.getCreatedAt());
+
+            List<GetAllRoomHolidaysResponseDto> roomHolidayResponseDtos = new ArrayList<>();
+            for (RoomHoliday roomHoliday : room.getRoomHolidays()) {
+                GetAllRoomHolidaysResponseDto roomHolidayDto = new GetAllRoomHolidaysResponseDto();
+                roomHolidayDto.setId(roomHoliday.getId());
+                roomHolidayDto.setDate(roomHoliday.getDate());
+                roomHolidayDto.setPrice(roomHoliday.getPrice());
+                roomHolidayResponseDtos.add(roomHolidayDto);
+            }
+            roomDto.setRoomHolidays(roomHolidayResponseDtos);
 
             // Khai báo một danh sách để lưu trữ URL hình ảnh
             List<String> imageUrls = new ArrayList<>();

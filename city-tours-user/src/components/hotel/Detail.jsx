@@ -146,8 +146,6 @@ export default function Detail({ hotel, reviews }) {
     return false;
   }
 
-  console.log("checkRoomBookingInHotel: ", checkRoomBookingInHotel());
-
   const handleNavigateCheckout = (roomId) => {
     if (selectedRoomRedux === null) {
       setErrorRoomTypes("Please choose room type");
@@ -210,18 +208,23 @@ export default function Detail({ hotel, reviews }) {
     roomId,
     discount,
     price,
-    pricePerHour,
     roomType
   ) => {
     if (dateStrings && dateStrings.length === 2) {
-      const startHour = dateStrings[0].split(" ")[1];
-      const endHour = dateStrings[1].split(" ")[1];
+      const formatDate = (dateString) => {
+        const [date, time] = dateString.split(" ");
+        const [year, month, day] = date.split("-");
+        return `${time} - ${day}/${month}/${year}`;
+      };
+
+      const startHour = formatDate(dateStrings?.[0]);
+      const endHour = formatDate(dateStrings?.[1]);
 
       const startTime = dayjs(dateStrings[0]);
       const endTime = dayjs(dateStrings[1]);
       const durationHours = endTime.diff(startTime, "hours");
 
-      const totalAmount = durationHours * pricePerHour;
+      const totalAmount = durationHours * price;
 
       console.log("durationHours: ", durationHours);
       console.log("totalAmount: ", totalAmount);
@@ -246,7 +249,6 @@ export default function Detail({ hotel, reviews }) {
       console.log("dates: ", dates);
       console.log("dateStrings: ", dateStrings);
       console.log("roomId: ", roomId);
-      console.log("pricePerHour: ", pricePerHour);
     }
   };
 
@@ -255,19 +257,6 @@ export default function Detail({ hotel, reviews }) {
 
     setErrorRoomTypes(null);
   };
-
-  // const handleNavigateCheckout = async () => {
-  //   try {
-  //     if (customerName === "" && phone === "" && address === "") {
-  //       await handleAddCustomer();
-  //     }
-  //     await handleAddTourBooking();
-  //     await handleCreateOrder();
-  //   } catch (error) {
-  //     console.error("Error during checkout process:", error);
-  //     // Xử lý lỗi tại đây nếu cần thiết
-  //   }
-  // };
 
   const [isModalShowReviewOpen, setIsModalShowReviewOpen] = useState(false);
   const [loadingButton, setLoadingButton] = useState(false);
@@ -338,39 +327,32 @@ export default function Detail({ hotel, reviews }) {
   // React Hook Form
   const { control, handleSubmit, reset } = useForm();
 
-  const [wishlist, setWishlist] = useState([]);
+  const [isWeekend, setIsWeekend] = useState(null);
 
-  // useEffect for loading data
   useEffect(() => {
-    const getWishlistFromLocalStorage = () => {
-      const data = JSON.parse(localStorage.getItem("wishlist")) || [];
-      setWishlist(data);
-      console.log("wishlist: ", data);
+    const checkWeekendDay = () => {
+      const currentDate = new Date();
+
+      const dayOfWeek = currentDate.getDay();
+      console.log("dayOfWeek: ", dayOfWeek);
+
+      const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+
+      setIsWeekend(isWeekend);
     };
 
-    getWishlistFromLocalStorage();
-  }, [dispatch]);
+    checkWeekendDay();
+  }, []);
 
-  const handleAddWishlist = (hotelId) => {
-    // Check if tour is already in wishlist
-    const isWishlist = wishlist?.some((item) => item.id === hotelId);
-    if (isWishlist) {
-      alert("Tour is already in wishlist");
-      return;
-    }
+  const getCurrentDate = () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, "0"); // Months are zero based
+    const day = String(today.getDate()).padStart(2, "0");
 
-    // Add tour to wishlist state
-    setWishlist(
-      [...wishlist, selectedHotel],
-      console.log("wishlist: ", wishlist)
-    );
+    console.log(`${year}-${month}-${day}`);
 
-    // Update localStorage
-    const updatedWishlist = [...wishlist, selectedHotel];
-
-    localStorage.setItem("wishlist", JSON.stringify(updatedWishlist));
-
-    console.log("Updated wishlist: ", updatedWishlist);
+    return `${year}-${month}-${day}`;
   };
 
   return (
@@ -937,10 +919,21 @@ export default function Detail({ hotel, reviews }) {
                       {new Intl.NumberFormat("vi-VN", {
                         style: "currency",
                         currency: "VND",
-                      }).format(room?.price - room?.discount)}
+                      }).format(
+                        room?.roomHolidays?.find(
+                          (holiday) => holiday.date === getCurrentDate()
+                        )?.price - room?.discount ||
+                          (isWeekend ? room?.weekendPrice : room?.basePrice) -
+                            room?.discount
+                      )}
                     </CustomText>
 
-                    <Row gutter={[10, 10]}>
+                    <Row
+                      gutter={[10, 10]}
+                      style={{
+                        width: "100%",
+                      }}
+                    >
                       {room?.imageUrls?.map((thumb, index) => (
                         <Col key={index} span={6}>
                           <Image
@@ -1269,18 +1262,28 @@ export default function Detail({ hotel, reviews }) {
                       disabledTime={disabledTime(
                         selectedRoomRedux?.roomBookings
                       )}
-                      onChange={(dates, dateStrings) =>
+                      onChange={(dates, dateStrings) => {
+                        const holidayPrice =
+                          selectedRoomRedux?.roomHolidays?.find(
+                            (holiday) => holiday.date === getCurrentDate()
+                          )?.price;
+
+                        const basePrice = isWeekend
+                          ? selectedRoomRedux?.weekendPrice
+                          : selectedRoomRedux?.basePrice;
+                        const finalPrice =
+                          holidayPrice ||
+                          basePrice - selectedRoomRedux?.discount;
+
                         onChangeDatePicker(
                           dates,
                           dateStrings,
                           selectedRoomRedux?.id,
                           selectedRoomRedux?.discount,
-                          selectedRoomRedux?.price,
-                          selectedRoomRedux?.price -
-                            selectedRoomRedux?.discount,
+                          finalPrice,
                           selectedRoomRedux?.type
-                        )
-                      }
+                        );
+                      }}
                     />
 
                     {errorCheckTime && (
@@ -1336,8 +1339,13 @@ export default function Detail({ hotel, reviews }) {
                         style: "currency",
                         currency: "VND",
                       }).format(
-                        dataTourRoomBooking?.price -
-                          dataTourRoomBooking?.discount || 0
+                        selectedRoomRedux?.roomHolidays?.find(
+                          (holiday) => holiday.date === getCurrentDate()
+                        )?.price - selectedRoomRedux?.discount ||
+                          (isWeekend
+                            ? selectedRoomRedux?.weekendPrice
+                            : selectedRoomRedux?.basePrice) -
+                            selectedRoomRedux?.discount
                       )}
                     </CustomText>
                   </Col>

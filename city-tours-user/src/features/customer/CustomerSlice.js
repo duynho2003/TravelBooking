@@ -22,6 +22,27 @@ export const createCustomer = createAsyncThunk(
   }
 );
 
+export const updateCustomer = createAsyncThunk(
+  "customers/updateCustomer",
+  async (data) => {
+    try {
+      const response = await customerApi.updateCustomer(data);
+      console.log("response slice: ", response);
+
+      if (response?.error) {
+        console.log("response slice error: ", response.error);
+        return { error: response.error };
+      }
+
+      return response;
+    } catch (error) {
+      console.log("response slice error: ", error);
+
+      return { error };
+    }
+  }
+);
+
 export const getInfoCustomer = createAsyncThunk(
   "customers/getInfoCustomer",
   async (customerId) => {
@@ -75,6 +96,29 @@ const customerSlice = createSlice({
     });
 
     builder.addCase(createCustomer.rejected, (state, action) => {
+      state.info = [];
+      state.loading = false;
+      state.error = action.error.message;
+    });
+
+    // Update customer
+    builder.addCase(updateCustomer.pending, (state) => {
+      state.loading = true;
+    });
+
+    builder.addCase(updateCustomer.fulfilled, (state, action) => {
+      state.loading = false;
+
+      if (action.payload.error) {
+        state.message = action.payload.error.message;
+        state.error = action.payload.error.moreInfo;
+      } else {
+        state.message = null;
+        state.error = null;
+      }
+    });
+
+    builder.addCase(updateCustomer.rejected, (state, action) => {
       state.info = [];
       state.loading = false;
       state.error = action.error.message;

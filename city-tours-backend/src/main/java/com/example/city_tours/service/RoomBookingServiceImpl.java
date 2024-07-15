@@ -4,6 +4,7 @@ import com.example.city_tours.dto.request.RoomBooking.CreateRoomBookingRequestDt
 import com.example.city_tours.dto.request.TourRoomBooking.CreateTourRoomBookingRequestDto;
 import com.example.city_tours.dto.response.RoomBooking.CreateRoomBookingResponseDto;
 import com.example.city_tours.dto.response.RoomBooking.GetRoomBookingResponseDto;
+import com.example.city_tours.dto.response.RoomBooking.GetRoomBookingsByUserIdResponseDto;
 import com.example.city_tours.dto.response.Tour.GetAllToursResponseDto;
 import com.example.city_tours.dto.response.TourRoomBooking.CreateTourRoomBookingResponseDto;
 import com.example.city_tours.dto.response.User.PageResponseDto;
@@ -32,12 +33,12 @@ import java.util.stream.Collectors;
 public class RoomBookingServiceImpl implements RoomBookingService{
 
     private final TourRepository tourRepository;
-    private final ScheduleRepository scheduleRepository;
     private final TourRoomBookingRepository tourRoomBookingRepository;
     private final RoomRepository roomRepository;
     private final CustomerRepository customerRepository;
     private final RoomBookingRepository roomBookingRepository;
     private final UserRepository userRepository;
+    private final TourBookingRepository tourBookingRepository;
 
     @Override
     public CreateRoomBookingResponseDto createRoomBooking(CreateRoomBookingRequestDto requestDto) {
@@ -118,6 +119,83 @@ public class RoomBookingServiceImpl implements RoomBookingService{
             responseDto.setPrice(roomBooking.getPrice());
             responseDto.setReviewStatus(roomBooking.getReviewStatus().toString());
             responseDto.setRoomType(roomBooking.getRoomType());
+            responseDto.setCustomerId(roomBooking.getCustomer().getId());
+            responseDto.setRoomId(roomBooking.getRoom().getId());
+            responseDto.setCreatedAt(roomBooking.getCreatedAt());
+            responseDto.setUpdatedAt(roomBooking.getUpdatedAt());
+
+            // Add responseDto to the list
+            responseDtoList.add(responseDto);
+        }
+
+        // Calculate skip (number of records skipped)
+        int skip = (page - 1) * limit;
+
+        // Prepare the response structure
+        PageResponseDto<GetRoomBookingResponseDto> pageResponseDto = new PageResponseDto<>();
+        pageResponseDto.setData(responseDtoList);
+        pageResponseDto.setPage(page);
+        pageResponseDto.setLimit(limit);
+        pageResponseDto.setSkip(skip);
+        pageResponseDto.setTotals(totalRoomBookings);
+
+        // Return the responseDtoList
+        return pageResponseDto;
+    }
+
+    @Override
+    public PageResponseDto getRoomBookingsByUserId(Long userId, int page, int limit) {
+        Optional<User> optionalUser = userRepository.findById(userId);
+
+        if (!optionalUser.isPresent()) {
+            throw new ResourceNotFoundException("User not found");
+        }
+
+        User user = optionalUser.get();
+
+        Optional<Customer> optionalCustomer = customerRepository.findById(user.getCustomer().getId());
+
+        if (!optionalCustomer.isPresent()) {
+            throw new ResourceNotFoundException("Customer not found");
+        }
+
+        Customer customer = optionalCustomer.get();
+
+        Pageable pageable = PageRequest.of(page - 1, limit);
+
+        Page<RoomBooking> roomBookingPage = roomBookingRepository.findAllByCustomerId(customer.getId(), pageable);
+
+        // Retrieve the total number of tours
+        long totalRoomBookings = roomBookingPage.getTotalElements();
+
+        // Retrieve the content from the fetched page
+        List<RoomBooking> roomBookings = roomBookingPage.getContent();
+
+        // Check if the fetched list of users is empty
+        if (roomBookings.isEmpty()) {
+            throw new ResourceNotFoundException("No room bookings found");
+        }
+
+        // Initialize the responseDtoList
+        List<GetRoomBookingResponseDto> responseDtoList = new ArrayList<>();
+
+        // Convert tours to GetAllAccountsResponseDto
+        for (RoomBooking roomBooking : roomBookings) {
+            GetRoomBookingResponseDto responseDto = new GetRoomBookingResponseDto();
+            responseDto.setId(roomBooking.getId());
+            responseDto.setDate(roomBooking.getDate());
+            responseDto.setStartHour(roomBooking.getStartHour());
+            responseDto.setEndHour(roomBooking.getEndHour());
+            responseDto.setPrice(roomBooking.getRoom().);
+            responseDto.setReviewStatus(roomBooking.getReviewStatus().toString());
+            responseDto.setRoomType(roomBooking.getRoomType());
+            responseDto.setRoomNumber(roomBooking.getRoom().getRoomNumber());
+            String hotelName = roomBooking.getRoom().getHotels()
+                    .stream()
+                    .findFirst()
+                    .map(Hotel::getName)
+                    .orElse("Unknown Hotel");
+            responseDto.setHotelName(hotelName);
             responseDto.setCustomerId(roomBooking.getCustomer().getId());
             responseDto.setRoomId(roomBooking.getRoom().getId());
             responseDto.setCreatedAt(roomBooking.getCreatedAt());

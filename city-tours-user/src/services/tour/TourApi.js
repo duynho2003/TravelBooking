@@ -3,9 +3,9 @@ import { API_ROUTE } from "../../utils/Constants";
 
 const tourApi = {
   getAllTours: async (panigation) => {
-    const { page, limit, minPrice, maxPrice, review } = panigation;
+    const { page, limit, minPrice, maxPrice, review, rating } = panigation;
 
-    const url = `${API_ROUTE.GET_ALL_TOURS}?page=${page}&limit=${limit}&startPrice=${minPrice}&endPrice=${maxPrice}&review=${review}`;
+    const url = `${API_ROUTE.GET_ALL_TOURS}?page=${page}&limit=${limit}&startPrice=${minPrice}&endPrice=${maxPrice}&review=${review}&rating=${rating}`;
     try {
       const response = await axiosClient.get(url);
       return response;

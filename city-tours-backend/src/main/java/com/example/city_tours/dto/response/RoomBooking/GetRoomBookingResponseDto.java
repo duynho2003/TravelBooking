@@ -20,6 +20,8 @@ public class GetRoomBookingResponseDto {
     private Double price;
     private String reviewStatus;
     private String roomType;
+    private String roomNumber;
+    private String hotelName;
     private Long customerId;
     private Long roomId;
     private LocalDateTime createdAt;

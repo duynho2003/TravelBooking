@@ -12,6 +12,7 @@ import {
   Pagination,
   Tag,
   Tooltip,
+  notification,
 } from "antd";
 import CustomText from "../common/CustomText";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -42,13 +43,20 @@ import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import { useState } from "react";
 import badgeSave from "../../assets/images/badge_save.png";
+import {
+  getAllWishlistsByUserId,
+  deleteWishlist,
+} from "../../features/wishlist/WishlistSlice";
+import { useDispatch } from "react-redux";
+
 dayjs.extend(customParseFormat);
 
 const { useBreakpoint } = Grid;
 
-export default function List({ wishlist, setWishlist }) {
+export default function List({ userId, wishlists }) {
   // Ant Design
   const screens = useBreakpoint();
+  const dispatch = useDispatch();
 
   const marks = {
     0: "0",
@@ -68,22 +76,42 @@ export default function List({ wishlist, setWishlist }) {
   };
 
   // Event Handlers
-  const handleRemoveWishlist = (tourId) => {
-    // Find index of tourId in wishlist
-    const index = wishlist?.findIndex((item) => item.id === tourId);
+  const handleRemoveWishlist = async (wishlistId) => {
+    try {
+      const action = await dispatch(deleteWishlist(wishlistId));
 
-    if (index === -1) {
-      alert("Tour is not in wishlist");
-      return;
+      console.log("action: ", action);
+
+      if (deleteWishlist.fulfilled.match(action)) {
+        if (action?.payload?.status === 200) {
+          notification.success({
+            message: "Remove item from wishlist successful",
+            description: "Successfully removed the item from your wishlist",
+          });
+
+          dispatch(getAllWishlistsByUserId(userId));
+        } else {
+          const error =
+            action?.payload?.error?.data?.message || "Unknown error";
+          notification.error({
+            message: "Remove item from wishlist error",
+            description: error,
+          });
+        }
+      } else if (deleteWishlist.rejected.match(action)) {
+        const error = action?.payload?.error.message || "Unknown error";
+        notification.error({
+          message: "Remove item from wishlist error",
+          description: error,
+        });
+      }
+    } catch (error) {
+      notification.error({
+        message: "System error",
+        description:
+          "The server couldn't fulfill a valid request due to an issue with the server.",
+      });
     }
-
-    const updatedWishlist = wishlist?.filter((item) => item.id !== tourId);
-    setWishlist(updatedWishlist);
-
-    // Update localStorage
-    localStorage.setItem("wishlist", JSON.stringify(updatedWishlist));
-
-    console.log("Tour removed from wishlist with id:", tourId);
   };
 
   return (
@@ -421,446 +449,70 @@ export default function List({ wishlist, setWishlist }) {
 
           {/* Col tours list */}
           <Col span={17}>
-            {wishlist && wishlist.length > 0 ? (
-              wishlist.map((item) =>
-                item?.address ? (
-                  <Row
-                    key={item.id}
+            {wishlists && wishlists?.length > 0 ? (
+              wishlists.map((item) => (
+                <Row
+                  key={item?.id}
+                  style={{
+                    width: "100%",
+                    height: "220px",
+                    marginBottom: "20px",
+                  }}
+                >
+                  {/* Thumbnail */}
+                  <Col
+                    span={7}
                     style={{
-                      width: "100%",
-                      height: "220px",
-                      marginBottom: "20px",
+                      position: "relative",
+                      overflow: "hidden",
+                      border: "1px solid var(--border)",
                     }}
                   >
-                    {/* Thumbnail */}
-                    <Col
-                      span={7}
+                    <Image
+                      src={item?.thumbnail}
+                      preview={false}
+                      width={"100%"}
                       style={{
-                        position: "relative",
-                        overflow: "hidden",
-                        border: "1px solid var(--border)",
+                        height: "220px",
+                        objectFit: "cover",
+                        transition: "transform 0.3s ease-in-out",
                       }}
-                    >
-                      <Image
-                        src={item.thumbnailUrls?.[0]}
-                        preview={false}
-                        width={"100%"}
-                        style={{
-                          height: "220px",
-                          objectFit: "cover",
-                          transition: "transform 0.3s ease-in-out",
-                        }}
-                        className="image-hover-zoom"
-                      />
-                    </Col>
+                      className="image-hover-zoom"
+                    />
+                  </Col>
 
-                    {/* Content */}
+                  {/* Content */}
+                  <Col
+                    span={12}
+                    style={{
+                      padding: "20px",
+                      background: "var(--white)",
+                      borderTop: "1px solid var(--border)",
+                      borderBottom: "1px solid var(--border)",
+                    }}
+                  >
+                    {/* Review */}
                     <Col
-                      span={12}
+                      span={24}
                       style={{
-                        padding: "20px",
-                        background: "var(--white)",
-                        borderTop: "1px solid var(--border)",
-                        borderBottom: "1px solid var(--border)",
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        marginBottom: "10px",
                       }}
                     >
-                      {/* Review */}
                       <Col
-                        span={24}
                         style={{
                           display: "flex",
-                          justifyContent: "space-between",
+                          justifyContent: "center",
                           alignItems: "center",
                           marginBottom: "10px",
                         }}
                       >
-                        <Col
-                          style={{
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center",
-                            marginBottom: "10px",
-                          }}
-                        >
+                        {item?.type === "TOUR" ? (
                           <Rate
                             disabled
                             value={item?.rating}
-                            style={{
-                              fontSize: "15px",
-                              color: "var(--orange)",
-                              marginRight: "5px",
-                            }}
-                          />
-
-                          <CustomText
-                            size={"12px"}
-                            weight={"400"}
-                            color={"var(--black-text)"}
-                          >
-                            ({item?.numberOfRating})
-                          </CustomText>
-                        </Col>
-
-                        <Col>
-                          <CustomText
-                            size={"24px"}
-                            weight={"400"}
-                            color={"var(--pink)"}
-                            isButton={true}
-                            onClick={() => handleRemoveWishlist(item?.id)}
-                          >
-                            <Tooltip
-                              title="Remove to wishlist"
-                              overlayInnerStyle={{
-                                borderRadius: "3px",
-                                fontFamily: "Montserrat",
-                              }}
-                              color="var(--pink)"
-                            >
-                              <FontAwesomeIcon icon={faHeartCircleMinus} />
-                            </Tooltip>
-                          </CustomText>
-                        </Col>
-                      </Col>
-
-                      {/* Name */}
-                      <Col
-                        span={24}
-                        style={{
-                          display: "flex",
-                          justifyContent: "start",
-                          alignItems: "center",
-                          marginBottom: "10px",
-                        }}
-                      >
-                        <CustomText
-                          size={"16px"}
-                          weight={"600"}
-                          color={"var(--gray-text)"}
-                          isUppercase={true}
-                        >
-                          {item.name}
-                        </CustomText>
-                      </Col>
-
-                      {/* Address */}
-                      <Col
-                        span={24}
-                        style={{
-                          display: "flex",
-                          justifyContent: "start",
-                          alignItems: "center",
-                          marginBottom: "10px",
-                        }}
-                      >
-                        <CustomText
-                          size={"13px"}
-                          weight={"400"}
-                          color={"var(--gray-text)"}
-                        >
-                          {item.address}
-                        </CustomText>
-                      </Col>
-
-                      {/* Locations */}
-                      {/* <Col
-                      span={24}
-                      style={{
-                        display: "flex",
-                        justifyContent: "start",
-                        alignItems: "center",
-                        marginBottom: "10px",
-                      }}
-                    >
-                      <CustomText
-                        size={"13px"}
-                        weight={"400"}
-                        color={"var(--gray-text)"}
-                      >
-                        {tour.locations}
-                      </CustomText>
-                    </Col> */}
-
-                      {/* Depart */}
-                      {/* <Col
-                      span={24}
-                      style={{
-                        display: "flex",
-                        justifyContent: "start",
-                        alignItems: "center",
-                        marginBottom: "10px",
-                      }}
-                    >
-                      <CustomText
-                        size={"13px"}
-                        weight={"400"}
-                        color={"var(--gray-text)"}
-                      >
-                        Depart at {tour.depart} at {tour.startTime}
-                      </CustomText>
-                    </Col> */}
-
-                      {/* Type rooms */}
-                      <Col
-                        span={24}
-                        style={{
-                          marginBottom: "10px",
-                        }}
-                      >
-                        <CustomText
-                          size={"13px"}
-                          weight={"400"}
-                          color={"var(--gray-text)"}
-                        >
-                          Type rooms:
-                        </CustomText>{" "}
-                        {[
-                          ...new Set(item?.rooms?.map((room) => room?.type)),
-                        ].map((type, index) => (
-                          <Tag color="var(--green-dark)" key={index}>
-                            <CustomText
-                              size={"12px"}
-                              weight={"400"}
-                              color={"var(--white)"}
-                            >
-                              {type}
-                            </CustomText>
-                          </Tag>
-                        ))}
-                      </Col>
-
-                      {/* Icons */}
-                      <Col
-                        span={24}
-                        style={{
-                          display: "flex",
-                          justifyContent: "start",
-                          alignItems: "center",
-                          marginBottom: "10px",
-                        }}
-                      >
-                        <FontAwesomeIcon
-                          icon={faClock}
-                          style={{
-                            fontSize: "22px",
-                            color: "var(--gray-light)",
-                            display: "block",
-                            padding: "5px",
-                            border: "1px solid var(--border)",
-                            borderRadius: "3px",
-                            marginRight: "10px",
-                          }}
-                        />
-
-                        <FontAwesomeIcon
-                          icon={faWifi}
-                          style={{
-                            fontSize: "22px",
-                            color: "var(--gray-light)",
-                            display: "block",
-                            padding: "5px",
-                            border: "1px solid var(--border)",
-                            borderRadius: "3px",
-                            marginRight: "10px",
-                          }}
-                        />
-
-                        <FontAwesomeIcon
-                          icon={faDumbbell}
-                          style={{
-                            fontSize: "22px",
-                            color: "var(--gray-light)",
-                            display: "block",
-                            padding: "5px",
-                            border: "1px solid var(--border)",
-                            borderRadius: "3px",
-                            marginRight: "10px",
-                          }}
-                        />
-
-                        <FontAwesomeIcon
-                          icon={faUtensils}
-                          style={{
-                            fontSize: "22px",
-                            color: "var(--gray-light)",
-                            display: "block",
-                            padding: "5px",
-                            border: "1px solid var(--border)",
-                            borderRadius: "3px",
-                            marginRight: "10px",
-                          }}
-                        />
-                      </Col>
-                    </Col>
-
-                    {/* Details */}
-                    <Col
-                      span={5}
-                      style={{
-                        background: "var(--white)",
-                        display: "flex",
-                        flexDirection: "column",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        gap: "10px",
-                        border: "1px solid var(--border)",
-                      }}
-                    >
-                      <CustomText
-                        size={"24px"}
-                        weight={"400"}
-                        color={"var(--pink)"}
-                      >
-                        {/* {new Intl.NumberFormat("vi-VN", {
-                        style: "currency",
-                        currency: "VND",
-                      }).format(tour.price - tour.discount)} */}
-                        Contact
-                      </CustomText>
-
-                      {/* <CustomText
-                      size={"18px"}
-                      weight={"300"}
-                      color={"var(--gray-light)"}
-                      isItalic={true}
-                      isStrikethrough={true}
-                    >
-                      {new Intl.NumberFormat("vi-VN", {
-                        style: "currency",
-                        currency: "VND",
-                      }).format(tour.price)}
-                      1.000.000đ
-                    </CustomText> */}
-
-                      {/* <CustomText
-                      size={"12px"}
-                      weight={"400"}
-                      color={"var(--gray-light)"}
-                    >
-                      Per / person
-                    </CustomText> */}
-
-                      <Button
-                        htmlType="submit"
-                        size="middle"
-                        className="hover-button"
-                        style={{
-                          background: "var(--green-dark)",
-                          border: "var(--green-dark)",
-                          color: "var(--white)",
-                          borderRadius: "3px",
-                          cursor: "pointer",
-                        }}
-                      >
-                        <CustomText
-                          size={"14px"}
-                          weight={"600"}
-                          color={"var(--white)"}
-                          isButton={true}
-                          link={`/hotels/${item.id}`}
-                        >
-                          Details
-                        </CustomText>
-                      </Button>
-                    </Col>
-                  </Row>
-                ) : (
-                  <Row
-                    key={item.id}
-                    style={{
-                      width: "100%",
-                      height: "220px",
-                      marginBottom: "20px",
-                    }}
-                  >
-                    {/* Thumbnail */}
-                    <Col
-                      span={7}
-                      style={{
-                        position: "relative",
-                        overflow: "hidden",
-                        border: "1px solid var(--border)",
-                      }}
-                    >
-                      <Image
-                        src={item.thumbnail}
-                        preview={false}
-                        width={"100%"}
-                        style={{
-                          height: "220px",
-                          objectFit: "cover",
-                          transition: "transform 0.3s ease-in-out",
-                        }}
-                        className="image-hover-zoom"
-                      />
-                      <Col
-                        style={{
-                          position: "absolute",
-                          top: 0,
-                          right: 0,
-                          zIndex: 9,
-                          backgroundImage: `url(${badgeSave})`,
-                          backgroundSize: "contain",
-                          backgroundPosition: "center",
-                          backgroundRepeat: "no-repeat",
-                          width: "70px",
-                          height: "82px",
-                          display: "flex",
-                          flexDirection: "column",
-                          justifyContent: "center",
-                          alignItems: "center",
-                          textAlign: "center",
-                          paddingTop: "13px",
-                        }}
-                      >
-                        <CustomText
-                          size={"12px"}
-                          weight={"500"}
-                          color={"var(--white)"}
-                        >
-                          SAVE
-                        </CustomText>
-                        <CustomText
-                          size={"13px"}
-                          weight={"700"}
-                          color={"var(--white)"}
-                        >
-                          {((item.discount / item.price) * 100).toFixed(0)} %
-                        </CustomText>
-                      </Col>
-                    </Col>
-
-                    {/* Content */}
-                    <Col
-                      span={12}
-                      style={{
-                        padding: "20px",
-                        background: "var(--white)",
-                        borderTop: "1px solid var(--border)",
-                        borderBottom: "1px solid var(--border)",
-                      }}
-                    >
-                      {/* Review */}
-                      <Col
-                        span={24}
-                        style={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                          alignItems: "center",
-                          marginBottom: "10px",
-                        }}
-                      >
-                        <Col
-                          style={{
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center",
-                            marginBottom: "10px",
-                          }}
-                        >
-                          <Rate
-                            disabled
-                            value={item.rating}
                             character={({ index = 0 }) =>
                               customIcons[index + 1]
                             }
@@ -870,136 +522,91 @@ export default function List({ wishlist, setWishlist }) {
                               marginRight: "5px",
                             }}
                           />
+                        ) : (
+                          <Rate
+                            disabled
+                            value={item?.rating}
+                            style={{
+                              fontSize: "15px",
+                              color: "var(--orange)",
+                              marginRight: "5px",
+                            }}
+                          />
+                        )}
 
-                          <CustomText
-                            size={"12px"}
-                            weight={"400"}
-                            color={"var(--black-text)"}
-                          >
-                            ({item.numberOfRating})
-                          </CustomText>
-                        </Col>
-
-                        <Col>
-                          <CustomText
-                            size={"24px"}
-                            weight={"400"}
-                            color={"var(--pink)"}
-                            isButton={true}
-                            onClick={() => handleRemoveWishlist(item?.id)}
-                          >
-                            <Tooltip
-                              title="Remove to wishlist"
-                              overlayInnerStyle={{
-                                borderRadius: "3px",
-                                fontFamily: "Montserrat",
-                              }}
-                              color="var(--pink)"
-                            >
-                              <FontAwesomeIcon icon={faHeartCircleMinus} />
-                            </Tooltip>
-                          </CustomText>
-                        </Col>
-                      </Col>
-
-                      {/* Name */}
-                      <Col
-                        span={24}
-                        style={{
-                          display: "flex",
-                          justifyContent: "start",
-                          alignItems: "center",
-                          marginBottom: "10px",
-                        }}
-                      >
                         <CustomText
-                          size={"16px"}
-                          weight={"600"}
-                          color={"var(--gray-text)"}
-                          isUppercase={true}
-                        >
-                          {item.name}
-                        </CustomText>
-                      </Col>
-
-                      {/* Locations */}
-                      <Col
-                        span={24}
-                        style={{
-                          display: "flex",
-                          justifyContent: "start",
-                          alignItems: "center",
-                          marginBottom: "10px",
-                        }}
-                      >
-                        <CustomText
-                          size={"13px"}
+                          size={"12px"}
                           weight={"400"}
-                          color={"var(--gray-text)"}
+                          color={"var(--black-text)"}
                         >
-                          {item.locations}
+                          ({item?.numberOfRating})
                         </CustomText>
                       </Col>
 
-                      {/* Depart */}
-                      <Col
-                        span={24}
-                        style={{
-                          display: "flex",
-                          justifyContent: "start",
-                          alignItems: "center",
-                          marginBottom: "10px",
-                        }}
-                      >
+                      <Col>
                         <CustomText
-                          size={"13px"}
+                          size={"24px"}
                           weight={"400"}
-                          color={"var(--gray-text)"}
+                          color={"var(--pink)"}
+                          isButton={true}
+                          onClick={() => handleRemoveWishlist(item?.id)}
                         >
-                          Depart at {item.depart} at {item.startTime}
+                          <Tooltip
+                            title="Remove to wishlist"
+                            overlayInnerStyle={{
+                              borderRadius: "3px",
+                              fontFamily: "Montserrat",
+                            }}
+                            color="var(--pink)"
+                          >
+                            <FontAwesomeIcon icon={faHeartCircleMinus} />
+                          </Tooltip>
                         </CustomText>
                       </Col>
+                    </Col>
 
-                      {/* Slot */}
-                      {/* <Col span={24}>
+                    {/* Name */}
+                    <Col
+                      span={24}
+                      style={{
+                        display: "flex",
+                        justifyContent: "start",
+                        alignItems: "center",
+                        marginBottom: "10px",
+                      }}
+                    >
                       <CustomText
-                        size={"14px"}
-                        weight={"500"}
+                        size={"16px"}
+                        weight={"600"}
+                        color={"var(--gray-text)"}
+                        isUppercase={true}
+                      >
+                        {item?.name}
+                      </CustomText>
+                    </Col>
+
+                    {/* Description */}
+                    <Col
+                      span={24}
+                      style={{
+                        display: "flex",
+                        justifyContent: "start",
+                        alignItems: "center",
+                        marginBottom: "10px",
+                      }}
+                    >
+                      <CustomText
+                        size={"13px"}
+                        weight={"400"}
                         color={"var(--gray-text)"}
                       >
-                        Remaining seats:
-                      </CustomText>{" "}
-                      <Tag color="var(--green-dark)">
-                        <CustomText
-                          size={"12px"}
-                          weight={"400"}
-                          color={"var(--white)"}
-                        >
-                          <FontAwesomeIcon icon={faUser} /> ({item?.adults})
-                        </CustomText>
-                      </Tag>
-                      <Tag color="var(--green-dark)">
-                        <CustomText
-                          size={"12px"}
-                          weight={"400"}
-                          color={"var(--white)"}
-                        >
-                          <FontAwesomeIcon icon={faChild} /> ({item?.children})
-                        </CustomText>
-                      </Tag>
-                      <Tag color="var(--green-dark)">
-                        <CustomText
-                          size={"12px"}
-                          weight={"400"}
-                          color={"var(--white)"}
-                        >
-                          <FontAwesomeIcon icon={faPersonBreastfeeding} /> (
-                          {item?.baby})
-                        </CustomText>
-                      </Tag>
-                    </Col> */}
+                        {item?.description}
+                      </CustomText>
+                    </Col>
 
-                      {/* Icons */}
+                    {/* Icons */}
+
+                    {item?.type === "TOUR" ? (
                       <Col
                         span={24}
                         style={{
@@ -1061,21 +668,85 @@ export default function List({ wishlist, setWishlist }) {
                           }}
                         />
                       </Col>
-                    </Col>
+                    ) : (
+                      <Col
+                        span={24}
+                        style={{
+                          display: "flex",
+                          justifyContent: "start",
+                          alignItems: "center",
+                          marginBottom: "10px",
+                        }}
+                      >
+                        <FontAwesomeIcon
+                          icon={faClock}
+                          style={{
+                            fontSize: "22px",
+                            color: "var(--gray-light)",
+                            display: "block",
+                            padding: "5px",
+                            border: "1px solid var(--border)",
+                            borderRadius: "3px",
+                            marginRight: "10px",
+                          }}
+                        />
 
-                    {/* Details */}
-                    <Col
-                      span={5}
-                      style={{
-                        background: "var(--white)",
-                        display: "flex",
-                        flexDirection: "column",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        gap: "10px",
-                        border: "1px solid var(--border)",
-                      }}
-                    >
+                        <FontAwesomeIcon
+                          icon={faWifi}
+                          style={{
+                            fontSize: "22px",
+                            color: "var(--gray-light)",
+                            display: "block",
+                            padding: "5px",
+                            border: "1px solid var(--border)",
+                            borderRadius: "3px",
+                            marginRight: "10px",
+                          }}
+                        />
+
+                        <FontAwesomeIcon
+                          icon={faDumbbell}
+                          style={{
+                            fontSize: "22px",
+                            color: "var(--gray-light)",
+                            display: "block",
+                            padding: "5px",
+                            border: "1px solid var(--border)",
+                            borderRadius: "3px",
+                            marginRight: "10px",
+                          }}
+                        />
+
+                        <FontAwesomeIcon
+                          icon={faUtensils}
+                          style={{
+                            fontSize: "22px",
+                            color: "var(--gray-light)",
+                            display: "block",
+                            padding: "5px",
+                            border: "1px solid var(--border)",
+                            borderRadius: "3px",
+                            marginRight: "10px",
+                          }}
+                        />
+                      </Col>
+                    )}
+                  </Col>
+
+                  {/* Details */}
+                  <Col
+                    span={5}
+                    style={{
+                      background: "var(--white)",
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      gap: "10px",
+                      border: "1px solid var(--border)",
+                    }}
+                  >
+                    {item?.type === "TOUR" ? (
                       <CustomText
                         size={"24px"}
                         weight={"400"}
@@ -1084,56 +755,55 @@ export default function List({ wishlist, setWishlist }) {
                         {new Intl.NumberFormat("vi-VN", {
                           style: "currency",
                           currency: "VND",
-                        }).format(item.price - item.discount)}
+                        }).format(item?.price)}
                       </CustomText>
-
+                    ) : (
                       <CustomText
-                        size={"18px"}
-                        weight={"300"}
-                        color={"var(--gray-light)"}
-                        isItalic={true}
-                        isStrikethrough={true}
-                      >
-                        {new Intl.NumberFormat("vi-VN", {
-                          style: "currency",
-                          currency: "VND",
-                        }).format(item.price)}
-                      </CustomText>
-
-                      <CustomText
-                        size={"12px"}
+                        size={"24px"}
                         weight={"400"}
-                        color={"var(--gray-light)"}
+                        color={"var(--pink)"}
                       >
-                        Per / person
+                        {item?.price}
                       </CustomText>
+                    )}
 
-                      <Button
-                        htmlType="submit"
-                        size="middle"
-                        className="hover-button"
-                        style={{
-                          background: "var(--green-dark)",
-                          border: "var(--green-dark)",
-                          color: "var(--white)",
-                          borderRadius: "3px",
-                          cursor: "pointer",
-                        }}
-                      >
+                    <Button
+                      htmlType="submit"
+                      size="middle"
+                      className="hover-button"
+                      style={{
+                        background: "var(--green-dark)",
+                        border: "var(--green-dark)",
+                        color: "var(--white)",
+                        borderRadius: "3px",
+                        cursor: "pointer",
+                      }}
+                    >
+                      {item?.type === "TOUR" ? (
                         <CustomText
                           size={"14px"}
                           weight={"600"}
                           color={"var(--white)"}
                           isButton={true}
-                          link={`/tours/${item.id}`}
+                          link={`/tours/${item.itemId}`}
                         >
                           Details
                         </CustomText>
-                      </Button>
-                    </Col>
-                  </Row>
-                )
-              )
+                      ) : (
+                        <CustomText
+                          size={"14px"}
+                          weight={"600"}
+                          color={"var(--white)"}
+                          isButton={true}
+                          link={`/hotels/${item.itemId}`}
+                        >
+                          Details
+                        </CustomText>
+                      )}
+                    </Button>
+                  </Col>
+                </Row>
+              ))
             ) : (
               <Row
                 style={{

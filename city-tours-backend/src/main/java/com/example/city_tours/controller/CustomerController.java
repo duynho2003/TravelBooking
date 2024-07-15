@@ -4,9 +4,11 @@ import com.example.city_tours.common.ApiErrorResponse;
 import com.example.city_tours.common.ApiSuccessResponse;
 import com.example.city_tours.common.ErrorCode;
 import com.example.city_tours.dto.request.Customer.CreateCustomerRequestDto;
+import com.example.city_tours.dto.request.Customer.UpdateCustomerRequestDto;
 import com.example.city_tours.dto.request.User.CreateAccountRequestDto;
 import com.example.city_tours.dto.request.User.UpdateAccountRequestDto;
 import com.example.city_tours.dto.response.Customer.CreateCustomerResponseDto;
+import com.example.city_tours.dto.response.Customer.UpdateCustomerResponseDto;
 import com.example.city_tours.dto.response.User.*;
 import com.example.city_tours.exception.EmailAlreadyExistsException;
 import com.example.city_tours.exception.ResourceNotFoundException;
@@ -41,6 +43,39 @@ public class CustomerController {
                     .body(new ApiSuccessResponse<>(
                             HttpStatus.CREATED.value(),
                             "Customer created successfully",
+                            responseDto
+                    ));
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(new ApiErrorResponse(
+                            HttpStatus.NOT_FOUND.value(),
+                            e.getMessage(),
+                            ErrorCode.NOT_FOUND,
+                            "http://localhost:5050/docs/errors/1001"
+                    ));
+        } catch (ServerErrorException e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiErrorResponse(
+                            HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                            e.getMessage(),
+                            ErrorCode.INTERNAL_SERVER_ERROR,
+                            "http://localhost:5050/docs/errors/1012"
+                    ));
+        }
+    }
+
+    @PreAuthorize("hasAnyRole('ROLE_CUSTOMER', 'ROLE_STAFF', 'ROLE_ADMIN')")
+    @PutMapping("/{userId}")
+    public ResponseEntity<?> updateCustomer(@PathVariable Long userId, @RequestBody UpdateCustomerRequestDto updateCustomerRequestDto) {
+        try {
+            UpdateCustomerResponseDto responseDto = customerService.updateCustomer(userId, updateCustomerRequestDto);
+            return ResponseEntity
+                    .status(HttpStatus.CREATED)
+                    .body(new ApiSuccessResponse<>(
+                            HttpStatus.CREATED.value(),
+                            "Customer updated successfully",
                             responseDto
                     ));
         } catch (ResourceNotFoundException e) {

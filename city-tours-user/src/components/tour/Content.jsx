@@ -12,6 +12,7 @@ import {
   Input,
   Table,
   InputNumber,
+  Select,
 } from "antd";
 import category1 from "../../assets/images/category-1.jpg";
 import category2 from "../../assets/images/category-2.jpg";
@@ -50,8 +51,15 @@ import { getTourById } from "../../features/tour/TourSlice";
 import { useEffect, useState } from "react";
 import { tourBooking } from "../../features/tour/TourSlice";
 dayjs.extend(customParseFormat);
+import "react-quill/dist/quill.snow.css";
+import DOMPurify from "dompurify";
+import { GOONG_MAP_KEY } from "../../utils/Constants";
+import goongjs from "@goongmaps/goong-js";
+import polyline from "@mapbox/polyline";
+import goongApi from "../../services/goongJs/goongApi";
 
 const { useBreakpoint } = Grid;
+const { Option } = Select;
 
 export default function Content({ tour }) {
   const navigate = useNavigate();
@@ -59,9 +67,12 @@ export default function Content({ tour }) {
 
   const sub = useSelector((state) => state.auth?.info?.sub);
 
+  const [selectedStartTime, setSelectedStartTime] = useState(null);
   const [quantityAdults, setQuantityAdults] = useState(1);
   const [quantityChildren, setQuantityChildren] = useState(0);
   const [quantityBaby, setQuantityBaby] = useState(0);
+
+  const sanitizedHTML = DOMPurify.sanitize(tour?.detail);
 
   // Ant Design
   const screens = useBreakpoint();
@@ -79,35 +90,58 @@ export default function Content({ tour }) {
     return dates.map((schedule) => schedule.date).join(" - ");
   };
 
-  const columns = [
+  const tourTimesColumns = [
     {
-      title: "Day of Week",
-      dataIndex: "dayOfWeek",
-      key: "dayOfWeek",
+      title: "STT",
+      dataIndex: "key",
+      key: "key",
     },
     {
-      title: "Date",
-      dataIndex: "date",
-      key: "date",
-      render: (text) => {
-        const dateParts = text.split("-");
-        return `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;
-      },
+      title: "Start Date",
+      dataIndex: "startDate",
+      key: "startDate",
     },
-
     {
-      title: "Activities",
-      dataIndex: "activities",
-      key: "activities",
+      title: "End Date",
+      dataIndex: "endDate",
+      key: "endDate",
     },
   ];
 
-  const dataSource = tour?.schedules?.map((day, index) => ({
-    key: index,
-    date: day.date,
-    dayOfWeek: day.dayOfWeek,
-    activities: day.activities,
+  const dataSourceTourTimes = tour?.tourTimes?.map((item, index) => ({
+    key: index + 1,
+    startDate: item.startDate,
+    endDate: item.endDate,
   }));
+
+  const tourLocationsColumns = [
+    {
+      title: "STT",
+      dataIndex: "key",
+      key: "key",
+    },
+    {
+      title: "Start Point",
+      dataIndex: "startPoint",
+      key: "startPoint",
+    },
+    {
+      title: "End Point",
+      dataIndex: "endPoint",
+      key: "endPoint",
+    },
+  ];
+
+  const dataSourceTourLocations = tour?.tourLocations?.map((item, index) => ({
+    key: index + 1,
+    startPoint: item.startPoint,
+    endPoint: item.endPoint,
+  }));
+
+  const onChangeStartTime = (value) => {
+    console.log("change startTime", value);
+    setSelectedStartTime(value);
+  };
 
   const onChangeAdults = (value) => {
     console.log("change adults", value);
@@ -129,6 +163,7 @@ export default function Content({ tour }) {
       dispatch(
         tourBooking({
           tourId: tourId,
+          startTime: selectedStartTime,
           adults: quantityAdults,
           children: quantityChildren,
           baby: quantityBaby,
@@ -140,37 +175,298 @@ export default function Content({ tour }) {
     }
   };
 
-  const [wishlist, setWishlist] = useState([]);
+  const dataStartTimes = tour?.tourTimes?.map(
+    (tourTime) => tourTime?.startDate
+  );
 
-  // useEffect for loading data
+  // const [isOpenMap, setIsOpenMap] = useState(false);
+
+  // const handleShowMap = () => {
+  //   console.log("Show map");
+
+  //   // setIsOpenMap(!isOpenMap);
+
+  //   goongjs.accessToken = GOONG_MAP_KEY;
+
+  //   let defaultCenter = [106.70105355500004, 10.776553100000058];
+
+  //   const map = new goongjs.Map({
+  //     container: "map",
+  //     style: "https://tiles.goong.io/assets/goong_map_web.json",
+  //     center: defaultCenter,
+  //     zoom: 9,
+  //   });
+
+  //   // Check markerPosition and add marker if not at default
+  //   // if (markerPosition[0] !== 0 || markerPosition[1] !== 0) {
+  //   //   const marker = new goongjs.Marker({ color: "red" })
+  //   //     .setLngLat(markerPosition)
+  //   //     .addTo(map);
+
+  //   //   map.flyTo({
+  //   //     center: markerPosition,
+  //   //     zoom: 13,
+  //   //     essential: true,
+  //   //   });
+  //   // }
+
+  //   return () => {
+  //     map.remove();
+  //   };
+  // };
+
+  const [polylinePoints, setPolylinePoints] = useState(null);
+
+  const handleGetGoongMapsDirections = async (origin, destination) => {
+    try {
+      const data = { origin, destination };
+      const response = await goongApi.direction(data);
+      return response.routes[0].overview_polyline.points;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  };
+
+  // useEffect(() => {
+  //   console.log("tour locations", tour?.tourLocations);
+
+  //   goongjs.accessToken = GOONG_MAP_KEY;
+
+  //   const defaultCenter = [106.70105355500004, 10.776553100000058];
+  //   const map = new goongjs.Map({
+  //     container: "map",
+  //     style: "https://tiles.goong.io/assets/goong_map_web.json",
+  //     center: defaultCenter,
+  //     zoom: 8,
+  //   });
+
+  //   const getUniqueCoordinates = (locations) => {
+  //     const uniqueCoordinates = new Set();
+  //     locations.forEach((location) => {
+  //       const { coordinatesStartPoint, coordinatesEndPoint } = location;
+  //       if (coordinatesStartPoint) uniqueCoordinates.add(coordinatesStartPoint);
+  //       if (coordinatesEndPoint) uniqueCoordinates.add(coordinatesEndPoint);
+  //     });
+  //     return Array.from(uniqueCoordinates).map((coord) => JSON.parse(coord));
+  //   };
+
+  //   const uniqueCoords = getUniqueCoordinates(tour?.tourLocations);
+  //   console.log("uniqueCoords: ", uniqueCoords);
+
+  //   const fetchAllDirections = async () => {
+  //     const allPolylines = [];
+  //     for (let i = 0; i < uniqueCoords.length - 1; i++) {
+  //       const origin = [uniqueCoords[i].lat, uniqueCoords[i].lng];
+  //       const destination = [uniqueCoords[i + 1].lat, uniqueCoords[i + 1].lng];
+  //       const polylinePoints = await handleGetGoongMapsDirections(
+  //         origin,
+  //         destination
+  //       );
+  //       if (polylinePoints) allPolylines.push(polylinePoints);
+  //     }
+  //     setPolylinePoints(allPolylines);
+  //   };
+
+  //   if (uniqueCoords.length > 0) {
+  //     uniqueCoords.forEach((coord, index) => {
+  //       if (coord && coord.lng !== undefined && coord.lat !== undefined) {
+  //         const color = index === 0 ? "green" : "red";
+  //         new goongjs.Marker({ color })
+  //           .setLngLat([coord.lng, coord.lat])
+  //           .addTo(map);
+  //       } else {
+  //         console.warn("Invalid coordinate:", coord);
+  //       }
+  //     });
+
+  //     map.on("load", async function () {
+  //       await fetchAllDirections();
+
+  //       const layers = map.getStyle().layers;
+  //       let firstSymbolId;
+
+  //       for (let layer of layers) {
+  //         if (layer.type === "symbol") {
+  //           firstSymbolId = layer.id;
+  //           break;
+  //         }
+  //       }
+
+  //       if (polylinePoints && polylinePoints?.length > 0) {
+  //         // Remove existing source and add new polylines
+  //         polylinePoints.forEach((points, index) => {
+  //           const geoJSON = polyline.toGeoJSON(points);
+
+  //           const sourceId = `route-${index}`; // Unique source ID for each polyline
+  //           if (map.getSource(sourceId)) {
+  //             map.removeSource(sourceId);
+  //           }
+
+  //           map.addSource(sourceId, {
+  //             type: "geojson",
+  //             data: geoJSON,
+  //           });
+
+  //           // Check if the layer already exists before adding
+  //           if (!map.getLayer(sourceId)) {
+  //             map.addLayer(
+  //               {
+  //                 id: sourceId,
+  //                 type: "line",
+  //                 source: sourceId,
+  //                 layout: {
+  //                   "line-join": "round",
+  //                   "line-cap": "round",
+  //                 },
+  //                 paint: {
+  //                   "line-color": "#1e88e5",
+  //                   "line-width": 8,
+  //                 },
+  //               },
+  //               firstSymbolId
+  //             );
+  //           }
+  //         });
+  //       }
+
+  //       const bounds = new goongjs.LngLatBounds();
+  //       uniqueCoords.forEach((coord) => {
+  //         bounds.extend([coord.lng, coord.lat]);
+  //       });
+
+  //       map.fitBounds(bounds, { padding: 100 });
+  //     });
+  //   }
+
+  //   return () => {
+  //     map.remove();
+  //   };
+  // }, [tour]);
+
   useEffect(() => {
-    const getWishlistFromLocalStorage = () => {
-      const data = JSON.parse(localStorage.getItem("wishlist")) || [];
-      setWishlist(data);
-      console.log("wishlist: ", data);
+    console.log("tour locations", tour?.tourLocations);
+
+    goongjs.accessToken = GOONG_MAP_KEY;
+
+    const defaultCenter = [106.70105355500004, 10.776553100000058];
+    const map = new goongjs.Map({
+      container: "map",
+      style: "https://tiles.goong.io/assets/goong_map_web.json",
+      center: defaultCenter,
+      zoom: 8,
+    });
+
+    const getUniqueCoordinates = (locations) => {
+      const uniqueCoordinates = new Set();
+      locations.forEach((location) => {
+        const { coordinatesStartPoint, coordinatesEndPoint } = location;
+        if (coordinatesStartPoint) uniqueCoordinates.add(coordinatesStartPoint);
+        if (coordinatesEndPoint) uniqueCoordinates.add(coordinatesEndPoint);
+      });
+      return Array.from(uniqueCoordinates).map((coord) => JSON.parse(coord));
     };
 
-    getWishlistFromLocalStorage();
-  }, [dispatch]);
+    const uniqueCoords = getUniqueCoordinates(tour?.tourLocations);
+    console.log("uniqueCoords: ", uniqueCoords);
 
-  const handleAddWishlist = (tourId) => {
-    // Check if tour is already in wishlist
-    const isWishlist = wishlist?.some((item) => item.id === tourId);
-    if (isWishlist) {
-      alert("Tour is already in wishlist");
-      return;
-    }
+    const fetchAllDirections = async () => {
+      const allPolylines = [];
+      for (let i = 0; i < uniqueCoords.length - 1; i++) {
+        const origin = [uniqueCoords[i].lat, uniqueCoords[i].lng];
+        const destination = [uniqueCoords[i + 1].lat, uniqueCoords[i + 1].lng];
+        const polylinePoints = await handleGetGoongMapsDirections(
+          origin,
+          destination
+        );
+        if (polylinePoints) allPolylines.push(polylinePoints);
+      }
+      return allPolylines; // Return the fetched polylines
+    };
 
-    // Add tour to wishlist state
-    setWishlist([...wishlist, tour], console.log("wishlist: ", wishlist));
+    map.on("load", async function () {
+      // Add markers for each unique coordinate
+      uniqueCoords.forEach((coord, index) => {
+        if (coord && coord.lng !== undefined && coord.lat !== undefined) {
+          const marker = new goongjs.Marker({ color: "red" })
+            .setLngLat([coord.lng, coord.lat])
+            .addTo(map);
 
-    // Update localStorage
-    const updatedWishlist = [...wishlist, tour];
+          const popup = new goongjs.Popup()
+            .setLngLat([coord.lng, coord.lat])
+            .setHTML(`Ngày ${index + 1}`) // Displaying Ngày 1, Ngày 2, etc.
+            .addTo(map);
 
-    localStorage.setItem("wishlist", JSON.stringify(updatedWishlist));
+          // Attach popup to marker
+          marker.setPopup(popup);
+        } else {
+          console.warn("Invalid coordinate:", coord);
+        }
+      });
 
-    console.log("Updated wishlist: ", updatedWishlist);
-  };
+      // Fetch all directions and render polylines
+      const polylines = await fetchAllDirections();
+
+      const layers = map.getStyle().layers;
+      let firstSymbolId;
+
+      for (let layer of layers) {
+        if (layer.type === "symbol") {
+          firstSymbolId = layer.id;
+          break;
+        }
+      }
+
+      if (polylines.length > 0) {
+        polylines.forEach((points, index) => {
+          const geoJSON = polyline.toGeoJSON(points);
+
+          const sourceId = `route-${index}`; // Unique source ID for each polyline
+          if (map.getSource(sourceId)) {
+            map.removeSource(sourceId);
+          }
+
+          map.addSource(sourceId, {
+            type: "geojson",
+            data: geoJSON,
+          });
+
+          // Add layer if it doesn't already exist
+          if (!map.getLayer(sourceId)) {
+            map.addLayer(
+              {
+                id: sourceId,
+                type: "line",
+                source: sourceId,
+                layout: {
+                  "line-join": "round",
+                  "line-cap": "round",
+                },
+                paint: {
+                  "line-color": "#1e88e5",
+                  "line-width": 8,
+                },
+              },
+              firstSymbolId
+            );
+          }
+        });
+      }
+
+      // Calculate bounds to fit all markers
+      const bounds = new goongjs.LngLatBounds();
+      uniqueCoords.forEach((coord) => {
+        bounds.extend([coord.lng, coord.lat]);
+      });
+
+      // Zoom the map to fit all points
+      map.fitBounds(bounds, { padding: 100 });
+    });
+
+    return () => {
+      map.remove();
+    };
+  }, [tour]);
 
   return (
     <>
@@ -259,6 +555,22 @@ export default function Content({ tour }) {
             padding: "40px 0",
           }}
         >
+          <Col
+            span={24}
+            style={{
+              height: "400px",
+              marginBottom: "20px",
+            }}
+          >
+            <div
+              id="map"
+              style={{
+                width: "100%",
+                height: "400px",
+              }}
+            ></div>
+          </Col>
+
           {/* Col content */}
           <Col span={16}>
             {/* Utilities */}
@@ -480,7 +792,7 @@ export default function Content({ tour }) {
               </Col>
             </Row>
 
-            {/* Schedules */}
+            {/* Detail */}
             <Row
               style={{
                 width: "100%",
@@ -504,7 +816,54 @@ export default function Content({ tour }) {
                   weight={"500"}
                   color={"var(--gray-text)"}
                 >
-                  Schedules
+                  Detail
+                </CustomText>
+              </Col>
+
+              <Col
+                span={18}
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "start",
+                  alignItems: "start",
+                  gap: "15px",
+                  padding: "10px 0",
+                }}
+              >
+                <div
+                  dangerouslySetInnerHTML={{
+                    __html: sanitizedHTML,
+                  }}
+                />
+              </Col>
+            </Row>
+
+            {/* Times */}
+            <Row
+              style={{
+                width: "100%",
+                padding: "20px 0",
+              }}
+              justify={"space-between"}
+            >
+              <Col
+                span={4}
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "start",
+                  alignItems: "start",
+                  gap: "15px",
+                  padding: "10px 0",
+                }}
+              >
+                <CustomText
+                  size={"22px"}
+                  weight={"500"}
+                  color={"var(--gray-text)"}
+                >
+                  Times
                 </CustomText>
               </Col>
 
@@ -520,8 +879,8 @@ export default function Content({ tour }) {
                 }}
               >
                 <Table
-                  columns={columns}
-                  dataSource={dataSource}
+                  columns={tourTimesColumns}
+                  dataSource={dataSourceTourTimes}
                   pagination={false}
                   style={{
                     width: "100%",
@@ -529,6 +888,57 @@ export default function Content({ tour }) {
                 />
               </Col>
             </Row>
+
+            {/* Locations */}
+            <Row
+              style={{
+                width: "100%",
+                padding: "20px 0",
+              }}
+              justify={"space-between"}
+            >
+              <Col
+                span={4}
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "start",
+                  alignItems: "start",
+                  gap: "15px",
+                  padding: "10px 0",
+                }}
+              >
+                <CustomText
+                  size={"22px"}
+                  weight={"500"}
+                  color={"var(--gray-text)"}
+                >
+                  Locations
+                </CustomText>
+              </Col>
+
+              <Col
+                span={18}
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "start",
+                  alignItems: "start",
+                  gap: "15px",
+                  padding: "10px 0",
+                }}
+              >
+                <Table
+                  columns={tourLocationsColumns}
+                  dataSource={dataSourceTourLocations}
+                  pagination={false}
+                  style={{
+                    width: "100%",
+                  }}
+                />
+              </Col>
+            </Row>
+
             {/* Reivews */}
             <Row
               style={{
@@ -717,16 +1127,15 @@ export default function Content({ tour }) {
                 borderRadius: "3px",
                 cursor: "pointer",
               }}
-              disabled
+              // onClick={handleShowMap}
             >
               <CustomText
                 size={"14px"}
                 weight={"600"}
                 color={"var(--white)"}
-                // isButton={true}
                 isUppercase={true}
               >
-                View on map (Updating)
+                View on map
               </CustomText>
             </Button>
 
@@ -759,7 +1168,7 @@ export default function Content({ tour }) {
                   borderBottomRightRadius: "3px",
                 }}
               >
-                {/* Date and time */}
+                {/* Depart */}
                 <Row
                   style={{
                     width: "100%",
@@ -768,11 +1177,12 @@ export default function Content({ tour }) {
                   justify={"space-between"}
                 >
                   <Col
-                    xl={11}
+                    xl={24}
                     style={{
                       display: "flex",
                       flexDirection: "column",
                       gap: "5px",
+                      marginBottom: "20px",
                     }}
                   >
                     <CustomText
@@ -791,11 +1201,11 @@ export default function Content({ tour }) {
                       Depart at
                     </CustomText>
 
-                    <Input size="small" value={tour?.depart} readOnly />
+                    <Input size="lagre" value={tour?.depart} readOnly />
                   </Col>
 
                   <Col
-                    xl={11}
+                    xl={24}
                     style={{
                       display: "flex",
                       flexDirection: "column",
@@ -817,7 +1227,16 @@ export default function Content({ tour }) {
                       />
                       Start Time
                     </CustomText>
-                    <Input value={tour?.startTime} readOnly />
+                    <Select
+                      onChange={onChangeStartTime}
+                      placeholder="Select start time"
+                    >
+                      {dataStartTimes?.map((item, index) => (
+                        <Option size="middle" key={index} value={item}>
+                          {item}
+                        </Option>
+                      ))}
+                    </Select>
                   </Col>
                 </Row>
 

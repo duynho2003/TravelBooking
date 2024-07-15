@@ -10,7 +10,7 @@ import { getInfoCustomer } from "../features/customer/CustomerSlice";
 
 export default function MainLayout() {
   // Constants
-  const ID_INFO_WEBSITE = 1;
+  const ID_INFO_WEBSITE = 15;
 
   // Redux State
   const dispatch = useDispatch();

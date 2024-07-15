@@ -1,4 +1,15 @@
-import { Col, Row, Grid, Image, Card, Rate, Button, Tooltip, Tag } from "antd";
+import {
+  Col,
+  Row,
+  Grid,
+  Image,
+  Card,
+  Rate,
+  Button,
+  Tooltip,
+  Tag,
+  notification,
+} from "antd";
 import item from "../../assets/images/hotels.jpg";
 import CustomText from "../common/CustomText";
 import { HeartOutlined } from "@ant-design/icons";
@@ -8,50 +19,77 @@ import {
   faHotel,
   faPlaneDeparture,
 } from "@fortawesome/free-solid-svg-icons";
-import { Link } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { createWishlist } from "../../features/wishlist/WishlistSlice";
+import { useDispatch } from "react-redux";
 
 const { useBreakpoint } = Grid;
 
-export default function TopHotels({ hotels }) {
+export default function TopHotels({ userId, hotels }) {
   const screens = useBreakpoint();
 
-  const [wishlist, setWishlist] = useState([]);
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    const getWishlistFromLocalStorage = () => {
-      if (localStorage.getItem("wishlist")) {
-        const data = JSON.parse(localStorage.getItem("wishlist"));
-        setWishlist(data);
-        console.log("wishlist: ", data);
-      }
-    };
+  const dispatch = useDispatch();
 
-    getWishlistFromLocalStorage();
-  }, []);
-
-  const handleAddWishlist = (hotelName) => {
-    // Add tourId to wishlist
-    const hotel = hotels?.find((hotel) => hotel?.name === hotelName);
-
-    console.log("tour: ", hotel);
-
-    // Check if tour is already in wishlist
-    const isWishlist = wishlist?.some((item) => item.name === hotelName);
-    if (isWishlist) {
-      alert("Item is already in wishlist");
+  const handleAddWishlist = async (hotelId) => {
+    if (!userId) {
+      alert("Please login before adding to wishlists");
+      navigate("/login");
       return;
     }
 
-    // Add tour to wishlist state
-    setWishlist([...wishlist, hotel]);
+    const hotel = hotels?.find((hotel) => hotel?.id === hotelId);
 
-    // Update localStorage
-    const updatedWishlist = [...wishlist, hotel];
+    console.log("hotel: ", hotel);
 
-    localStorage.setItem("wishlist", JSON.stringify(updatedWishlist));
+    const newData = {
+      name: hotel?.name,
+      rating: hotel?.rating,
+      numberOfRating: hotel?.numberOfRating,
+      price: "CONTACT",
+      description: hotel?.description,
+      thumbnail: hotel?.thumbnailUrls?.[0],
+      type: "HOTEL",
+      itemId: hotel?.id,
+      userId: userId,
+    };
 
-    console.log("Updated wishlist: ", updatedWishlist);
+    console.log("newData: ", newData);
+
+    try {
+      const action = await dispatch(createWishlist(newData));
+
+      console.log("action: ", action);
+
+      if (createWishlist.fulfilled.match(action)) {
+        if (action?.payload?.status === 201) {
+          notification.success({
+            message: "Add item to wishlist successful",
+            description: "Successfully added the item to your wishlist",
+          });
+        } else {
+          const error =
+            action?.payload?.error?.data?.message || "Unknown error";
+          notification.error({
+            message: "Add item to wishlist error",
+            description: error,
+          });
+        }
+      } else if (createWishlist.rejected.match(action)) {
+        const error = action?.payload?.error.message || "Unknown error";
+        notification.error({
+          message: "Add item to wishlist error",
+          description: error,
+        });
+      }
+    } catch (error) {
+      notification.error({
+        message: "System error",
+        description:
+          "The server couldn't fulfill a valid request due to an issue with the server.",
+      });
+    }
   };
 
   return (
@@ -242,8 +280,9 @@ export default function TopHotels({ hotels }) {
                     color={"var(--gray-text)"}
                   >
                     Type rooms:{" "}
-                    {[...new Set(hotel?.rooms?.map((room) => room?.type))].map(
-                      (type, index) => (
+                    {[...new Set(hotel?.rooms?.map((room) => room?.type))]
+                      .slice(0, 2)
+                      .map((type, index) => (
                         <Tag color="var(--green-dark)" key={index}>
                           <CustomText
                             size={"12px"}
@@ -253,8 +292,8 @@ export default function TopHotels({ hotels }) {
                             {type}
                           </CustomText>
                         </Tag>
-                      )
-                    )}
+                      ))}
+                    {hotel?.rooms?.length > 2 && "..."}
                   </CustomText>
 
                   <Rate
@@ -282,7 +321,7 @@ export default function TopHotels({ hotels }) {
                     size={"30px"}
                     weight={"500"}
                     color={"var(--gray-light)"}
-                    onClick={() => handleAddWishlist(hotel?.name)}
+                    onClick={() => handleAddWishlist(hotel?.id)}
                   >
                     <Tooltip
                       title="Add to wishlist"

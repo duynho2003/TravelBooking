@@ -64,81 +64,16 @@ public class TourBookingController {
         }
     }
 
-//    @PreAuthorize("hasAuthority('UPDATE_TOUR')")
-//    @PutMapping("/{tourBookingId}")
-//    public ResponseEntity<?> updateTourBooking(@PathVariable Long tourId, @RequestBody UpdateTourRequestDto updateTourRequestDto) {
-//        try {
-//            UpdateTourResponseDto responseDto = tourService.updateTour(tourId, updateTourRequestDto);
-//
-//            return ResponseEntity
-//                    .status(HttpStatus.CREATED)
-//                    .body(new ApiSuccessResponse<>(
-//                            HttpStatus.CREATED.value(),
-//                            "Updated tour successfully",
-//                            responseDto
-//                    ));
-//        } catch (ServerErrorException e) {
-//            return ResponseEntity
-//                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-//                    .body(new ApiErrorResponse(
-//                            HttpStatus.INTERNAL_SERVER_ERROR.value(),
-//                            e.getMessage(),
-//                            ErrorCode.INTERNAL_SERVER_ERROR,
-//                            "http://localhost:5050/docs/errors/1012"
-//                    ));
-//        }
-//    }
-//
-//    @PreAuthorize("hasAuthority('UPDATE_TOUR')")
-//    @DeleteMapping("/{tourId}")
-//    public ResponseEntity<?> deleteTour(@PathVariable Long tourId) {
-//        try {
-//            tourService.deleteTour(tourId);
-//
-//            return ResponseEntity
-//                    .status(HttpStatus.CREATED)
-//                    .body(new ApiSuccessResponse<>(
-//                            HttpStatus.CREATED.value(),
-//                            "Deleted tour successfully",
-//                            null
-//                    ));
-//        } catch (ServerErrorException e) {
-//            return ResponseEntity
-//                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-//                    .body(new ApiErrorResponse(
-//                            HttpStatus.INTERNAL_SERVER_ERROR.value(),
-//                            e.getMessage(),
-//                            ErrorCode.INTERNAL_SERVER_ERROR,
-//                            "http://localhost:5050/docs/errors/1012"
-//                    ));
-//        }
-//    }
-//
-
-
-    @PreAuthorize("hasAuthority('READ_TOUR')")
+    @PreAuthorize("hasAnyRole('ROLE_STAFF', 'ROLE_ADMIN')")
     @GetMapping("")
     public ResponseEntity<?> getAllTourBookings(
             @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "10") int limit
+            @RequestParam(defaultValue = "10") int limit,
+            @RequestParam(defaultValue = "") String tourName,
+            @RequestParam(required = false) Integer tourId
     ) {
         try {
-            // Call userService to get a page of accounts
-            List<GetAllTourBookingsResponseDto> responsePage = tourBookingService.getAllTourBookings(page, limit);
-
-            // Count total users
-            long totalTourBookings = tourBookingRepository.count();
-
-            // Calculate skip (number of records skipped)
-            int skip = (page - 1) * limit;
-
-            // Prepare the response structure
-            PageResponseDto<GetAllTourBookingsResponseDto> pageResponseDto = new PageResponseDto<>();
-            pageResponseDto.setData(responsePage);
-            pageResponseDto.setPage(page);
-            pageResponseDto.setLimit(limit);
-            pageResponseDto.setSkip(skip);
-            pageResponseDto.setTotals(totalTourBookings);
+            PageResponseDto responsePage = tourBookingService.getAllTourBookings(page, limit, tourName, tourId);
 
             // Return success response
             return ResponseEntity
@@ -146,7 +81,7 @@ public class TourBookingController {
                     .body(new ApiSuccessResponse<>(
                             HttpStatus.OK.value(),
                             "Get all tour bookings successfully",
-                            pageResponseDto
+                            responsePage
                     ));
         } catch (ResourceNotFoundException e) {
             // Return error response for resource not found
@@ -170,38 +105,46 @@ public class TourBookingController {
                     ));
         }
     }
-//
-////    @PreAuthorize("hasAuthority('READ_TOUR')")
-//    @GetMapping("/{tourId}")
-//    public ResponseEntity<?> getTourById(@PathVariable Long tourId) {
-//        try {
-//            GetTourByIdResponseDto responseDto = tourService.getTourById(tourId);
-//            return ResponseEntity
-//                    .status(HttpStatus.OK)
-//                    .body(new ApiSuccessResponse<>(
-//                            HttpStatus.OK.value(),
-//                            "Get tour by id successfully",
-//                            responseDto
-//                    ));
-//        } catch (ResourceNotFoundException e) {
-//            return ResponseEntity
-//                    .status(HttpStatus.NOT_FOUND)
-//                    .body(new ApiErrorResponse(
-//                            HttpStatus.NOT_FOUND.value(),
-//                            e.getMessage(),
-//                            ErrorCode.NOT_FOUND,
-//                            "http://localhost:5050/docs/errors/1015"
-//                    ));
-//        } catch (ServerErrorException e) {
-//            return ResponseEntity
-//                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-//                    .body(new ApiErrorResponse(
-//                            HttpStatus.INTERNAL_SERVER_ERROR.value(),
-//                            e.getMessage(),
-//                            ErrorCode.INTERNAL_SERVER_ERROR,
-//                            "http://localhost:5050/docs/errors/1012"
-//                    ));
-//        }
-//    }
+
+    @PreAuthorize("hasAnyRole('ROLE_CUSTOMER', 'ROLE_STAFF', 'ROLE_ADMIN')")
+    @GetMapping("/{userId}")
+    public ResponseEntity<?> getAllTourBookingsByUserId(
+            @PathVariable Long userId,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int limit
+    ) {
+        try {
+            PageResponseDto responsePage = tourBookingService.getAllTourBookingsByUserId(userId, page, limit);
+
+            // Return success response
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(new ApiSuccessResponse<>(
+                            HttpStatus.OK.value(),
+                            "Get all tour bookings by userId successfully",
+                            responsePage
+                    ));
+        } catch (ResourceNotFoundException e) {
+            // Return error response for resource not found
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(new ApiErrorResponse(
+                            HttpStatus.NOT_FOUND.value(),
+                            e.getMessage(),
+                            ErrorCode.NOT_FOUND,
+                            "http://localhost:5050/docs/errors/1015"
+                    ));
+        } catch (ServerErrorException e) {
+            // Return error response for server error
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiErrorResponse(
+                            HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                            e.getMessage(),
+                            ErrorCode.INTERNAL_SERVER_ERROR,
+                            "http://localhost:5050/docs/errors/1012"
+                    ));
+        }
+    }
 
 }

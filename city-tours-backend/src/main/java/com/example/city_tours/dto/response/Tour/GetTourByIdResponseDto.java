@@ -1,6 +1,7 @@
 package com.example.city_tours.dto.response.Tour;
 
-import com.example.city_tours.entity.Schedule;
+import com.example.city_tours.dto.response.TourLocation.GetATourLocationResponseDto;
+import com.example.city_tours.dto.response.TourTime.GetATourTimeResponseDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,6 +19,7 @@ public class GetTourByIdResponseDto {
     private Long id;
     private String name;
     private String description;
+    private String detail;
     private Double rating;
     private int numberOfRating;
     private Double price;
@@ -34,6 +36,7 @@ public class GetTourByIdResponseDto {
     private String activeStatus;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private List<Schedule> schedules;
+    private List<GetATourTimeResponseDto> tourTimes;
+    private List<GetATourLocationResponseDto> tourLocations;
 
 }

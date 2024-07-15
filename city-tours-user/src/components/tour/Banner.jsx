@@ -72,6 +72,7 @@ export default function Banner({ tour }) {
               justify={"space-between"}
             >
               <Col
+                span={16}
                 style={{
                   display: "flex",
                   flexDirection: "column",
@@ -90,7 +91,7 @@ export default function Banner({ tour }) {
                   {tour?.address}
                   <Rate
                     disabled
-                    value={5}
+                    value={tour?.rating || 5}
                     character={({ index = 0 }) => customIcons[index + 1]}
                     style={{
                       fontSize: "15px",
@@ -102,16 +103,16 @@ export default function Banner({ tour }) {
                 </CustomText>
               </Col>
               <Col
-              // style={{
-              //   display: "flex",
-              //   justifyContent: "end",
-              //   alignItem: "end",
-              //   gap: "5px",
-              // }}
+                span={8}
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "end",
+                }}
               >
-                <CustomText size={"14px"} weight={"400"} color={"var(--white)"}>
-                  price
-                </CustomText>
+                {/* <CustomText size={"14px"} weight={"400"} color={"var(--white)"}>
+                  price{" "}
+                </CustomText> */}
                 <CustomText
                   size={"60px"}
                   weight={"400"}

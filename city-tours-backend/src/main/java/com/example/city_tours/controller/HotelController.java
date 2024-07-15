@@ -119,10 +119,11 @@ public class HotelController {
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int limit,
             @RequestParam(defaultValue = "") String search,
-            @RequestParam(defaultValue = "") String review
+            @RequestParam(defaultValue = "") String review,
+            @RequestParam(defaultValue = "") String rating
     ) {
         try {
-            PageResponseDto responsePage = hotelService.getAllHotels(page, limit, search, review);
+            PageResponseDto responsePage = hotelService.getAllHotels(page, limit, search, review, rating);
 
             // Return success response
             return ResponseEntity
