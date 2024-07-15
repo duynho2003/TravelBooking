@@ -55,6 +55,7 @@ import {
 import { activeStatus } from "../../utils/enums/ActiveStatus";
 import { bookedStatus } from "../../utils/enums/BookedStatus";
 import axios from "axios";
+import { name } from "dayjs/locale/en";
 dayjs.extend(customParseFormat);
 
 const { RangePicker } = DatePicker;
@@ -68,6 +69,7 @@ const ViewRoom = () => {
   const { hotelId, roomId } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const nameHotel = useSelector((state) => state.hotels?.selectedHotel);
   const selectedRoom = useSelector((state) => state.hotels?.selectedRoom);
   const isLoading = useSelector((state) => state.hotels?.isLoading);
   const error = useSelector((state) => state.hotels?.error);
@@ -222,7 +224,7 @@ const ViewRoom = () => {
                       color={"var(--black-text)"}
                       isButton={true}
                     >
-                      View room {selectedRoom?.roomNumber} in hotel {}
+                      View room {selectedRoom?.roomNumber} in {nameHotel?.name}
                     </CustomText>
                   ),
                 },

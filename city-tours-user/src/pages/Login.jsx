@@ -162,7 +162,7 @@ export default function Login() {
                   validateStatus={error ? "error" : ""}
                   help={error?.message}
                 >
-                  <Input
+                  <Input.Password
                     {...field}
                     placeholder="Password"
                     onChange={(e) => {

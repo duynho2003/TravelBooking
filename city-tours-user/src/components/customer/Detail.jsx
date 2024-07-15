@@ -462,7 +462,7 @@ export default function Detail() {
                       />
                     </Col>
 
-                    <Col span={11}>
+                    {/* <Col span={11}>
                       <Controller
                         name="status"
                         control={control}
@@ -477,7 +477,7 @@ export default function Detail() {
                           </Form.Item>
                         )}
                       />
-                    </Col>
+                    </Col> */}
                   </Row>
 
                   <Row
