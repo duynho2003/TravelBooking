@@ -17,6 +17,9 @@ import HotelList from "./pages/HotelList";
 import HotelDetail from "./pages/HotelDetail";
 import HotelCheckout from "./pages/HotelCheckout";
 import Wishlist from "./pages/Wishlist";
+import Profile from "./pages/Profile";
+import RoomBookings from "./pages/RoomBookings";
+import TourBookings from "./pages/TourBookings";
 
 function App() {
   // Redux State
@@ -40,6 +43,9 @@ function App() {
             <Route path="/register" element={<Register />} />
             <Route path="/login" element={<Login />} />
 
+            {/* Customer */}
+            <Route path="/profile" element={<Profile />} />
+
             {/* Tours */}
             <Route path="/tours/:tourId" element={<TourDetail />} />
             <Route path="/tours/list" element={<TourList />} />
@@ -56,6 +62,10 @@ function App() {
 
             {/* Wishlist */}
             <Route path="/wishlist" element={<Wishlist />} />
+
+            {/* Bookings */}
+            <Route path="/room/bookings" element={<RoomBookings />} />
+            <Route path="/tour/bookings" element={<TourBookings />} />
 
             <Route path="/*" element={<NotFound />} />
           </Route>

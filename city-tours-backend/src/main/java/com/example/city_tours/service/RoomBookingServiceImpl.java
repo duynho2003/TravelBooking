@@ -186,7 +186,7 @@ public class RoomBookingServiceImpl implements RoomBookingService{
             responseDto.setDate(roomBooking.getDate());
             responseDto.setStartHour(roomBooking.getStartHour());
             responseDto.setEndHour(roomBooking.getEndHour());
-            responseDto.setPrice(roomBooking.getRoom().);
+            responseDto.setPrice(roomBooking.getPrice());
             responseDto.setReviewStatus(roomBooking.getReviewStatus().toString());
             responseDto.setRoomType(roomBooking.getRoomType());
             responseDto.setRoomNumber(roomBooking.getRoom().getRoomNumber());
