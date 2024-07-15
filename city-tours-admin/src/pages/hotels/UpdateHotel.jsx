@@ -35,7 +35,7 @@ import Loading from "../../components/common/Loading";
 import dayjs from "dayjs";
 import "dayjs/locale/en"; // Import locale 'en' để sử dụng tiếng Anh
 import customParseFormat from "dayjs/plugin/customParseFormat";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { Controller, useForm } from "react-hook-form";
 import { roomTypes } from "../../utils/enums/RoomTypes";
 import {
@@ -67,6 +67,7 @@ const UpdateHotel = () => {
   // Redux State
   const { hotelId } = useParams();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const hotel = useSelector((state) => state.hotels?.selectedHotel);
   const selectedRoom = useSelector((state) => state.hotels?.selectedRoom);
   const isLoading = useSelector((state) => state.hotels?.isLoading);
@@ -89,6 +90,7 @@ const UpdateHotel = () => {
   const [isChangeImageUpdateRoom, setIsChangeImageUpdateRoom] = useState(false);
   const [errorChangeImage, setErrorChangeImage] = useState(false);
   const [isModalDetailRoom, setIsModalDetailRoom] = useState(false);
+  const [isWeekend, setIsWeekend] = useState(null);
 
   // React Hook Form
   const { control, handleSubmit, reset } = useForm();
@@ -161,10 +163,8 @@ const UpdateHotel = () => {
     return { color, tagText };
   };
 
-  const handleShowDetailRoom = (roomId) => {
-    setIsModalDetailRoom(true);
-
-    dispatch(getRoomById(roomId));
+  const handleNavigateDetailRoom = (roomId) => {
+    navigate(`/admin/hotels/${hotelId}/room/${roomId}/view`);
   };
 
   // Modal detail room
@@ -190,10 +190,8 @@ const UpdateHotel = () => {
   };
 
   // Modal update room
-  const showModalUpdateRoom = (roomId) => {
-    dispatch(getRoomById(roomId));
-
-    setIsModalUpdateRoom(true);
+  const handleNavigateUpdateRoom = (roomId) => {
+    navigate(`/admin/hotels/${hotelId}/room/${roomId}/update`);
   };
 
   const handleOkUpdateRoom = () => {
@@ -364,9 +362,12 @@ const UpdateHotel = () => {
       const newData = {
         hotelId: parseInt(hotelId),
         roomNumber: data.roomNumber,
-        price: data.price,
+        basePrice: data.basePrice,
+        weekendPrice: data.weekendPrice,
         discount: data.discount || 0.0,
         type: data.type,
+        numberOfResidents: data.numberOfResidents,
+        roomHolidays: holidaysData,
         imageUrls: urls,
       };
 
@@ -381,6 +382,9 @@ const UpdateHotel = () => {
           resetFileInput();
           setIsModalAddRoom(false);
           dispatch(getHotelById(hotelId));
+
+          setHolidays(null);
+          setHolidaysData(null);
 
           notification.success({
             message: "Room created successfully",
@@ -567,6 +571,61 @@ const UpdateHotel = () => {
 
   const cancel = (e) => {};
 
+  useEffect(() => {
+    const checkWeekendDay = () => {
+      const currentDate = new Date();
+
+      const dayOfWeek = currentDate.getDay();
+      console.log("dayOfWeek: ", dayOfWeek);
+
+      const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+
+      setIsWeekend(isWeekend);
+    };
+
+    checkWeekendDay();
+  }, []);
+
+  console.log("isWeekend", isWeekend);
+
+  const [holidays, setHolidays] = useState(null);
+  const [holidaysData, setHolidaysData] = useState([]);
+
+  const onChangeHolidays = (date, dateString) => {
+    setHolidays(dateString);
+    setHolidaysData([]);
+  };
+
+  const handlePriceChange = (dateString, priceString) => {
+    const price = parseInt(priceString);
+    const updatedHolidaysData = [...holidaysData];
+    const index = updatedHolidaysData.findIndex((h) => h.date === dateString);
+    if (index !== -1) {
+      updatedHolidaysData[index].price = price;
+    } else {
+      updatedHolidaysData.push({ date: dateString, price });
+    }
+    setHolidaysData(updatedHolidaysData);
+  };
+
+  const getCurrentDate = () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, "0"); // Months are zero based
+    const day = String(today.getDate()).padStart(2, "0");
+
+    console.log(`${year}-${month}-${day}`);
+
+    return `${year}-${month}-${day}`;
+  };
+
+  console.log("holidays: ", holidays);
+  console.log("holidaysData: ", holidaysData);
+
+  const handleNavigateAddRoom = () => {
+    navigate(`/admin/hotels/${hotelId}/room/create`);
+  };
+
   return (
     <>
       {/* Show loading */}
@@ -605,7 +664,8 @@ const UpdateHotel = () => {
                       color={"var(--black-text)"}
                       isButton={true}
                     >
-                      Update Hotel - {hotel?.name}
+                      Update Hotel - {hotel?.name}{" "}
+                      {/* <Button onClick={displayedPrice}>Test</Button> */}
                     </CustomText>
                   ),
                 },
@@ -848,7 +908,7 @@ const UpdateHotel = () => {
                           color: "var(--gray-light)",
                           border: "none",
                         }}
-                        onClick={() => handleShowDetailRoom(room?.id)}
+                        onClick={() => handleNavigateDetailRoom(room?.id)}
                       >
                         <FontAwesomeIcon icon={faEye} />
                       </Button>,
@@ -858,7 +918,7 @@ const UpdateHotel = () => {
                           color: "var(--gray-light)",
                           border: "none",
                         }}
-                        onClick={() => showModalUpdateRoom(room?.id)}
+                        onClick={() => handleNavigateUpdateRoom(room?.id)}
                       >
                         <FontAwesomeIcon icon={faPen} />
                       </Button>,
@@ -946,8 +1006,14 @@ const UpdateHotel = () => {
                         {new Intl.NumberFormat("vi-VN", {
                           style: "currency",
                           currency: "VND",
-                        }).format(room?.price - room?.discount)}{" "}
-                        /per night
+                        }).format(
+                          room?.roomHolidays?.find(
+                            (holiday) => holiday.date === getCurrentDate()
+                          )?.price - room?.discount ||
+                            (isWeekend ? room?.weekendPrice : room?.basePrice) -
+                              room?.discount
+                        )}{" "}
+                        /per hour
                       </Tag>
                     </Col>
 
@@ -989,7 +1055,7 @@ const UpdateHotel = () => {
                   height: "225px",
                 }}
               >
-                <Link onClick={showModalAddRoom}>
+                <Link to={`/admin/hotels/${hotelId}/room/create`}>
                   <Card
                     hoverable
                     bordered={false}
@@ -1042,162 +1108,266 @@ const UpdateHotel = () => {
               open={isModalAddRoom}
               onOk={handleOkAddRoom}
               onCancel={handleCancelAddRoom}
-              width={400}
+              width={800}
             >
-              <Col xs={22} sm={20} md={16} lg={24} xl={24}>
-                <Form
-                  onFinish={handleSubmit(onSubmitAddRoom)}
-                  layout="vertical"
+              <Form
+                onFinish={handleSubmit(onSubmitAddRoom)}
+                layout="vertical"
+                style={{
+                  width: "100%",
+                }}
+              >
+                <Row
+                  justify={"space-between"}
+                  style={{
+                    width: "100%",
+                  }}
+                  gutter={20}
                 >
-                  <Controller
-                    name="roomNumber"
-                    control={control}
-                    rules={{ required: "Room number is required" }}
-                    render={({ field, fieldState: { error } }) => (
-                      <Form.Item
-                        label="Room Number"
-                        validateStatus={error ? "error" : ""}
-                        help={error?.message}
-                      >
-                        <Input {...field} placeholder="Enter room number" />
-                      </Form.Item>
-                    )}
-                  />
-
-                  <Controller
-                    name="price"
-                    control={control}
-                    rules={{
-                      required: "Price is required",
-                      validate: {
-                        min: (value) =>
-                          value >= 100000 || "Minimum price is 100,000 VND",
-                        max: (value) =>
-                          value <= 100000000 ||
-                          "Maximum price is 100,000,000 VND",
-                      },
-                    }}
-                    render={({ field, fieldState: { error } }) => (
-                      <Form.Item
-                        label="Price / per night"
-                        validateStatus={error ? "error" : ""}
-                        help={error?.message}
-                      >
-                        <InputNumber
-                          {...field}
-                          formatter={(value) =>
-                            new Intl.NumberFormat("vi-VN", {
-                              style: "currency",
-                              currency: "VND",
-                            }).format(value)
-                          }
-                          parser={(value) => value.replace(/[^\d]/g, "")}
-                          style={{
-                            width: "100%",
-                          }}
-                        />
-                      </Form.Item>
-                    )}
-                  />
-
-                  <Controller
-                    name="discount"
-                    control={control}
-                    // rules={{
-                    //   validate: {
-                    //     min: (value) =>
-                    //       value >= 100000 || "Minimum price is 100,000 VND",
-                    //     max: (value) =>
-                    //       value <= 100000000 ||
-                    //       "Maximum price is 100,000,000 VND",
-                    //   },
-                    // }}
-                    render={({ field, fieldState: { error } }) => (
-                      <Form.Item
-                        label="Discount"
-                        validateStatus={error ? "error" : ""}
-                        help={error?.message}
-                      >
-                        <InputNumber
-                          {...field}
-                          formatter={(value) =>
-                            new Intl.NumberFormat("vi-VN", {
-                              style: "currency",
-                              currency: "VND",
-                            }).format(value)
-                          }
-                          parser={(value) => value.replace(/[^\d]/g, "")}
-                          style={{
-                            width: "100%",
-                          }}
-                        />
-                      </Form.Item>
-                    )}
-                  />
-
-                  <Controller
-                    name="type"
-                    control={control}
-                    rules={{ required: "Room type is required" }}
-                    render={({ field, fieldState: { error } }) => (
-                      <Form.Item
-                        label="Type"
-                        validateStatus={error ? "error" : ""}
-                        help={error?.message}
-                      >
-                        <Select
-                          {...field}
-                          placeholder="Choose room type"
-                          onChange={(value) => {
-                            field.onChange(value);
-                          }}
+                  <Col xs={12} sm={12} md={12} lg={12} xl={12}>
+                    <Controller
+                      name="roomNumber"
+                      control={control}
+                      rules={{ required: "Room number is required" }}
+                      render={({ field, fieldState: { error } }) => (
+                        <Form.Item
+                          label="Room Number"
+                          validateStatus={error ? "error" : ""}
+                          help={error?.message}
                         >
-                          {roomTypes.map((type) => {
-                            return (
-                              <Option key={type} value={type}>
-                                {type}
-                              </Option>
-                            );
-                          })}
-                        </Select>
-                      </Form.Item>
-                    )}
-                  />
-
-                  <Form.Item
-                    label="Images"
-                    // validateStatus={thumbnailUrls.length === 0 ? "error" : ""}
-                    // help={
-                    //   thumbnailUrls.length === 0
-                    //     ? "Please select at least one image"
-                    //     : ""
-                    // }
-                  >
-                    <input
-                      id="imageInput"
-                      type="file"
-                      multiple
-                      onChange={handleImageChange}
+                          <Input {...field} placeholder="Enter room number" />
+                        </Form.Item>
+                      )}
                     />
-                  </Form.Item>
 
-                  <Form.Item>
-                    <Button
-                      htmlType="submit"
-                      style={{
-                        background: "var(--pink)",
-                        color: "var(--white)",
-                        marginTop: "20px",
-                        width: "100%",
+                    <Controller
+                      name="type"
+                      control={control}
+                      rules={{ required: "Room type is required" }}
+                      render={({ field, fieldState: { error } }) => (
+                        <Form.Item
+                          label="Type"
+                          validateStatus={error ? "error" : ""}
+                          help={error?.message}
+                        >
+                          <Select
+                            {...field}
+                            placeholder="Choose room type"
+                            onChange={(value) => {
+                              field.onChange(value);
+                            }}
+                          >
+                            {roomTypes.map((type) => {
+                              return (
+                                <Option key={type} value={type}>
+                                  {type}
+                                </Option>
+                              );
+                            })}
+                          </Select>
+                        </Form.Item>
+                      )}
+                    />
+
+                    <Controller
+                      name="numberOfResidents"
+                      control={control}
+                      rules={{
+                        required: "Base price is required",
                       }}
-                      icon={loadingButton ? <Spin /> : null}
-                      loading={loadingButton}
+                      render={({ field, fieldState: { error } }) => (
+                        <Form.Item
+                          label="Number Of Residents"
+                          validateStatus={error ? "error" : ""}
+                          help={error?.message}
+                        >
+                          <InputNumber
+                            {...field}
+                            defaultValue={0}
+                            style={{
+                              width: "100%",
+                            }}
+                          />
+                        </Form.Item>
+                      )}
+                    />
+
+                    <Form.Item
+                      label="Images"
+                      // validateStatus={thumbnailUrls.length === 0 ? "error" : ""}
+                      // help={
+                      //   thumbnailUrls.length === 0
+                      //     ? "Please select at least one image"
+                      //     : ""
+                      // }
                     >
-                      Save
-                    </Button>
-                  </Form.Item>
-                </Form>
-              </Col>
+                      <input
+                        id="imageInput"
+                        type="file"
+                        multiple
+                        onChange={handleImageChange}
+                      />
+                    </Form.Item>
+                  </Col>
+                  <Col xs={12} sm={12} md={12} lg={12} xl={12}>
+                    <Controller
+                      name="basePrice"
+                      control={control}
+                      rules={{
+                        required: "Base price is required",
+                        validate: {
+                          min: (value) =>
+                            value >= 100000 || "Minimum price is 100,000 VND",
+                          max: (value) =>
+                            value <= 100000000 ||
+                            "Maximum price is 100,000,000 VND",
+                        },
+                      }}
+                      render={({ field, fieldState: { error } }) => (
+                        <Form.Item
+                          label="Base price / per hour"
+                          validateStatus={error ? "error" : ""}
+                          help={error?.message}
+                        >
+                          <InputNumber
+                            {...field}
+                            formatter={(value) =>
+                              new Intl.NumberFormat("vi-VN", {
+                                style: "currency",
+                                currency: "VND",
+                              }).format(value)
+                            }
+                            parser={(value) => value.replace(/[^\d]/g, "")}
+                            style={{
+                              width: "100%",
+                            }}
+                          />
+                        </Form.Item>
+                      )}
+                    />
+
+                    <Controller
+                      name="weekendPrice"
+                      control={control}
+                      rules={{
+                        required: "Weekend price is required",
+                        validate: {
+                          min: (value) =>
+                            value >= 100000 || "Minimum price is 100,000 VND",
+                          max: (value) =>
+                            value <= 100000000 ||
+                            "Maximum price is 100,000,000 VND",
+                        },
+                      }}
+                      render={({ field, fieldState: { error } }) => (
+                        <Form.Item
+                          label="Weekend price / per hour"
+                          validateStatus={error ? "error" : ""}
+                          help={error?.message}
+                        >
+                          <InputNumber
+                            {...field}
+                            formatter={(value) =>
+                              new Intl.NumberFormat("vi-VN", {
+                                style: "currency",
+                                currency: "VND",
+                              }).format(value)
+                            }
+                            parser={(value) => value.replace(/[^\d]/g, "")}
+                            style={{
+                              width: "100%",
+                            }}
+                          />
+                        </Form.Item>
+                      )}
+                    />
+
+                    <Form.Item label="Holidays">
+                      <DatePicker
+                        multiple
+                        onChange={onChangeHolidays}
+                        maxTagCount="responsive"
+                      />
+                    </Form.Item>
+
+                    {holidays?.map((holiday, index) => (
+                      <Form.Item key={index} label={`Price for ${holiday}`}>
+                        <InputNumber
+                          formatter={(value) =>
+                            new Intl.NumberFormat("vi-VN", {
+                              style: "currency",
+                              currency: "VND",
+                            }).format(value)
+                          }
+                          parser={(value) => value.replace(/[^\d]/g, "")}
+                          placeholder={`Enter price for ${holiday}`}
+                          style={{
+                            width: "100%",
+                          }}
+                          onChange={(value) =>
+                            handlePriceChange(holiday, value)
+                          }
+                          value={
+                            holidaysData.find((h) => h.date === holiday)
+                              ?.price || ""
+                          }
+                        />
+                      </Form.Item>
+                    ))}
+
+                    <Controller
+                      name="discount"
+                      control={control}
+                      // rules={{
+                      //   validate: {
+                      //     min: (value) =>
+                      //       value >= 100000 || "Minimum price is 100,000 VND",
+                      //     max: (value) =>
+                      //       value <= 100000000 ||
+                      //       "Maximum price is 100,000,000 VND",
+                      //   },
+                      // }}
+                      render={({ field, fieldState: { error } }) => (
+                        <Form.Item
+                          label="Discount"
+                          validateStatus={error ? "error" : ""}
+                          help={error?.message}
+                        >
+                          <InputNumber
+                            {...field}
+                            formatter={(value) =>
+                              new Intl.NumberFormat("vi-VN", {
+                                style: "currency",
+                                currency: "VND",
+                              }).format(value)
+                            }
+                            parser={(value) => value.replace(/[^\d]/g, "")}
+                            style={{
+                              width: "100%",
+                            }}
+                          />
+                        </Form.Item>
+                      )}
+                    />
+
+                    <Form.Item>
+                      <Button
+                        htmlType="submit"
+                        style={{
+                          background: "var(--pink)",
+                          color: "var(--white)",
+                          marginTop: "20px",
+                          width: "100%",
+                        }}
+                        icon={loadingButton ? <Spin /> : null}
+                        loading={loadingButton}
+                      >
+                        Save
+                      </Button>
+                    </Form.Item>
+                  </Col>{" "}
+                </Row>
+              </Form>
             </Modal>
 
             {/* Modal hiển thị chi tiết room */}
@@ -1222,7 +1392,7 @@ const UpdateHotel = () => {
                         <Input value={selectedRoom?.roomNumber} readOnly />
                       </Form.Item>
 
-                      <Form.Item label="Price / per night">
+                      <Form.Item label="Price / per hour">
                         <InputNumber
                           value={selectedRoom?.price}
                           formatter={(value) =>
@@ -1368,7 +1538,7 @@ const UpdateHotel = () => {
                       }}
                       render={({ field, fieldState: { error } }) => (
                         <Form.Item
-                          label="Price / per night"
+                          label="Price / per hour"
                           validateStatus={error ? "error" : ""}
                           help={error?.message}
                         >

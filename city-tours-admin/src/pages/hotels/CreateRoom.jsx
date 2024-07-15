@@ -1,0 +1,929 @@
+import { useEffect, useState } from "react";
+import {
+  Breadcrumb,
+  Col,
+  Form,
+  Input,
+  Row,
+  DatePicker,
+  Table,
+  TimePicker,
+  Typography,
+  Image,
+  Button,
+  Tag,
+  Card,
+  Modal,
+  Select,
+  InputNumber,
+  notification,
+  Spin,
+  Popconfirm,
+} from "antd";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  createRoom,
+  deleteRoom,
+  getHotelById,
+  getRoomById,
+  updateHotel,
+  updateRoom,
+} from "../../features/hotel/HotelSlice";
+import "../../App.css";
+import CustomText from "../../components/common/CustomText";
+import Loading from "../../components/common/Loading";
+import dayjs from "dayjs";
+import "dayjs/locale/en"; // Import locale 'en' để sử dụng tiếng Anh
+import customParseFormat from "dayjs/plugin/customParseFormat";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { Controller, useForm } from "react-hook-form";
+import { roomTypes } from "../../utils/enums/RoomTypes";
+import {
+  EditOutlined,
+  EllipsisOutlined,
+  QuestionCircleOutlined,
+  SettingOutlined,
+  UserOutlined,
+} from "@ant-design/icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faDoorOpen,
+  faEye,
+  faPen,
+  faTrashCan,
+} from "@fortawesome/free-solid-svg-icons";
+import { activeStatus } from "../../utils/enums/ActiveStatus";
+import { bookedStatus } from "../../utils/enums/BookedStatus";
+import axios from "axios";
+dayjs.extend(customParseFormat);
+
+const { RangePicker } = DatePicker;
+
+const { Meta } = Card;
+const { Text } = Typography;
+const { Option } = Select;
+
+const CreateRoom = () => {
+  // Redux State
+  const { hotelId } = useParams();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const hotel = useSelector((state) => state.hotels?.selectedHotel);
+  const selectedRoom = useSelector((state) => state.hotels?.selectedRoom);
+  const isLoading = useSelector((state) => state.hotels?.isLoading);
+  const error = useSelector((state) => state.hotels?.error);
+
+  // Local State
+  const [showContent, setShowContent] = useState(false);
+  const [isModalAddRoom, setIsModalAddRoom] = useState(false);
+  const [isModalUpdateRoom, setIsModalUpdateRoom] = useState(false);
+  const [loadingButton, setLoadingButton] = useState(false);
+  const [loadingButtonUpdateHotel, setLoadingButtonUpdateHotel] =
+    useState(false);
+  const [loadingButtonUpdateRoom, setLoadingButtonUpdateRoom] = useState(false);
+  const [selectedImages, setSelectedImages] = useState([]);
+  const [selectedImagesUpdateHotel, setSelectedImagesUpdateHotel] = useState(
+    []
+  );
+  const [selectedImagesUpdateRoom, setSelectedImagesUpdateRoom] = useState([]);
+  const [isChangeImage, setIsChangeImage] = useState(false);
+  const [isChangeImageUpdateRoom, setIsChangeImageUpdateRoom] = useState(false);
+  const [errorChangeImage, setErrorChangeImage] = useState(false);
+  const [isModalDetailRoom, setIsModalDetailRoom] = useState(false);
+  const [isWeekend, setIsWeekend] = useState(null);
+
+  // React Hook Form
+  const { control, handleSubmit, reset } = useForm();
+
+  // useEffect for loading data
+  useEffect(() => {
+    dispatch(getHotelById(hotelId));
+
+    if (!isLoading) {
+      setTimeout(() => {
+        setShowContent(true);
+      }, 1000);
+    }
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (hotel) {
+      reset({
+        name: hotel?.name,
+        description: hotel?.description,
+        address: hotel?.address,
+        activeStatus: hotel?.activeStatus,
+      });
+    }
+  }, [hotel]);
+
+  useEffect(() => {
+    if (selectedRoom) {
+      reset({
+        roomNumberRoom: selectedRoom?.roomNumber,
+        typeRoom: selectedRoom?.type,
+        priceRoom: selectedRoom?.price,
+        discountRoom: selectedRoom?.discount,
+        bookedStatusRoom: selectedRoom?.bookedStatus,
+        activeStatusRoom: selectedRoom?.activeStatus,
+      });
+    }
+  }, [selectedRoom]);
+
+  const getTagProps = (bookedStatus) => {
+    let color, tagText;
+
+    switch (bookedStatus) {
+      case "CANCELLED":
+        color = "red";
+        tagText = "Cancelled";
+        break;
+      case "NOT_BOOKED":
+        color = "blue";
+        tagText = "Not Booked";
+        break;
+      case "BOOKED":
+        color = "green";
+        tagText = "Booked";
+        break;
+      case "ACTIVE":
+        color = "cyan";
+        tagText = "Active";
+        break;
+      case "IN_ACTIVE":
+        color = "volcano";
+        tagText = "Inactive";
+        break;
+      default:
+        color = "default";
+        tagText = "Unknown";
+        break;
+    }
+
+    return { color, tagText };
+  };
+
+  const handleShowDetailRoom = (roomId) => {
+    setIsModalDetailRoom(true);
+
+    dispatch(getRoomById(roomId));
+  };
+
+  // Modal detail room
+  const handleOkDetailRoom = () => {
+    setIsModalDetailRoom(false);
+  };
+
+  const handleCancelDetailRoom = () => {
+    setIsModalDetailRoom(false);
+  };
+
+  // Modal add room
+  const showModalAddRoom = () => {
+    setIsModalAddRoom(true);
+  };
+
+  const handleOkAddRoom = () => {
+    setIsModalAddRoom(false);
+  };
+
+  const handleCancelAddRoom = () => {
+    setIsModalAddRoom(false);
+  };
+
+  // Modal update room
+  const showModalUpdateRoom = (roomId) => {
+    dispatch(getRoomById(roomId));
+
+    setIsModalUpdateRoom(true);
+  };
+
+  const handleOkUpdateRoom = () => {
+    setIsModalUpdateRoom(false);
+  };
+
+  const handleCancelUpdateRoom = () => {
+    setIsModalUpdateRoom(false);
+  };
+
+  // Reset input image add room
+  const resetFileInput = () => {
+    const fileInput = document.getElementById("imageInput");
+    if (fileInput) {
+      fileInput.value = null;
+    }
+    setSelectedImages(null);
+  };
+
+  // Reset input image update hotel
+  const resetFileInputUpdateHotel = () => {
+    const fileInput = document.getElementById("imageInputUpdateHotel");
+    if (fileInput) {
+      fileInput.value = null;
+    }
+    setSelectedImagesUpdateHotel(null);
+  };
+
+  // Reset input image update room
+  const resetFileInputUpdateRoom = () => {
+    const fileInput = document.getElementById("imageInputUpdateRoom");
+    if (fileInput) {
+      fileInput.value = null;
+    }
+    setSelectedImagesUpdateRoom(null);
+  };
+
+  // Show change image update hotel
+  const handleShowChangeImage = () => {
+    setIsChangeImage(!isChangeImage);
+  };
+
+  // Show change image update room
+  const handleShowChangeImageUpdateRoom = () => {
+    setIsChangeImageUpdateRoom(!isChangeImageUpdateRoom);
+  };
+
+  // Onchange image add room
+  const handleImageChange = (e) => {
+    const files = Array.from(e.target.files);
+    setSelectedImages(files);
+
+    console.log("selectedImages: ", selectedImages);
+  };
+
+  // Onchange image update hotel
+  const handleImageChangeUpdateHotel = (e) => {
+    const files = Array.from(e.target.files);
+    setSelectedImagesUpdateHotel(files);
+
+    console.log("selectedImages: ", selectedImagesUpdateHotel);
+  };
+
+  // Onchange image update room
+  const handleImageChangeUpdateRoom = (e) => {
+    const files = Array.from(e.target.files);
+    setSelectedImagesUpdateRoom(files);
+
+    console.log("selectedImages: ", selectedImagesUpdateRoom);
+  };
+
+  // Function upload images add room
+  const uploadImages = async () => {
+    try {
+      const uploadPromises = selectedImages.map(async (image) => {
+        const formData = new FormData();
+        formData.append("thumbnail", image);
+
+        const response = await axios.post(
+          `http://localhost:5050/api/v1/auth/upload`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+
+        return response?.data?.data?.thumbnail;
+      });
+
+      const urls = await Promise.all(uploadPromises);
+
+      return urls;
+    } catch (error) {
+      console.error("Error uploading images:", error);
+      throw new Error("Failed to upload images");
+    }
+  };
+
+  // Function upload images update hotel
+  const uploadImagesUpdateHotel = async () => {
+    try {
+      const uploadPromises = selectedImagesUpdateHotel.map(async (image) => {
+        const formData = new FormData();
+        formData.append("thumbnail", image);
+
+        const response = await axios.post(
+          `http://localhost:5050/api/v1/auth/upload`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+
+        return response?.data?.data?.thumbnail;
+      });
+
+      const urls = await Promise.all(uploadPromises);
+
+      return urls;
+    } catch (error) {
+      console.error("Error uploading images:", error);
+      throw new Error("Failed to upload images");
+    }
+  };
+
+  // Function upload images update room
+  const uploadImagesUpdateRoom = async () => {
+    try {
+      const uploadPromises = selectedImagesUpdateRoom.map(async (image) => {
+        const formData = new FormData();
+        formData.append("thumbnail", image);
+
+        const response = await axios.post(
+          `http://localhost:5050/api/v1/auth/upload`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+
+        return response?.data?.data?.thumbnail;
+      });
+
+      const urls = await Promise.all(uploadPromises);
+
+      return urls;
+    } catch (error) {
+      console.error("Error uploading images:", error);
+      throw new Error("Failed to upload images");
+    }
+  };
+
+  // Submit add room
+  const onSubmitAddRoom = async (data) => {
+    console.log("data: ", data);
+
+    try {
+      setLoadingButton(true);
+
+      const urls = await uploadImages();
+
+      const newData = {
+        hotelId: parseInt(hotelId),
+        roomNumber: data.roomNumber,
+        basePrice: data.basePrice,
+        weekendPrice: data.weekendPrice,
+        discount: data.discount || 0.0,
+        type: data.type,
+        numberOfResidents: data.numberOfResidents,
+        roomHolidays: holidaysData,
+        imageUrls: urls,
+      };
+
+      console.log("newData: ", newData);
+
+      const action = await dispatch(createRoom(newData));
+
+      console.log("action: ", action);
+
+      if (createRoom.fulfilled.match(action)) {
+        if (action?.payload?.status === 201) {
+          resetFileInput();
+          setIsModalAddRoom(false);
+          dispatch(getHotelById(hotelId));
+
+          setHolidays(null);
+          setHolidaysData(null);
+
+          // navigate(`/admin/hotels/update/${hotelId}`);
+
+          window.location.reload();
+
+          notification.success({
+            message: "Room created successfully",
+            description: "Room created successfully.",
+          });
+        } else {
+          const error =
+            action?.payload?.error?.data?.message || "Unknown error.";
+          notification.error({
+            message: "Create Room Error",
+            description: error,
+          });
+        }
+      } else if (createAccount.rejected.match(action)) {
+        const error = action?.payload?.error?.data?.message || "Unknown error.";
+        notification.error({
+          message: "Create Account Error",
+          description: error,
+        });
+      }
+    } catch (error) {
+      console.error("Error creating hotel:", error);
+      notification.error({
+        message: "System Error",
+        description: "There was an error creating the tour.",
+      });
+    } finally {
+      setLoadingButton(false);
+    }
+  };
+
+  // Submit update hotel
+  const onSubmitUpdateHotel = async (data) => {
+    try {
+      setLoadingButtonUpdateHotel(true);
+
+      let thumbnailUrlsToUse = [];
+
+      if (selectedImagesUpdateHotel && selectedImagesUpdateHotel.length > 0) {
+        thumbnailUrlsToUse = await uploadImagesUpdateHotel();
+      } else {
+        thumbnailUrlsToUse = hotel?.thumbnailUrls || [];
+      }
+
+      const newData = {
+        hotelId: parseInt(hotelId),
+        name: data.name,
+        description: data.description,
+        address: data.address,
+        activeStatus: data.activeStatus,
+        thumbnailUrls: thumbnailUrlsToUse,
+      };
+
+      console.log("newDataUpdateHotel: ", newData);
+
+      const action = await dispatch(updateHotel(newData));
+
+      console.log("action: ", action);
+
+      if (updateHotel.fulfilled.match(action)) {
+        if (action?.payload?.status === 201) {
+          resetFileInputUpdateHotel();
+          setIsChangeImage(false);
+          dispatch(getHotelById(hotelId));
+
+          notification.success({
+            message: "Room updated successfully",
+            description: "Room updated successfully.",
+          });
+        } else {
+          const error =
+            action?.payload?.error?.data?.message || "Unknown error.";
+          notification.error({
+            message: "Create Room Error",
+            description: error,
+          });
+        }
+      } else if (updateHotel.rejected.match(action)) {
+        const error = action?.payload?.error?.data?.message || "Unknown error.";
+        notification.error({
+          message: "Create Account Error",
+          description: error,
+        });
+      }
+    } catch (error) {
+      console.error("Error creating hotel:", error);
+      notification.error({
+        message: "System Error",
+        description: "There was an error creating the tour.",
+      });
+    } finally {
+      setLoadingButtonUpdateHotel(false);
+    }
+  };
+
+  // Submit update room
+  const onSubmitUpdateRoom = async (data) => {
+    console.log("onSubmitUpdateRoom");
+    try {
+      setLoadingButtonUpdateRoom(true);
+
+      let imageUrlsToUse = [];
+
+      if (selectedImagesUpdateRoom && selectedImagesUpdateRoom.length > 0) {
+        imageUrlsToUse = await uploadImagesUpdateRoom();
+      } else {
+        imageUrlsToUse = selectedRoom?.imageUrls || [];
+      }
+
+      const newData = {
+        roomId: parseInt(selectedRoom?.id),
+        roomNumber: data.roomNumberRoom,
+        type: data.typeRoom,
+        price: data.priceRoom,
+        discount: data.discountRoom,
+        bookedStatus: data.bookedStatusRoom,
+        activeStatus: data.activeStatusRoom,
+        imageUrls: imageUrlsToUse,
+      };
+
+      console.log("newDataUpdateRoom: ", newData);
+
+      const action = await dispatch(updateRoom(newData));
+
+      console.log("action: ", action);
+
+      if (updateRoom.fulfilled.match(action)) {
+        if (action?.payload?.status === 201) {
+          resetFileInputUpdateRoom();
+          setIsModalUpdateRoom(false);
+          setIsChangeImageUpdateRoom(false);
+          // dispatch(getHotelById(hotelId));
+
+          notification.success({
+            message: "Room updated successfully",
+            description: "Room updated successfully.",
+          });
+        } else {
+          const error =
+            action?.payload?.error?.data?.message || "Unknown error.";
+          notification.error({
+            message: "Create Room Error",
+            description: error,
+          });
+        }
+      } else if (updateRoom.rejected.match(action)) {
+        const error = action?.payload?.error?.data?.message || "Unknown error.";
+        notification.error({
+          message: "Create Account Error",
+          description: error,
+        });
+      }
+    } catch (error) {
+      console.error("Error creating hotel:", error);
+      notification.error({
+        message: "System Error",
+        description: "There was an error creating the tour.",
+      });
+    } finally {
+      setLoadingButtonUpdateRoom(false);
+    }
+  };
+
+  // Submit delete room
+  const confirm = async (roomId) => {
+    try {
+      await dispatch(deleteRoom(roomId));
+
+      notification.success({
+        message: "Room Deletion Confirmation",
+        description: "Successfully deleted the room.",
+      });
+
+      dispatch(getHotelById(hotelId));
+    } catch (error) {
+      console.error("Error deleting user:", error);
+
+      notification.error({
+        message: "Room Deletion Failed",
+        description: "Failed to delete the room.",
+      });
+    }
+  };
+
+  const cancel = (e) => {};
+
+  useEffect(() => {
+    const checkWeekendDay = () => {
+      const currentDate = new Date();
+
+      const dayOfWeek = currentDate.getDay();
+      console.log("dayOfWeek: ", dayOfWeek);
+
+      const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+
+      setIsWeekend(isWeekend);
+    };
+
+    checkWeekendDay();
+  }, []);
+
+  console.log("isWeekend", isWeekend);
+
+  const [holidays, setHolidays] = useState(null);
+  const [holidaysData, setHolidaysData] = useState([]);
+
+  const onChangeHolidays = (date, dateString) => {
+    setHolidays(dateString);
+    setHolidaysData([]);
+  };
+
+  const handlePriceChange = (dateString, priceString) => {
+    const price = parseInt(priceString);
+    const updatedHolidaysData = [...holidaysData];
+    const index = updatedHolidaysData.findIndex((h) => h.date === dateString);
+    if (index !== -1) {
+      updatedHolidaysData[index].price = price;
+    } else {
+      updatedHolidaysData.push({ date: dateString, price });
+    }
+    setHolidaysData(updatedHolidaysData);
+  };
+
+  return (
+    <>
+      {/* Show loading */}
+      {!showContent && <Loading />}
+
+      {/* Show error */}
+      {error && <p>{error}</p>}
+
+      {/* Show content */}
+      {showContent && (
+        <Row
+          style={{
+            padding: "20px",
+            background: "var( --white)",
+            borderRadius: "8px",
+          }}
+        >
+          <Col
+            xl={24}
+            style={{
+              borderBottom: "1px solid var(--border)",
+              padding: "0 0 20px 0",
+              marginBottom: "10px",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <Breadcrumb
+              items={[
+                {
+                  title: (
+                    <CustomText
+                      size={"18px"}
+                      weight={"500"}
+                      color={"var(--black-text)"}
+                      isButton={true}
+                    >
+                      Create new room in {hotel?.name}
+                    </CustomText>
+                  ),
+                },
+              ]}
+            />
+          </Col>
+          <Col xl={24}>
+            <Form
+              onFinish={handleSubmit(onSubmitAddRoom)}
+              layout="vertical"
+              style={{
+                width: "100%",
+              }}
+            >
+              <Row
+                justify={"space-between"}
+                style={{
+                  width: "100%",
+                }}
+                gutter={20}
+              >
+                <Col xs={12} sm={12} md={12} lg={12} xl={12}>
+                  <Controller
+                    name="roomNumber"
+                    control={control}
+                    rules={{ required: "Room number is required" }}
+                    render={({ field, fieldState: { error } }) => (
+                      <Form.Item
+                        label="Room Number"
+                        validateStatus={error ? "error" : ""}
+                        help={error?.message}
+                      >
+                        <Input {...field} placeholder="Enter room number" />
+                      </Form.Item>
+                    )}
+                  />
+
+                  <Controller
+                    name="type"
+                    control={control}
+                    rules={{ required: "Room type is required" }}
+                    render={({ field, fieldState: { error } }) => (
+                      <Form.Item
+                        label="Type"
+                        validateStatus={error ? "error" : ""}
+                        help={error?.message}
+                      >
+                        <Select
+                          {...field}
+                          placeholder="Choose room type"
+                          onChange={(value) => {
+                            field.onChange(value);
+                          }}
+                        >
+                          {roomTypes.map((type) => {
+                            return (
+                              <Option key={type} value={type}>
+                                {type}
+                              </Option>
+                            );
+                          })}
+                        </Select>
+                      </Form.Item>
+                    )}
+                  />
+
+                  <Controller
+                    name="numberOfResidents"
+                    control={control}
+                    rules={{
+                      required: "Base price is required",
+                    }}
+                    render={({ field, fieldState: { error } }) => (
+                      <Form.Item
+                        label="Number Of Residents"
+                        validateStatus={error ? "error" : ""}
+                        help={error?.message}
+                      >
+                        <InputNumber
+                          {...field}
+                          defaultValue={0}
+                          style={{
+                            width: "100%",
+                          }}
+                        />
+                      </Form.Item>
+                    )}
+                  />
+
+                  <Form.Item
+                    label="Images"
+                    // validateStatus={thumbnailUrls.length === 0 ? "error" : ""}
+                    // help={
+                    //   thumbnailUrls.length === 0
+                    //     ? "Please select at least one image"
+                    //     : ""
+                    // }
+                  >
+                    <input
+                      id="imageInput"
+                      type="file"
+                      multiple
+                      onChange={handleImageChange}
+                    />
+                  </Form.Item>
+                </Col>
+                <Col xs={12} sm={12} md={12} lg={12} xl={12}>
+                  <Controller
+                    name="basePrice"
+                    control={control}
+                    rules={{
+                      required: "Base price is required",
+                      validate: {
+                        min: (value) =>
+                          value >= 100000 || "Minimum price is 100,000 VND",
+                        max: (value) =>
+                          value <= 100000000 ||
+                          "Maximum price is 100,000,000 VND",
+                      },
+                    }}
+                    render={({ field, fieldState: { error } }) => (
+                      <Form.Item
+                        label="Base price / per hour"
+                        validateStatus={error ? "error" : ""}
+                        help={error?.message}
+                      >
+                        <InputNumber
+                          {...field}
+                          formatter={(value) =>
+                            new Intl.NumberFormat("vi-VN", {
+                              style: "currency",
+                              currency: "VND",
+                            }).format(value)
+                          }
+                          parser={(value) => value.replace(/[^\d]/g, "")}
+                          style={{
+                            width: "100%",
+                          }}
+                        />
+                      </Form.Item>
+                    )}
+                  />
+
+                  <Controller
+                    name="weekendPrice"
+                    control={control}
+                    rules={{
+                      required: "Weekend price is required",
+                      validate: {
+                        min: (value) =>
+                          value >= 100000 || "Minimum price is 100,000 VND",
+                        max: (value) =>
+                          value <= 100000000 ||
+                          "Maximum price is 100,000,000 VND",
+                      },
+                    }}
+                    render={({ field, fieldState: { error } }) => (
+                      <Form.Item
+                        label="Weekend price / per hour"
+                        validateStatus={error ? "error" : ""}
+                        help={error?.message}
+                      >
+                        <InputNumber
+                          {...field}
+                          formatter={(value) =>
+                            new Intl.NumberFormat("vi-VN", {
+                              style: "currency",
+                              currency: "VND",
+                            }).format(value)
+                          }
+                          parser={(value) => value.replace(/[^\d]/g, "")}
+                          style={{
+                            width: "100%",
+                          }}
+                        />
+                      </Form.Item>
+                    )}
+                  />
+
+                  <Form.Item label="Holidays">
+                    <DatePicker
+                      multiple
+                      onChange={onChangeHolidays}
+                      maxTagCount="responsive"
+                    />
+                  </Form.Item>
+
+                  {holidays?.map((holiday, index) => (
+                    <Form.Item key={index} label={`Price for ${holiday}`}>
+                      <InputNumber
+                        formatter={(value) =>
+                          new Intl.NumberFormat("vi-VN", {
+                            style: "currency",
+                            currency: "VND",
+                          }).format(value)
+                        }
+                        parser={(value) => value.replace(/[^\d]/g, "")}
+                        placeholder={`Enter price for ${holiday}`}
+                        style={{
+                          width: "100%",
+                        }}
+                        onChange={(value) => handlePriceChange(holiday, value)}
+                        value={
+                          holidaysData.find((h) => h.date === holiday)?.price ||
+                          ""
+                        }
+                      />
+                    </Form.Item>
+                  ))}
+
+                  <Controller
+                    name="discount"
+                    control={control}
+                    // rules={{
+                    //   validate: {
+                    //     min: (value) =>
+                    //       value >= 100000 || "Minimum price is 100,000 VND",
+                    //     max: (value) =>
+                    //       value <= 100000000 ||
+                    //       "Maximum price is 100,000,000 VND",
+                    //   },
+                    // }}
+                    render={({ field, fieldState: { error } }) => (
+                      <Form.Item
+                        label="Discount"
+                        validateStatus={error ? "error" : ""}
+                        help={error?.message}
+                      >
+                        <InputNumber
+                          {...field}
+                          formatter={(value) =>
+                            new Intl.NumberFormat("vi-VN", {
+                              style: "currency",
+                              currency: "VND",
+                            }).format(value)
+                          }
+                          parser={(value) => value.replace(/[^\d]/g, "")}
+                          style={{
+                            width: "100%",
+                          }}
+                        />
+                      </Form.Item>
+                    )}
+                  />
+
+                  <Form.Item>
+                    <Button
+                      htmlType="submit"
+                      style={{
+                        background: "var(--pink)",
+                        color: "var(--white)",
+                        marginTop: "20px",
+                        width: "100%",
+                      }}
+                      icon={loadingButton ? <Spin /> : null}
+                      loading={loadingButton}
+                    >
+                      Save
+                    </Button>
+                  </Form.Item>
+                </Col>{" "}
+              </Row>
+            </Form>
+          </Col>
+        </Row>
+      )}
+    </>
+  );
+};
+
+export default CreateRoom;

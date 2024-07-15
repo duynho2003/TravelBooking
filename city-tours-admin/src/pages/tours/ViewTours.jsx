@@ -82,74 +82,6 @@ const ViewTours = () => {
     }
   }, [dispatch, pagination]);
 
-  // Event Handlers
-  // const showModalOpenChangeStatus = (userId, status) => {
-  //   setSelectedUserId(userId);
-  //   setSelectedUserStatus(status);
-  //   setIsModalOpenChangeStatus(true);
-  // };
-
-  // const handleOkChangeStatus = () => {
-  //   setIsModalOpenChangeStatus(false);
-  // };
-
-  // const handleCancelChangeStatus = () => {
-  //   setSelectedUserId(null);
-  //   setSelectedUserStatus(null);
-  //   setIsModalOpenChangeStatus(false);
-  // };
-
-  // const onSubmit = async () => {
-  //   const data = {
-  //     userId: selectedUserId,
-  //     status: selectedUserStatus,
-  //   };
-
-  //   setLoadingButton(true);
-
-  //   try {
-  //     const response = await dispatch(changeStatusAccount(data));
-
-  //     handleChangeStatusAccountResponse(response);
-
-  //     dispatch(getAllAcounts(pagination));
-  //   } catch (error) {
-  //     notification.error({
-  //       message: "Lỗi hệ thống",
-  //       description:
-  //         "Máy chủ không thực hiện được yêu cầu hợp lệ do lỗi với máy chủ.",
-  //     });
-  //   } finally {
-  //     setLoadingButton(false);
-  //   }
-  // };
-
-  // const handleChangeStatusAccountResponse = (response) => {
-  //   console.log("response: ", response);
-  //   if (response.type === changeStatusAccount.fulfilled.toString()) {
-  //     if (response?.payload?.status) {
-  //       setIsModalOpenChangeStatus(false);
-  //       notification.success({
-  //         message: "Xét duyệt đơn đăng ký",
-  //         description: "Xét duyệt đơn đăng ký tài khoản giáo viên thành công.",
-  //       });
-  //     } else {
-  //       const error =
-  //         response?.payload?.error?.message || "Lỗi không xác định.";
-  //       notification.error({
-  //         message: "Lỗi duyệt đơn đăng ký",
-  //         description: error,
-  //       });
-  //     }
-  //   } else if (response.type === changeStatusAccount.rejected.toString()) {
-  //     const error = response?.payload?.error?.message || "Lỗi không xác định.";
-  //     notification.error({
-  //       message: "Lỗi duyệt đơn đăng ký",
-  //       description: error,
-  //     });
-  //   }
-  // };
-
   const handleTableChange = (pagination) => {
     const { current, pageSize } = pagination;
 
@@ -187,18 +119,42 @@ const ViewTours = () => {
 
   const confirm = async (tourId) => {
     try {
-      await dispatch(deleteTour(tourId));
+      const action = await dispatch(deleteTour(tourId));
 
-      notification.success({
-        message: "Tour Deletion Confirmation",
-        description: "Successfully deleted the tour.",
-      });
+      console.log("action: ", action);
 
-      dispatch(getAllTours(pagination));
+      if (deleteTour.fulfilled.match(action)) {
+        if (action?.payload?.status === 200) {
+          notification.success({
+            message: "Tour Deletion Confirmation",
+            description: "Successfully deleted the tour.",
+          });
+
+          dispatch(
+            getAllTours({
+              page: INIT_PAGE,
+              limit: INIT_LIMIT,
+              search: "",
+              status: "",
+            })
+          );
+        } else {
+          const error =
+            action?.payload?.error?.data?.message || "Unknown error.";
+          notification.error({
+            message: "Tour Deletion Error",
+            description: error,
+          });
+        }
+      } else if (deleteTour.rejected.match(action)) {
+        const error = action?.payload?.error?.data?.message || "Unknown error.";
+        notification.error({
+          message: "Tour Deletion Error",
+          description: error,
+        });
+      }
     } catch (error) {
-      // Xử lý lỗi nếu cần thiết
-      console.error("Error deleting user:", error);
-
+      console.error("Error deleting tour:", error);
       notification.error({
         message: "Tour Deletion Failed",
         description: "Failed to delete the tour.",
@@ -239,6 +195,7 @@ const ViewTours = () => {
         </>
       ),
       dataIndex: "name",
+      render: (text) => <div className="truncated-text">{text}</div>,
     },
     {
       title: (
@@ -422,45 +379,6 @@ const ViewTours = () => {
 
     setActiveStatus(value);
   };
-
-  const data = [
-    {
-      id: 1,
-      name: "Tour Hà Giang",
-      description: "Tour Hà Giang",
-      rating: 0.0,
-      numberOfRating: 0,
-      price: 3000000.0,
-      discount: 400000.0,
-      locations: "Hà Giang",
-      depart: "Hồ Chí Minh",
-      adults: 10,
-      // children: 2,
-      baby: 2,
-      code: "BZZLAWPY240707192443",
-      // thumbnail:
-      //   "https://res.cloudinary.com/dbammk7wt/image/upload/v1720355084/oauq4c8odfslkwmluntc.jpg",
-      // startTime: "00:00:00",
-      // bookedStatus: "NOT_BOOKED",
-      // activeStatus: "ACTIVE",
-      // createdAt: "2024-07-07T19:24:43.778755",
-      // updateAt: "2024-07-07T19:24:43.778755",
-      // schedules: [
-      //   {
-      //     id: 1,
-      //     dayOfWeek: "Monday",
-      //     date: "2024-07-08",
-      //     activities: null,
-      //   },
-      //   {
-      //     id: 2,
-      //     dayOfWeek: "Tuesday",
-      //     date: "2024-07-09",
-      //     activities: null,
-      //   },
-      // ],
-    },
-  ];
 
   return (
     <>

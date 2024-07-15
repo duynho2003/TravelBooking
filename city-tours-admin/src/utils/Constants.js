@@ -71,3 +71,7 @@ export const API_ROUTE = {
   // Transactions
   GET_ALL_TRANSACTIONS: "v1/transactions",
 };
+
+export const GOONG_MAP_KEY = "RPTXmcQEy2r3meEHOZFZ3B5L7u68a8YO5XF9pAuM";
+
+export const API_KEY = "SCaIqymW5vCSNG158cOMc3VYYi6HOlsLCjfKwBgL";

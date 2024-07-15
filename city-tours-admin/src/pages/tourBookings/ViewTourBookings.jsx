@@ -43,7 +43,7 @@ const { Text } = Typography;
 const ViewTourBookings = () => {
   // Constants
   const INIT_PAGE = 1;
-  const INIT_LIMIT = 6;
+  const INIT_LIMIT = 5;
 
   // Redux State
   const dispatch = useDispatch();
@@ -55,12 +55,17 @@ const ViewTourBookings = () => {
   const error = useSelector((state) => state.tourBookings?.error);
 
   // Local State
+  const [tourName, setTourName] = useState("");
+  const [tourId, setTourId] = useState("");
   const [pageSize, setPageSize] = useState(INIT_LIMIT);
   const [pagination, setPagination] = useState({
     page: INIT_PAGE,
     limit: pageSize,
+    tourName: tourName,
+    tourId: tourId,
   });
   const [showContent, setShowContent] = useState(false);
+  const [uniqueTourNames, setUniqueTourNames] = useState([]);
 
   // useEffect for loading data
   useEffect(() => {
@@ -74,6 +79,35 @@ const ViewTourBookings = () => {
     }
   }, [dispatch, pagination]);
 
+  useEffect(() => {
+    if (tourBookings && tourBookings.length > 0) {
+      // Create a Set to store unique tour names
+      const uniqueNamesSet = new Set();
+
+      const addedTourIds = []; // Array to keep track of added tourIds
+
+      // Iterate over tourBookings and add unique tour objects to the Set
+      tourBookings.forEach((tourBooking) => {
+        // Check if tourId is already added
+        if (!addedTourIds.includes(tourBooking.tourId)) {
+          uniqueNamesSet.add({
+            tourId: tourBooking.tourId,
+            tourName: tourBooking.tourName,
+          });
+          addedTourIds.push(tourBooking.tourId); // Add tourId to the addedTourIds array
+        }
+      });
+
+      // Convert Set back to array
+      const uniqueNamesArray = Array.from(uniqueNamesSet);
+
+      // Update state with unique tour names
+      setUniqueTourNames(uniqueNamesArray);
+    }
+  }, [tourBookings]);
+
+  console.log("uniqueTourNames: ", uniqueTourNames);
+
   // Event Handlers
   const handleTableChange = (pagination) => {
     const { current, pageSize } = pagination;
@@ -81,6 +115,8 @@ const ViewTourBookings = () => {
     setPagination({
       page: current,
       limit: pageSize,
+      tourName: tourName,
+      tourId: tourId,
     });
   };
 
@@ -89,6 +125,8 @@ const ViewTourBookings = () => {
     setPagination({
       page: INIT_PAGE,
       limit: value,
+      tourName: tourName,
+      tourId: tourId,
     });
   };
 
@@ -198,6 +236,31 @@ const ViewTourBookings = () => {
     },
   ];
 
+  const onSearch = (value) => {
+    console.log(value);
+
+    setPagination((prev) => ({
+      ...prev,
+      tourName: value,
+      page: INIT_PAGE,
+    }));
+
+    setTourName(value);
+  };
+
+  const onChangeTour = (value) => {
+    console.log(value);
+    setPagination((prev) => ({
+      ...prev,
+      tourId: value,
+      page: INIT_PAGE,
+    }));
+
+    setTourId(value);
+  };
+
+  console.log("pagination: ", pagination);
+
   return (
     <>
       {/* Show loading */}
@@ -261,6 +324,42 @@ const ViewTourBookings = () => {
               </Button> */}
             </Col>
 
+            <Col
+              xl={24}
+              style={{
+                borderBottom: "1px solid var(--border)",
+                padding: "0 0 20px 0",
+                marginBottom: "10px",
+                display: "flex",
+                justifyContent: "end",
+                alignItems: "center",
+                gap: "20px",
+              }}
+            >
+              <Search
+                placeholder="Search tour name"
+                onSearch={onSearch}
+                style={{
+                  width: 300,
+                }}
+              />
+
+              <Select
+                onChange={onChangeTour}
+                style={{
+                  width: "300px",
+                }}
+                defaultValue={""}
+              >
+                <Option value={""}>All Tours</Option>
+                {uniqueTourNames.map((tour) => (
+                  <Option key={tour.tourId} value={tour.tourId}>
+                    {tour.tourName}
+                  </Option>
+                ))}
+              </Select>
+            </Col>
+
             <Col xl={24}>
               <Table
                 columns={columns}
@@ -294,53 +393,9 @@ const ViewTourBookings = () => {
                     <Option value={3}>3 / page</Option>
                     <Option value={4}>4 / page</Option>
                     <Option value={5}>5 / page</Option>
-                    <Option value={6}>6 / page</Option>
                   </Select>
                 </Col>
               </Row>
-
-              {/* Modal hiển thị form duyệt đơn đăng ký giáo viên */}
-              {/* <Modal
-                title="Change status user"
-                footer={null}
-                open={isModalOpenChangeStatus}
-                onOk={handleOkChangeStatus}
-                onCancel={handleCancelChangeStatus}
-              >
-                <Col xs={22} sm={20} md={16} lg={12} xl={24}>
-                  <Form onFinish={onSubmit} layout="vertical">
-                    <Form.Item label="User Id">
-                      <Input value={selectedUserId} disabled />
-                    </Form.Item>
-
-                    <Form.Item label="Status">
-                      <Select
-                        value={selectedUserStatus}
-                        onChange={(value) => setSelectedUserStatus(value)}
-                      >
-                        <Option value="ACTIVE">ACTIVE</Option>
-                        <Option value="IN_ACTIVE">IN ACTIVE</Option>
-                      </Select>
-                    </Form.Item>
-
-                    <Form.Item>
-                      <Button
-                        htmlType="submit"
-                        style={{
-                          background: "var(--blue-light)",
-                          color: "var(--white)",
-                          marginTop: "20px",
-                          width: "100%",
-                        }}
-                        icon={loadingButton ? <Spin /> : null}
-                        loading={loadingButton}
-                      >
-                        Save
-                      </Button>
-                    </Form.Item>
-                  </Form>
-                </Col>
-              </Modal> */}
             </Col>
           </Row>
         </>

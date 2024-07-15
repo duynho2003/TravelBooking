@@ -42,7 +42,7 @@ const { Text } = Typography;
 const ViewTransactions = () => {
   // Constants
   const INIT_PAGE = 1;
-  const INIT_LIMIT = 6;
+  const INIT_LIMIT = 5;
 
   // Redux State
   const dispatch = useDispatch();
@@ -418,53 +418,9 @@ const ViewTransactions = () => {
                     <Option value={3}>3 / page</Option>
                     <Option value={4}>4 / page</Option>
                     <Option value={5}>5 / page</Option>
-                    <Option value={6}>6 / page</Option>
                   </Select>
                 </Col>
               </Row>
-
-              {/* Modal hiển thị form duyệt đơn đăng ký giáo viên */}
-              {/* <Modal
-                title="Change status user"
-                footer={null}
-                open={isModalOpenChangeStatus}
-                onOk={handleOkChangeStatus}
-                onCancel={handleCancelChangeStatus}
-              >
-                <Col xs={22} sm={20} md={16} lg={12} xl={24}>
-                  <Form onFinish={onSubmit} layout="vertical">
-                    <Form.Item label="User Id">
-                      <Input value={selectedUserId} disabled />
-                    </Form.Item>
-
-                    <Form.Item label="Status">
-                      <Select
-                        value={selectedUserStatus}
-                        onChange={(value) => setSelectedUserStatus(value)}
-                      >
-                        <Option value="ACTIVE">ACTIVE</Option>
-                        <Option value="IN_ACTIVE">IN ACTIVE</Option>
-                      </Select>
-                    </Form.Item>
-
-                    <Form.Item>
-                      <Button
-                        htmlType="submit"
-                        style={{
-                          background: "var(--blue-light)",
-                          color: "var(--white)",
-                          marginTop: "20px",
-                          width: "100%",
-                        }}
-                        icon={loadingButton ? <Spin /> : null}
-                        loading={loadingButton}
-                      >
-                        Save
-                      </Button>
-                    </Form.Item>
-                  </Form>
-                </Col>
-              </Modal> */}
             </Col>
           </Row>
         </>

@@ -9,6 +9,7 @@ import {
   useParams,
 } from "react-router-dom";
 import {
+  faChartLine,
   faCreditCard,
   faEarthAmericas,
   faHotel,
@@ -35,6 +36,7 @@ export default function AdminLayout() {
   const sub = useSelector((state) => state.auth?.info?.sub);
   const tourId = useSelector((state) => state.tours?.selectedTour?.id);
   const hotelId = useSelector((state) => state.hotels?.selectedHotel?.id);
+  const roomId = useSelector((state) => state.hotels?.selectedRoom?.id);
   const regionId = useSelector((state) => state.regions?.selectedRegion?.id);
 
   const [collapsed, setCollapsed] = useState(false);
@@ -146,6 +148,21 @@ export default function AdminLayout() {
           label: "Update hotel",
           key: `/admin/hotels/update/${hotelId}`,
         },
+        {
+          key: `/admin/hotels/${hotelId}/room/${roomId}/view`,
+          label: "View room in hotel",
+          path: `/admin/hotels/${hotelId}/room/${roomId}/view`,
+        },
+        {
+          key: `/admin/hotels/${hotelId}/room/create`,
+          label: "Create new room in hotel",
+          path: `/admin/hotels/${hotelId}/room/create`,
+        },
+        {
+          key: `/admin/hotels/${hotelId}/room/${roomId}/update`,
+          label: "Update room in hotel",
+          path: `/admin/hotels/${hotelId}/room/${roomId}/update`,
+        },
       ],
     },
 
@@ -178,35 +195,20 @@ export default function AdminLayout() {
     },
 
     {
-      key: "/admin/tourBookings",
+      key: "/admin/bookings",
       icon: <FontAwesomeIcon icon={faCreditCard} />,
       label: "Bookings",
       children: [
         {
-          key: "/admin/tourBookings/view",
-          label: <Link to="/admin/tourBookings/view">View tour bookings</Link>,
-          path: "/admin/tourBookings/view",
+          key: "/admin/bookings/tour/view",
+          label: <Link to="/admin/bookings/tour/view">View tour bookings</Link>,
+          path: "/admin/bookings/tour/view",
         },
         {
-          key: "/admin/roomBookings/view",
-          label: <Link to="/admin/roomBookings/view">View room bookings</Link>,
-          path: "/admin/roomBookings/view",
+          key: "/admin/bookings/room/view",
+          label: <Link to="/admin/bookings/room/view">View room bookings</Link>,
+          path: "/admin/bookings/room/view",
         },
-        // {
-        //   key: `/admin/tours/view/${tourId}`,
-        //   label: "View a tour",
-        //   path: `/admin/tours/view/${tourId}`,
-        // },
-        // {
-        //   key: "/admin/tours/create",
-        //   label: <Link to="/admin/tours/create">Create new tour</Link>,
-        //   path: "/admin/tours/create",
-        // },
-        // {
-        //   key: `/admin/tours/update/${tourId}`,
-        //   label: "Update tour",
-        //   path: `/admin/tours/update/${tourId}`,
-        // },
       ],
     },
 
@@ -220,23 +222,19 @@ export default function AdminLayout() {
           label: <Link to="/admin/transactions/view">View transactions</Link>,
           path: "/admin/transactions/view",
         },
-        // {
-        //   key: `/admin/hotels/view/${hotelId}`,
-        //   label: "View a hotel",
-        //   path: `/admin/hotels/view/${hotelId}`,
-        // },
-        // {
-        //   key: "/admin/transactions/create",
-        //   label: (
-        //     <Link to="/admin/transactions/create">Create new transation</Link>
-        //   ),
-        //   path: "/admin/transactions/create",
-        // },
-        // {
-        //   key: `/admin/hotels/update/${hotelId}`,
-        //   label: "Update hotel",
-        //   key: `/admin/hotels/update/${hotelId}`,
-        // },
+      ],
+    },
+
+    {
+      key: "/admin/statisticals",
+      icon: <FontAwesomeIcon icon={faChartLine} />,
+      label: "Statisticals",
+      children: [
+        {
+          key: "/admin/statisticals/view",
+          label: <Link to="/admin/statisticals/view">View statisticals</Link>,
+          path: "/admin/statisticals/view",
+        },
       ],
     },
   ];

@@ -457,7 +457,7 @@ const UpdateInfoWebsite = () => {
                       icon={loadingButton ? <Spin /> : null}
                       loading={loadingButton}
                     >
-                      Cập nhật
+                      Save
                     </Button>
                   </Form.Item>
                 </Col>

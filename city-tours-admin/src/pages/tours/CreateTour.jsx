@@ -17,6 +17,8 @@ import {
   Tag,
   Modal,
   Card,
+  List,
+  Space,
 } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import "../../App.css";
@@ -31,6 +33,12 @@ import customParseFormat from "dayjs/plugin/customParseFormat";
 import { generateTourCode } from "../../utils/generateTourCode";
 import { getAllHotels } from "../../features/hotel/HotelSlice";
 dayjs.extend(customParseFormat);
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import { PlusOutlined, SearchOutlined } from "@ant-design/icons";
+import goongApi from "../../services/goongJs/goongApi";
 
 const { RangePicker } = DatePicker;
 const { Text } = Typography;
@@ -73,12 +81,12 @@ const CreateTour = () => {
 
   // useEffect for loading data
   useEffect(() => {
-    dispatch(
-      getAllHotels({
-        page: INIT_PAGE,
-        limit: INIT_LIMIT,
-      })
-    );
+    // dispatch(
+    //   getAllHotels({
+    //     page: INIT_PAGE,
+    //     limit: INIT_LIMIT,
+    //   })
+    // );
 
     // Delay showing content after loading
     if (!isLoading) {
@@ -114,33 +122,29 @@ const CreateTour = () => {
   };
 
   const onSubmit = async (data) => {
-    if (dates?.[0] === null && dates?.[1] === null) {
-      setErrorDatePicker("Please select a date time");
-
-      return;
-    }
-
     setLoadingButton(true);
 
     try {
-      const thumbnail = await uploadImage();
+      await handleAddCoordinates();
 
-      const startHour = startTime.split(" ")[1];
+      const thumbnail = await uploadImage();
 
       const newData = {
         code: generateTourCode(),
         name: data.name,
         description: data.description,
+        detail: data.detail,
         price: parseInt(data.price),
         discount: parseInt(data.discount) || 0.0,
         locations: data.locations,
         depart: data.depart,
-        startTime: startHour,
+        startTime: "startHour",
         adults: data.adults,
         children: data.children,
         baby: data.baby,
         thumbnail: thumbnail,
-        schedules: weekdays,
+        tourTimes: timeSlot,
+        tourLocations: locations,
       };
 
       console.log("newData: ", newData);
@@ -159,6 +163,10 @@ const CreateTour = () => {
       setDataSource([]);
       setWeekdays([]);
       handleResetPicker();
+      setIsOpenTimeSlot(false);
+      setTimeSlot([]);
+      setIsOpenLocations(false);
+      setLocations([]);
 
       notification.success({
         message: "Tour created successfully",
@@ -200,31 +208,11 @@ const CreateTour = () => {
 
     setDates(dates);
 
+    console.log("Lịch trình 1: ", dateStrings?.[0], " ", dateStrings?.[1]);
+
     const weekdays = getWeekdaysInRange(dateStrings[0], dateStrings[1]);
     setWeekdays(weekdays);
-    console.log("Weekdays:", weekdays); // In ra mảng các thứ tiếng Anh từ ngày bắt đầu đến ngày kết thúc (bao gồm cả ngày kết thúc)
-
-    // const initialDataSource = weekdays.map((day) => ({
-    //   key: day,
-    //   data: [],
-    // }));
-
-    // setDataSource(initialDataSource);
-
-    // // Tạo object schedules mới
-    // const newSchedules = {
-    //   startDay: dateStrings?.[0],
-    //   endDay: dateStrings?.[1],
-    //   weeks: {},
-    // };
-
-    // // Thêm các thông tin ban đầu cho mỗi ngày trong tuần vào weeks
-    // weekdays.forEach((day) => {
-    //   newSchedules.weeks[day] = [];
-    // });
-
-    // // Cập nhật state cho schedules
-    // setSchedules(newSchedules);
+    console.log("Weekdays:", weekdays);
   };
 
   const handleAddRow = (dayIndex) => {
@@ -295,6 +283,8 @@ const CreateTour = () => {
   const handleTimeChange = (value, fieldName, day, dataIndex) => {
     const updatedSchedules = { ...schedules };
     const [weekday, index] = day.split("-");
+
+    console.log("schedules: ", schedules);
 
     if (updatedSchedules.weeks.hasOwnProperty(weekday)) {
       // Finding the index of the dataIndex within the weekday's array
@@ -532,6 +522,110 @@ const CreateTour = () => {
     };
   };
 
+  const modules = {
+    toolbar: [
+      ["bold", "italic", "underline", "strike"], // toggled buttons
+      ["blockquote", "code-block"],
+      ["link", "image", "video", "formula"],
+
+      [{ header: 1 }, { header: 2 }], // custom button values
+      [{ list: "ordered" }, { list: "bullet" }, { list: "check" }],
+      [{ script: "sub" }, { script: "super" }], // superscript/subscript
+      [{ indent: "-1" }, { indent: "+1" }], // outdent/indent
+      [{ direction: "rtl" }], // text direction
+
+      [{ size: ["small", false, "large", "huge"] }], // custom dropdown
+      [{ header: [1, 2, 3, 4, 5, 6, false] }],
+
+      [{ color: [] }, { background: [] }], // dropdown with defaults from theme
+      [{ font: [] }],
+      [{ align: [] }],
+
+      ["clean"], // remove formatting button
+    ],
+  };
+
+  const [isOpenTimeSlot, setIsOpenTimeSlot] = useState(true);
+  const [timeSlot, setTimeSlot] = useState([]);
+  const [isOpenLocations, setIsOpenLocations] = useState(true);
+  const [locations, setLocations] = useState([]);
+  const [startPoint, setStartPoint] = useState(null);
+  const [endPoint, setEndPoint] = useState(null);
+
+  const handleOpenTimeSlot = () => {
+    setIsOpenTimeSlot(!isOpenTimeSlot);
+  };
+
+  const handleOpenLocations = () => {
+    setIsOpenLocations(!isOpenLocations);
+  };
+
+  const handleOnChangeRangePicker = (dates, dateStrings) => {
+    const formatDate = (dateString) => {
+      const [date, time] = dateString.split(" ");
+      const [year, month, day] = date.split("-");
+      return `${time} - ${day}/${month}/${year}`;
+    };
+
+    const startDate = formatDate(dateStrings?.[0]);
+    const endDate = formatDate(dateStrings?.[1]);
+
+    setTimeSlot((prev) => [
+      ...prev,
+      {
+        startDate: startDate,
+        endDate: endDate,
+      },
+    ]);
+
+    setIsOpenTimeSlot(false);
+  };
+
+  const handleChangeStartPoint = (value) => {
+    setStartPoint(value);
+  };
+
+  const handleChangeEndPoint = (value) => {
+    setEndPoint(value);
+  };
+
+  const handleAddLocation = () => {
+    if (startPoint && endPoint) {
+      setLocations((prev) => [...prev, { startPoint, endPoint }]);
+      setStartPoint(null);
+      setEndPoint(null);
+      setIsOpenLocations(false);
+    }
+  };
+
+  const handleAddCoordinates = async () => {
+    for (const location of locations) {
+      try {
+        const encodedStartPoint = encodeURIComponent(location.startPoint);
+        const encodedEndPoint = encodeURIComponent(location.endPoint);
+
+        const startCoordinates = await goongApi.geocoding(encodedStartPoint);
+        const endCoordinates = await goongApi.geocoding(encodedEndPoint);
+
+        if (startCoordinates.length > 0) {
+          location.coordinatesStartPoint = JSON.stringify(
+            startCoordinates[0].geometry.location
+          );
+        }
+
+        if (endCoordinates.length > 0) {
+          location.coordinatesEndPoint = JSON.stringify(
+            endCoordinates[0].geometry.location
+          );
+        }
+
+        console.log(location);
+      } catch (error) {
+        console.error("Error fetching coordinates:", error);
+      }
+    }
+  };
+
   return (
     <>
       {/* Show loading */}
@@ -608,22 +702,36 @@ const CreateTour = () => {
                         validateStatus={error ? "error" : ""}
                         help={error?.message}
                       >
-                        <Input {...field} placeholder="Enter description" />
+                        <Input.TextArea
+                          {...field}
+                          placeholder="Enter description"
+                        />
                       </Form.Item>
                     )}
                   />
 
                   <Controller
-                    name="locations"
+                    name="detail"
                     control={control}
-                    rules={{ required: "Locations is required" }}
+                    rules={{ required: "Detail is required" }}
                     render={({ field, fieldState: { error } }) => (
                       <Form.Item
-                        label="Locations"
+                        label="Detail"
                         validateStatus={error ? "error" : ""}
                         help={error?.message}
+                        style={{
+                          height: "520px",
+                        }}
                       >
-                        <Input {...field} placeholder="Enter locations" />
+                        <ReactQuill
+                          {...field}
+                          theme="snow"
+                          modules={modules}
+                          // formats={formats}
+                          style={{
+                            height: "400px",
+                          }}
+                        />
                       </Form.Item>
                     )}
                   />
@@ -840,68 +948,113 @@ const CreateTour = () => {
                     )}
                   />
 
-                  <Controller
-                    name="datTime"
-                    control={control}
-                    render={({ field, fieldState: { error } }) => (
-                      <Form.Item label="Date Time">
-                        <RangePicker
-                          showTime
-                          onChange={handleRangePickerChange}
-                          value={dates}
+                  <Form.Item
+                    label={
+                      <>
+                        Time Slot{" "}
+                        <FontAwesomeIcon
+                          icon={faPlus}
+                          style={{
+                            cursor: "pointer",
+                            marginLeft: "8px",
+                            color: "var(--white)",
+                            display: "inline-block",
+                            width: "12px",
+                            height: "12px",
+                            border: "1px solid green",
+                            padding: "2px",
+                            borderRadius: "50%",
+                            background: "var(--green-dark)",
+                          }}
+                          onClick={handleOpenTimeSlot}
                         />
-                        <br />
-                        {
-                          <Text
-                            style={{
-                              color: "red",
-                            }}
-                          >
-                            {errorDatePicker}
-                          </Text>
-                        }
-                      </Form.Item>
+                      </>
+                    }
+                  >
+                    {isOpenTimeSlot && (
+                      <RangePicker
+                        showTime
+                        onChange={handleOnChangeRangePicker}
+                        style={{
+                          marginBottom: "10px",
+                        }}
+                      />
                     )}
-                  />
-                  <Form.Item label="Schedules">
-                    <Timeline
-                      mode="left"
-                      style={{
-                        marginTop: "5px",
-                      }}
-                    >
-                      {weekdays.length > 0 &&
-                        weekdays.map((day, index) => (
-                          <Timeline.Item
-                            key={index}
-                            label={`${day.dayOfWeek} - ${day.date} `}
-                          >
-                            <Row
-                              style={{
-                                width: "100%",
-                              }}
-                            >
-                              <Col span={24}>
-                                <Input
-                                  value={day.activities || ""}
-                                  onChange={(e) =>
-                                    handleActivitiesChange(
-                                      index,
-                                      e.target.value
-                                    )
-                                  }
-                                  placeholder="Enter activities"
-                                />
-                              </Col>
-                            </Row>
-                          </Timeline.Item>
-                        ))}
-                    </Timeline>
-                    {weekdays.length === 0 && (
-                      <Text style={{ fontSize: "14px", fontWeight: 400 }}>
-                        This tour has no schedules
-                      </Text>
+
+                    <List
+                      header={<div>List time</div>}
+                      bordered
+                      dataSource={timeSlot}
+                      renderItem={(item, index) => (
+                        <List.Item>
+                          {index + 1} - From <Tag>{item?.startDate}</Tag> to{" "}
+                          <Tag>{item?.endDate}</Tag>
+                        </List.Item>
+                      )}
+                    />
+                  </Form.Item>
+
+                  <Form.Item
+                    label={
+                      <>
+                        Locations{" "}
+                        <FontAwesomeIcon
+                          icon={faPlus}
+                          style={{
+                            cursor: "pointer",
+                            marginLeft: "8px",
+                            color: "var(--white)",
+                            display: "inline-block",
+                            width: "12px",
+                            height: "12px",
+                            border: "1px solid green",
+                            padding: "2px",
+                            borderRadius: "50%",
+                            background: "var(--green-dark)",
+                          }}
+                          onClick={handleOpenLocations}
+                        />
+                      </>
+                    }
+                  >
+                    {isOpenLocations && (
+                      <>
+                        <Space.Compact
+                          size="middle"
+                          style={{
+                            marginBottom: "15px",
+                          }}
+                        >
+                          <Input
+                            onChange={(e) =>
+                              handleChangeStartPoint(e.target.value)
+                            }
+                            placeholder="Enter start point"
+                          />
+                          <Input
+                            onChange={(e) =>
+                              handleChangeEndPoint(e.target.value)
+                            }
+                            placeholder="Enter end point"
+                          />
+                          <Button onClick={handleAddLocation}>
+                            <PlusOutlined />
+                          </Button>
+                        </Space.Compact>
+                      </>
                     )}
+
+                    <List
+                      header={<div>List Location</div>}
+                      bordered
+                      dataSource={locations}
+                      renderItem={(item, index) => (
+                        <List.Item>
+                          Day {index + 1} - From <Tag>{item?.startPoint}</Tag>{" "}
+                          to <Tag>{item?.endPoint}</Tag>
+                        </List.Item>
+                      )}
+                    />
                   </Form.Item>
 
                   <Form.Item>

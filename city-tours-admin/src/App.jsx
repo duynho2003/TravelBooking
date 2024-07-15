@@ -29,6 +29,10 @@ import ViewRegions from "./pages/region/ViewRegions";
 import UpdateRegion from "./pages/region/UpdateRegion";
 import ViewTourBookings from "./pages/tourBookings/ViewTourBookings";
 import ViewRoomBookings from "./pages/tourBookings/ViewRoomBookings";
+import CreateRoom from "./pages/hotels/CreateRoom";
+import UpdateRoom from "./pages/hotels/UpdateRoom";
+import ViewRoom from "./pages/hotels/ViewRoom";
+import ViewStatisticals from "./pages/statistical/ViewStatisticals";
 
 function App() {
   // Redux State
@@ -71,6 +75,20 @@ function App() {
             <Route path="hotels/create" element={<CreateHotel />} />
             <Route path="hotels/update/:hotelId" element={<UpdateHotel />} />
 
+            {/* Rooms management */}
+            <Route
+              path="hotels/:hotelId/room/:roomId/view"
+              element={<ViewRoom />}
+            />
+            <Route
+              path="hotels/:hotelId/room/create"
+              element={<CreateRoom />}
+            />
+            <Route
+              path="hotels/:hotelId/room/:roomId/update"
+              element={<UpdateRoom />}
+            />
+
             {/* Tours management */}
             <Route path="tours/view" element={<ViewTours />} />
             <Route path="tours/view/:tourId" element={<ViewATour />} />
@@ -78,13 +96,16 @@ function App() {
             <Route path="tours/update/:tourId" element={<UpdateTour />} />
 
             {/* Bookings management */}
-            <Route path="tourBookings/view" element={<ViewTourBookings />} />
-            <Route path="roomBookings/view" element={<ViewRoomBookings />} />
+            <Route path="bookings/tour/view" element={<ViewTourBookings />} />
+            <Route path="bookings/room/view" element={<ViewRoomBookings />} />
 
             {/* Transactions management */}
             <Route path="transactions/view" element={<ViewTransactions />} />
             <Route path="transactions/create" element={<CreateTransaction />} />
             <Route path="transactions/result" element={<ResultTransaction />} />
+
+            {/* Statistical management */}
+            <Route path="statisticals/view" element={<ViewStatisticals />} />
 
             {/* Not found */}
             <Route path="admin/*" element={<NotFound />} />

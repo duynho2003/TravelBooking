@@ -25,7 +25,7 @@ import Loading from "../../components/common/Loading";
 import dayjs from "dayjs";
 import "dayjs/locale/en"; // Import locale 'en' để sử dụng tiếng Anh
 import customParseFormat from "dayjs/plugin/customParseFormat";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { Controller, useForm } from "react-hook-form";
 import { UserOutlined } from "@ant-design/icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -42,6 +42,7 @@ const ViewAHotel = () => {
   // Redux State
   const { hotelId } = useParams();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const hotel = useSelector((state) => state.hotels?.selectedHotel);
   const selectedRoom = useSelector((state) => state.hotels?.selectedRoom);
   const isLoading = useSelector((state) => state.hotels?.isLoading);
@@ -50,6 +51,7 @@ const ViewAHotel = () => {
   // Local State
   const [showContent, setShowContent] = useState(false);
   const [isModalDetailRoom, setIsModalDetailRoom] = useState(false);
+  const [isWeekend, setIsWeekend] = useState(null);
 
   // useEffect for loading data
   useEffect(() => {
@@ -107,6 +109,36 @@ const ViewAHotel = () => {
 
   const handleCancelDetailRoom = () => {
     setIsModalDetailRoom(false);
+  };
+
+  const handleNavigateDetailRoom = (roomId) => {
+    navigate(`/admin/hotels/${hotelId}/room/${roomId}/view`);
+  };
+
+  useEffect(() => {
+    const checkWeekendDay = () => {
+      const currentDate = new Date();
+
+      const dayOfWeek = currentDate.getDay();
+      console.log("dayOfWeek: ", dayOfWeek);
+
+      const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+
+      setIsWeekend(isWeekend);
+    };
+
+    checkWeekendDay();
+  }, []);
+
+  const getCurrentDate = () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, "0"); // Months are zero based
+    const day = String(today.getDate()).padStart(2, "0");
+
+    console.log(`${year}-${month}-${day}`);
+
+    return `${year}-${month}-${day}`;
   };
 
   return (
@@ -219,14 +251,15 @@ const ViewAHotel = () => {
                         style={{
                           width: "100%",
                         }}
+                        gutter={[10, 10]}
                       >
                         {hotel?.thumbnailUrls?.map((url, index) => (
                           <Col
-                            xxl={6}
-                            xl={6}
-                            lg={6}
+                            xxl={12}
+                            xl={12}
+                            lg={12}
                             key={index}
-                            style={{ marginBottom: "10px" }}
+                            // style={{ marginBottom: "10px" }}
                           >
                             <Image
                               src={url}
@@ -344,8 +377,15 @@ const ViewAHotel = () => {
                           {new Intl.NumberFormat("vi-VN", {
                             style: "currency",
                             currency: "VND",
-                          }).format(room?.price)}{" "}
-                          /per night
+                          }).format(
+                            room?.roomHolidays?.find(
+                              (holiday) => holiday.date === getCurrentDate()
+                            )?.price - room?.discount ||
+                              (isWeekend
+                                ? room?.weekendPrice
+                                : room?.basePrice) - room?.discount
+                          )}{" "}
+                          /per hour
                         </Tag>
                       </Col>
 
@@ -397,7 +437,7 @@ const ViewAHotel = () => {
                               background: "var(--green-dark)",
                               color: "var(--white)",
                             }}
-                            onClick={() => handleShowDetailRoom(room?.id)}
+                            onClick={() => handleNavigateDetailRoom(room?.id)}
                           >
                             Detail
                           </Button>

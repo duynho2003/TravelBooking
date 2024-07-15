@@ -20,6 +20,8 @@ import {
   Modal,
   Card,
   Tag,
+  List,
+  Space,
 } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import "../../App.css";
@@ -38,6 +40,12 @@ import { useParams } from "react-router-dom";
 import { roomTypes } from "../../utils/enums/RoomTypes";
 import { getAllHotels, getRoomById } from "../../features/hotel/HotelSlice";
 dayjs.extend(customParseFormat);
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
+import { faPlus, faX } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { PlusOutlined } from "@ant-design/icons";
+import goongApi from "../../services/goongJs/goongApi";
 
 const { RangePicker } = DatePicker;
 const { Text } = Typography;
@@ -120,11 +128,11 @@ const UpdateTour = () => {
       reset({
         name: tour?.name,
         description: tour?.description,
+        detail: tour?.detail,
         depart: tour?.depart,
         startTime: tour?.startTime,
         price: tour?.price,
         discount: tour?.discount,
-        locations: tour?.locations,
         bookedStatus: tour?.bookedStatus,
         activeStatus: tour?.activeStatus,
         adults: tour?.adults,
@@ -132,10 +140,13 @@ const UpdateTour = () => {
         baby: tour?.baby,
       });
 
-      const startDate = dayjs(tour?.schedules[0]?.date, "YYYY-MM-DD");
+      setTimeSlot(tour?.tourTimes);
+      setLocations(tour?.tourLocations);
+
+      const startDate = dayjs(tour?.schedules?.[0]?.date, "YYYY-MM-DD");
 
       const endDate = dayjs(
-        tour?.schedules[tour?.schedules?.length - 1]?.date,
+        tour?.schedules?.[tour?.schedules?.length - 1]?.date,
         "YYYY-MM-DD"
       );
 
@@ -190,23 +201,26 @@ const UpdateTour = () => {
 
     setLoadingButton(true);
 
+    await handleAddCoordinates();
+
     let thumbnailToUse = selectedImage ? await uploadImage() : tour?.thumbnail;
 
     const newData = {
       id: tourId,
       name: data.name,
       description: data.description,
+      detail: data.detail,
       depart: data.depart,
       price: parseInt(data.price),
       discount: parseInt(data.discount) || 0.0,
-      locations: data.locations,
       adults: data.adults,
       children: data.children,
       baby: data.baby,
       bookedStatus: data.bookedStatus,
       activeStatus: data.activeStatus,
       thumbnail: thumbnailToUse,
-      schedules: weekdays,
+      tourTimes: timeSlot,
+      tourLocations: locations,
     };
 
     console.log("newData: ", newData);
@@ -242,8 +256,7 @@ const UpdateTour = () => {
     }
   };
 
-  const disabledDate = (current) => {
-    // Chỉ cho phép chọn ngày trong tương lai và không cho phép chọn ngày hiện tại
+  const disabledDateCurrent = (current) => {
     return current && current < Date.now();
   };
 
@@ -582,13 +595,13 @@ const UpdateTour = () => {
         };
 
         setDataTourRoomBooking(newRoom);
-
-        console.log("Updated newdata with new room:", newRoom);
       } else {
         console.log(`Hotel not found for roomId: ${roomId}`);
       }
     }
   };
+
+  console.log("dataTourRoomBooking:", dataTourRoomBooking);
 
   const handleTourRoomBooking = async () => {
     setLoadingButtonTourRoomBooking(true);
@@ -635,6 +648,300 @@ const UpdateTour = () => {
 
   const onSubmitTourRoomBooking = (data) => {
     console.log(data);
+  };
+
+  const modules = {
+    toolbar: [
+      ["bold", "italic", "underline", "strike"], // toggled buttons
+      ["blockquote", "code-block"],
+      ["link", "image", "video", "formula"],
+
+      [{ header: 1 }, { header: 2 }], // custom button values
+      [{ list: "ordered" }, { list: "bullet" }, { list: "check" }],
+      [{ script: "sub" }, { script: "super" }], // superscript/subscript
+      [{ indent: "-1" }, { indent: "+1" }], // outdent/indent
+      [{ direction: "rtl" }], // text direction
+
+      [{ size: ["small", false, "large", "huge"] }], // custom dropdown
+      [{ header: [1, 2, 3, 4, 5, 6, false] }],
+
+      [{ color: [] }, { background: [] }], // dropdown with defaults from theme
+      [{ font: [] }],
+      [{ align: [] }],
+
+      ["clean"], // remove formatting button
+    ],
+  };
+
+  const [isOpenTimeSlot, setIsOpenTimeSlot] = useState(true);
+  const [timeSlot, setTimeSlot] = useState([]);
+  const [isOpenLocations, setIsOpenLocations] = useState(true);
+  const [locations, setLocations] = useState([]);
+  const [startPoint, setStartPoint] = useState(null);
+  const [endPoint, setEndPoint] = useState(null);
+  const [isWeekend, setIsWeekend] = useState(null);
+
+  const handleOpenTimeSlot = () => {
+    setIsOpenTimeSlot(!isOpenTimeSlot);
+  };
+
+  const handleOpenLocations = () => {
+    setIsOpenLocations(!isOpenLocations);
+  };
+
+  const handleOnChangeRangePicker = (dates, dateStrings) => {
+    const formatDate = (dateString) => {
+      const [date, time] = dateString.split(" ");
+      const [year, month, day] = date.split("-");
+      return `${time} - ${day}/${month}/${year}`;
+    };
+
+    const startDate = formatDate(dateStrings?.[0]);
+    const endDate = formatDate(dateStrings?.[1]);
+
+    setTimeSlot((prev) => [
+      ...prev,
+      {
+        startDate: startDate,
+        endDate: endDate,
+      },
+    ]);
+
+    setIsOpenTimeSlot(false);
+  };
+
+  const handleChangeStartPoint = (value) => {
+    setStartPoint(value);
+  };
+
+  const handleChangeEndPoint = (value) => {
+    setEndPoint(value);
+  };
+
+  const handleAddLocation = () => {
+    if (startPoint && endPoint) {
+      setLocations((prev) => [...prev, { startPoint, endPoint }]);
+      setStartPoint(null);
+      setEndPoint(null);
+      setIsOpenLocations(false);
+    }
+  };
+
+  const handleDeleteTourTime = async (tourTimeId, startDate, endDate) => {
+    console.log("tourTimeId: ", tourTimeId);
+
+    try {
+      const token = Cookies.get("token");
+
+      if (!tourTimeId) {
+        setTimeSlot((prev) =>
+          prev.filter(
+            (item) => item.startDate !== startDate || item.endDate !== endDate
+          )
+        );
+        notification.success({
+          message: "Tour Time Deleted Successfully",
+          description: "The selected tour time has been deleted from the list.",
+        });
+        return;
+      }
+
+      await axios.delete(
+        `http://localhost:5050/api/v1/tourTimes/${tourTimeId}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      dispatch(getTourById(tourId));
+
+      notification.success({
+        message: "Tour Time Deleted Successfully",
+        description: "The selected tour time has been deleted.",
+      });
+    } catch (error) {
+      console.error("Error deleting tour time:", error);
+      notification.error({
+        message: "System Error",
+        description: "There was an error deleting the tour time.",
+      });
+    }
+  };
+
+  const handleDeleteTourLocation = async (
+    tourLocationId,
+    startPoint,
+    endPoint
+  ) => {
+    console.log("tourLocationId: ", tourLocationId);
+
+    try {
+      const token = Cookies.get("token");
+
+      if (!tourLocationId) {
+        setLocations((prev) =>
+          prev.filter(
+            (item) =>
+              item.startPoint !== startPoint || item.endPoint !== endPoint
+          )
+        );
+        notification.success({
+          message: "Tour Location Deleted Successfully",
+          description:
+            "The selected tour location has been deleted from the list.",
+        });
+        return;
+      }
+
+      await axios.delete(
+        `http://localhost:5050/api/v1/tourLocations/${tourLocationId}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      dispatch(getTourById(tourId));
+
+      notification.success({
+        message: "Tour Location Deleted Successfully",
+        description: "The selected tour location has been deleted.",
+      });
+    } catch (error) {
+      console.error("Error deleting tour location:", error);
+      notification.error({
+        message: "System Error",
+        description: "There was an error deleting the tour time.",
+      });
+    }
+  };
+
+  const disabledDate = (current) => {
+    const currentDate = dayjs(); // Ngày hiện tại
+
+    // Vô hiệu hóa ngày hiện tại và quá khứ
+    if (current.isBefore(currentDate.startOf("day"))) {
+      return true;
+    }
+
+    // Vô hiệu hóa các ngày trong timeSlot
+    for (const item of timeSlot) {
+      const start = dayjs(item.startDate, "HH:mm - DD/MM/YYYY");
+      const end = dayjs(item.endDate, "HH:mm - DD/MM/YYYY");
+
+      // Kiểm tra xem ngày hiện tại có nằm trong khoảng start và end
+      if (
+        current.isSame(start, "day") ||
+        current.isSame(end, "day") ||
+        (current.isAfter(start) && current.isBefore(end))
+      ) {
+        return true;
+      }
+    }
+
+    return false;
+  };
+
+  useEffect(() => {
+    const checkWeekendDay = () => {
+      const currentDate = new Date();
+
+      const dayOfWeek = currentDate.getDay();
+      console.log("dayOfWeek: ", dayOfWeek);
+
+      const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+
+      setIsWeekend(isWeekend);
+    };
+
+    checkWeekendDay();
+  }, []);
+
+  const getCurrentDate = () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, "0"); // Months are zero based
+    const day = String(today.getDate()).padStart(2, "0");
+
+    console.log(`${year}-${month}-${day}`);
+
+    return `${year}-${month}-${day}`;
+  };
+
+  const handleAddTourRoomBooking = async () => {
+    const token = Cookies.get("token");
+
+    const urlAddTourRoomBooking =
+      "http://localhost:5050/api/v1/tourRoomBookings/create";
+
+    try {
+      await axios.post(urlAddTourRoomBooking, dataTourRoomBooking, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+    } catch (error) {
+      console.error("Error adding tour booking:", error);
+      throw error;
+    }
+  };
+
+  const handleCreateOrder = async () => {
+    const amount = totalPriceRoom;
+
+    const orderInfo = "BOOKING ROOM ON TOUR";
+    const urlVNPay = `http://localhost:5050/api/v1/payments/createOrder?amount=${amount}&orderInfo=${orderInfo}`;
+
+    try {
+      const response = await axios.post(urlVNPay);
+      const redirectUrl = response.data;
+
+      console.log("response: ", response);
+      // window.location.href = redirectUrl;
+    } catch (error) {
+      console.error("Error creating order:", error);
+      throw error;
+    }
+  };
+
+  const handleCheckout = async () => {
+    try {
+      await handleAddTourRoomBooking();
+      await handleCreateOrder();
+    } catch (error) {
+      console.error("Error during checkout process:", error);
+    }
+  };
+
+  const handleAddCoordinates = async () => {
+    for (const location of locations) {
+      try {
+        const encodedStartPoint = encodeURIComponent(location.startPoint);
+        const encodedEndPoint = encodeURIComponent(location.endPoint);
+
+        const startCoordinates = await goongApi.geocoding(encodedStartPoint);
+        const endCoordinates = await goongApi.geocoding(encodedEndPoint);
+
+        if (startCoordinates.length > 0) {
+          location.coordinatesStartPoint = JSON.stringify(
+            startCoordinates[0].geometry.location
+          );
+        }
+
+        if (endCoordinates.length > 0) {
+          location.coordinatesEndPoint = JSON.stringify(
+            endCoordinates[0].geometry.location
+          );
+        }
+
+        console.log(location);
+      } catch (error) {
+        console.error("Error fetching coordinates:", error);
+      }
+    }
   };
 
   return (
@@ -719,16 +1026,26 @@ const UpdateTour = () => {
                   />
 
                   <Controller
-                    name="locations"
+                    name="detail"
                     control={control}
-                    rules={{ required: "Locations is required" }}
+                    rules={{ required: "Detail is required" }}
                     render={({ field, fieldState: { error } }) => (
                       <Form.Item
-                        label="Locations"
+                        label="Detail"
                         validateStatus={error ? "error" : ""}
                         help={error?.message}
+                        style={{
+                          height: "520px",
+                        }}
                       >
-                        <Input {...field} />
+                        <ReactQuill
+                          {...field}
+                          theme="snow"
+                          modules={modules}
+                          style={{
+                            height: "400px",
+                          }}
+                        />
                       </Form.Item>
                     )}
                   />
@@ -809,12 +1126,12 @@ const UpdateTour = () => {
                         control={control}
                         rules={{
                           required: "Adults is required",
-                          validate: {
-                            min: (value) =>
-                              value >= 5 || "Minimum adults is 5 people",
-                            max: (value) =>
-                              value <= 30 || "Maximum adults is 30 people",
-                          },
+                          // validate: {
+                          //   min: (value) =>
+                          //     value >= 5 || "Minimum adults is 5 people",
+                          //   max: (value) =>
+                          //     value <= 30 || "Maximum adults is 30 people",
+                          // },
                         }}
                         render={({ field, fieldState: { error } }) => (
                           <Form.Item
@@ -824,7 +1141,7 @@ const UpdateTour = () => {
                           >
                             <InputNumber
                               {...field}
-                              min={5}
+                              min={1}
                               max={30}
                               style={{
                                 width: "100%",
@@ -1034,69 +1351,158 @@ const UpdateTour = () => {
                     />
                   )}
 
-                  <Controller
-                    name="datTime"
-                    control={control}
-                    render={({ field, fieldState: { error } }) => (
-                      <Form.Item label="Date Time">
-                        <RangePicker
-                          disabledDate={disabledDate}
-                          onChange={handleRangePickerChange}
-                          value={dates}
+                  <Form.Item
+                    label={
+                      <>
+                        Time Slot{" "}
+                        <FontAwesomeIcon
+                          icon={faPlus}
+                          style={{
+                            cursor: "pointer",
+                            marginLeft: "8px",
+                            color: "var(--white)",
+                            display: "inline-block",
+                            width: "12px",
+                            height: "12px",
+                            border: "1px solid green",
+                            padding: "2px",
+                            borderRadius: "50%",
+                            background: "var(--green-dark)",
+                          }}
+                          onClick={handleOpenTimeSlot}
                         />
-                        <br />
-                        {
-                          <Text
-                            style={{
-                              color: "red",
-                            }}
-                          >
-                            {errorDatePicker}
-                          </Text>
-                        }
-                      </Form.Item>
+                      </>
+                    }
+                  >
+                    {isOpenTimeSlot && (
+                      <RangePicker
+                        disabledDate={disabledDate}
+                        showTime
+                        onChange={handleOnChangeRangePicker}
+                        style={{
+                          marginBottom: "10px",
+                        }}
+                      />
                     )}
-                  />
 
-                  <Form.Item label="Schedules">
-                    <Timeline
-                      mode="left"
-                      style={{
-                        marginTop: "5px",
-                      }}
-                    >
-                      {weekdays.length > 0 &&
-                        weekdays.map((day, index) => (
-                          <Timeline.Item
-                            key={index}
-                            label={`${day.dayOfWeek} - ${day.date} `}
-                          >
-                            <Row
-                              style={{
-                                width: "100%",
-                              }}
-                            >
-                              <Col span={24}>
-                                <Input
-                                  defaultValue={day.activities}
-                                  onChange={(e) =>
-                                    handleActivitiesChange(
-                                      index,
-                                      e.target.value
-                                    )
-                                  }
-                                  placeholder="Enter activities"
-                                />
-                              </Col>
-                            </Row>
-                          </Timeline.Item>
-                        ))}
-                    </Timeline>
-                    {weekdays.length === 0 && (
-                      <Text style={{ fontSize: "14px", fontWeight: 400 }}>
-                        This tour has no schedules
-                      </Text>
+                    <List
+                      header={<div>List time</div>}
+                      bordered
+                      dataSource={timeSlot}
+                      renderItem={(item, index) => (
+                        <List.Item>
+                          {index + 1} - From <Tag>{item?.startDate}</Tag> to{" "}
+                          <Tag>{item?.endDate}</Tag>
+                          <FontAwesomeIcon
+                            icon={faX}
+                            style={{
+                              cursor: "pointer",
+                              marginLeft: "8px",
+                              color: "var(--white)",
+                              display: "inline-block",
+                              width: "12px",
+                              height: "12px",
+                              border: "1px solid var(--pink)",
+                              padding: "2px",
+                              borderRadius: "50%",
+                              background: "var(--pink)",
+                            }}
+                            onClick={() =>
+                              handleDeleteTourTime(
+                                item?.id,
+                                item?.startDate,
+                                item?.endDate
+                              )
+                            }
+                          />
+                        </List.Item>
+                      )}
+                    />
+                  </Form.Item>
+
+                  <Form.Item
+                    label={
+                      <>
+                        Locations{" "}
+                        <FontAwesomeIcon
+                          icon={faPlus}
+                          style={{
+                            cursor: "pointer",
+                            marginLeft: "8px",
+                            color: "var(--white)",
+                            display: "inline-block",
+                            width: "12px",
+                            height: "12px",
+                            border: "1px solid green",
+                            padding: "2px",
+                            borderRadius: "50%",
+                            background: "var(--green-dark)",
+                          }}
+                          onClick={handleOpenLocations}
+                        />
+                      </>
+                    }
+                  >
+                    {isOpenLocations && (
+                      <>
+                        <Space.Compact
+                          size="middle"
+                          style={{
+                            marginBottom: "15px",
+                          }}
+                        >
+                          <Input
+                            onChange={(e) =>
+                              handleChangeStartPoint(e.target.value)
+                            }
+                            placeholder="Enter start point"
+                          />
+                          <Input
+                            onChange={(e) =>
+                              handleChangeEndPoint(e.target.value)
+                            }
+                            placeholder="Enter end point"
+                          />
+                          <Button onClick={handleAddLocation}>
+                            <PlusOutlined />
+                          </Button>
+                        </Space.Compact>
+                      </>
                     )}
+
+                    <List
+                      header={<div>List Location</div>}
+                      bordered
+                      dataSource={locations}
+                      renderItem={(item, index) => (
+                        <List.Item>
+                          Day {index + 1} - From <Tag>{item?.startPoint}</Tag>{" "}
+                          to <Tag>{item?.endPoint}</Tag>
+                          <FontAwesomeIcon
+                            icon={faX}
+                            style={{
+                              cursor: "pointer",
+                              marginLeft: "8px",
+                              color: "var(--white)",
+                              display: "inline-block",
+                              width: "12px",
+                              height: "12px",
+                              border: "1px solid var(--pink)",
+                              padding: "2px",
+                              borderRadius: "50%",
+                              background: "var(--pink)",
+                            }}
+                            onClick={() =>
+                              handleDeleteTourLocation(
+                                item?.id,
+                                item?.startPoint,
+                                item?.endPoint
+                              )
+                            }
+                          />
+                        </List.Item>
+                      )}
+                    />
                   </Form.Item>
 
                   <Form.Item>
@@ -1117,7 +1523,8 @@ const UpdateTour = () => {
               </Row>
             </Form>
           </Col>
-          <Col
+
+          {/* <Col
             span={24}
             style={{
               borderTop: "1px solid var(--border)",
@@ -1190,10 +1597,9 @@ const UpdateTour = () => {
             <Col span={12}>
               {hasRooms ? (
                 <Row
-                  gutter={16}
+                  gutter={[16, 16]}
                   style={{
                     width: "100%",
-                    paddingTop: "20px",
                   }}
                   justify={"space-between"}
                 >
@@ -1265,92 +1671,17 @@ const UpdateTour = () => {
                             {new Intl.NumberFormat("vi-VN", {
                               style: "currency",
                               currency: "VND",
-                            }).format(room?.price - room?.discount)}{" "}
+                            }).format(
+                              room?.roomHolidays?.find(
+                                (holiday) => holiday.date === getCurrentDate()
+                              )?.price - room?.discount ||
+                                (isWeekend
+                                  ? room?.weekendPrice
+                                  : room?.basePrice) - room?.discount
+                            )}{" "}
                             / hour
                           </Tag>
                         </Col>
-
-                        {/* <Row
-                                justify={"center"}
-                                style={{
-                                  width: "100%",
-                                  marginTop: "20px",
-                                }}
-                              >
-                                <Col>
-                                  <Tag
-                                    color={
-                                      getTagProps(room?.bookedStatus)?.color ||
-                                      "default"
-                                    }
-                                  >
-                                    {getTagProps(room?.bookedStatus)?.tagText ||
-                                      "Unknown"}
-                                  </Tag>
-                                </Col>
-                              </Row>
-
-                              <Row
-                                justify={"center"}
-                                style={{
-                                  width: "100%",
-                                  marginTop: "20px",
-                                }}
-                              >
-                                <Col>
-                                  <Tag
-                                    color={
-                                      getTagProps(room?.activeStatus)?.color ||
-                                      "default"
-                                    }
-                                  >
-                                    {getTagProps(room?.activeStatus)?.tagText ||
-                                      "Unknown"}
-                                  </Tag>
-                                </Col>
-                              </Row> */}
-
-                        {/* <Row>
-                          <Col>
-                            <RangePicker
-                              showTime={{
-                                defaultValue: dayjs("00:00", "HH:mm"),
-                                format: "HH",
-                              }}
-                              disabledDate={disabledDate}
-                              // disabledTime={(current) =>
-                              //   disabledTime([
-                              //     {
-                              //       date: "2024-06-28",
-                              //       times: [
-                              //         { startHour: 7, endHour: 9 },
-                              //         { startHour: 12, endHour: 14 },
-                              //       ],
-                              //     },
-                              //     {
-                              //       date: "2024-06-29",
-                              //       times: [
-                              //         { startHour: 1, endHour: 3 },
-                              //         { startHour: 5, endHour: 7 },
-                              //       ],
-                              //     },
-                              //   ])(current)
-                              // }
-
-                              disabledTime={disabledTime(
-                                room?.tourRoomBookings
-                              )}
-                              onChange={(dates, dateStrings) =>
-                                onChangeDatePicker(
-                                  dates,
-                                  dateStrings,
-                                  room?.id,
-                                  room?.price
-                                )
-                              }
-                            />
-                          </Col>
-                        </Row> */}
 
                         <Row
                           justify={"center"}
@@ -1359,12 +1690,6 @@ const UpdateTour = () => {
                             marginTop: "20px",
                           }}
                         >
-                          {/* <Col>
-                              <Link to={`/courses/${1}`}>
-                                <Button>Update</Button>
-                              </Link>
-                            </Col> */}
-
                           <Col>
                             <Button
                               // style={{
@@ -1385,7 +1710,7 @@ const UpdateTour = () => {
                 <p>No rooms available for this hotel.</p>
               )}
             </Col>
-          </Row>
+          </Row> */}
         </Row>
       )}
 
@@ -1413,9 +1738,43 @@ const UpdateTour = () => {
                 <Input value={selectedRoom?.roomNumber} readOnly />
               </Form.Item>
 
-              <Form.Item label="Price / hour">
+              <Form.Item label="Base price / hour">
                 <InputNumber
-                  value={selectedRoom?.price}
+                  value={selectedRoom?.basePrice}
+                  formatter={(value) =>
+                    new Intl.NumberFormat("vi-VN", {
+                      style: "currency",
+                      currency: "VND",
+                    }).format(value)
+                  }
+                  parser={(value) => value.replace(/[^\d]/g, "")}
+                  style={{
+                    width: "100%",
+                  }}
+                  readOnly
+                />
+              </Form.Item>
+
+              <Form.Item label="Weekend price / hour">
+                <InputNumber
+                  value={selectedRoom?.weekendPrice}
+                  formatter={(value) =>
+                    new Intl.NumberFormat("vi-VN", {
+                      style: "currency",
+                      currency: "VND",
+                    }).format(value)
+                  }
+                  parser={(value) => value.replace(/[^\d]/g, "")}
+                  style={{
+                    width: "100%",
+                  }}
+                  readOnly
+                />
+              </Form.Item>
+
+              <Form.Item label="Holiday price / hour">
+                <InputNumber
+                  value={selectedRoom?.holidayPrice}
                   formatter={(value) =>
                     new Intl.NumberFormat("vi-VN", {
                       style: "currency",
@@ -1483,20 +1842,31 @@ const UpdateTour = () => {
 
               <Form.Item label="Times">
                 <RangePicker
+                  disabled
                   showTime={{
                     defaultValue: dayjs("00:00", "HH:mm"),
                     format: "HH",
                   }}
-                  disabledDate={disabledDate}
+                  disabledDate={disabledDateCurrent}
                   disabledTime={disabledTime(selectedRoom?.tourRoomBookings)}
-                  onChange={(dates, dateStrings) =>
+                  onChange={(dates, dateStrings) => {
+                    const holidayPrice = selectedRoom?.roomHolidays?.find(
+                      (holiday) => holiday.date === getCurrentDate()
+                    )?.price;
+
+                    const basePrice = isWeekend
+                      ? selectedRoom?.weekendPrice
+                      : selectedRoom?.basePrice;
+                    const finalPrice =
+                      holidayPrice || basePrice - selectedRoom?.discount;
+
                     onChangeDatePicker(
                       dates,
                       dateStrings,
                       selectedRoom?.id,
-                      selectedRoom?.price
-                    )
-                  }
+                      finalPrice
+                    );
+                  }}
                 />
               </Form.Item>
 
@@ -1519,23 +1889,6 @@ const UpdateTour = () => {
                 </Form.Item>
               )}
 
-              {/* <Form.Item
-                      label="Images"
-                      // validateStatus={thumbnailUrls.length === 0 ? "error" : ""}
-                      // help={
-                      //   thumbnailUrls.length === 0
-                      //     ? "Please select at least one image"
-                      //     : ""
-                      // }
-                    >
-                      <input
-                        id="imageInputUpdateRoom"
-                        type="file"
-                        multiple
-                        onChange={handleImageChangeUpdateRoom}
-                      />
-                    </Form.Item> */}
-
               <Form.Item>
                 <Button
                   htmlType="submit"
@@ -1547,11 +1900,10 @@ const UpdateTour = () => {
                   }}
                   icon={loadingButtonTourRoomBooking ? <Spin /> : null}
                   loading={loadingButtonTourRoomBooking}
-                  onClick={handleTourRoomBooking}
+                  onClick={handleCheckout}
                   disabled
-                  type="default"
                 >
-                  Booking Now (Updating)
+                  Booking Now (UPDATING)
                 </Button>
               </Form.Item>
             </Col>

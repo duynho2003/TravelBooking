@@ -59,20 +59,6 @@ const ViewATour = () => {
 
   useEffect(() => {
     if (tour) {
-      const startDate = dayjs(tour?.schedules[0]?.date, "YYYY-MM-DD");
-
-      const endDate = dayjs(
-        tour?.schedules[tour?.schedules?.length - 1]?.date,
-        "YYYY-MM-DD"
-      );
-
-      setDates([startDate, endDate]);
-
-      console.log("dates: ", dates);
-
-      const weekdays = tour?.schedules;
-      setWeekdays(weekdays);
-
       if (!isLoading) {
         setTimeout(() => {
           setShowContent(true);
@@ -228,10 +214,6 @@ const ViewATour = () => {
                     <Input value={tour?.description} readOnly />
                   </Form.Item>
 
-                  <Form.Item label="Locations">
-                    <Input value={tour?.locations} readOnly />
-                  </Form.Item>
-
                   <Form.Item label="Depart">
                     <Input value={tour?.depart} readOnly />
                   </Form.Item>
@@ -303,42 +285,6 @@ const ViewATour = () => {
                         objectFit: "cover",
                       }}
                     />
-                  </Form.Item>
-
-                  <Form.Item label="Date Time">
-                    <RangePicker value={dates} disabled />
-                  </Form.Item>
-
-                  <Form.Item label="Schedules">
-                    <Timeline
-                      mode="left"
-                      style={{
-                        marginTop: "5px",
-                      }}
-                    >
-                      {tour?.schedules?.length > 0 &&
-                        tour?.schedules.map((day, index) => (
-                          <Timeline.Item
-                            key={index}
-                            label={`${day.dayOfWeek} - ${day.date} `}
-                          >
-                            <Row
-                              style={{
-                                width: "100%",
-                              }}
-                            >
-                              <Col span={24}>
-                                <Input value={day.activities} readOnly />
-                              </Col>
-                            </Row>
-                          </Timeline.Item>
-                        ))}
-                    </Timeline>
-                    {tour?.schedules.length === 0 && (
-                      <Text style={{ fontSize: "14px", fontWeight: 400 }}>
-                        This tour has no schedules
-                      </Text>
-                    )}
                   </Form.Item>
                 </Col>
               </Row>
