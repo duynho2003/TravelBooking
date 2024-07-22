@@ -19,7 +19,9 @@ public class UpdateTourResponseDto {
     private String depart;
     private Double rating;
     private int numberOfRating;
-    private Double price;
+    private Double priceAdult;
+    private Double priceChild;
+    private Double priceBaby;
     private Double discount;
     private String locations;
     private int adults;

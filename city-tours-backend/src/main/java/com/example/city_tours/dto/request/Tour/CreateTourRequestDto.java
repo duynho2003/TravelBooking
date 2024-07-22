@@ -19,9 +19,10 @@ public class CreateTourRequestDto {
     private String name;
     private String description;
     private String detail;
-    private Double price;
+    private Double priceAdult;
+    private Double priceChild;
+    private Double priceBaby;
     private Double discount;
-    private String locations;
     private String depart;
     private String startTime;
     private int adults;

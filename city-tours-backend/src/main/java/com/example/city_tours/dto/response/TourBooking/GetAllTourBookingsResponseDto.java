@@ -19,7 +19,7 @@ public class GetAllTourBookingsResponseDto {
     private Long customerId;
     private String customerName;
     private int adults;
-    private int children;
+    private int child;
     private int baby;
     private Double amount;
     private String bookingStatus;

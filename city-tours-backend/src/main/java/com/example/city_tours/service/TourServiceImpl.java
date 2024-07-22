@@ -19,7 +19,10 @@ import com.example.city_tours.enums.BookedStatus;
 import com.example.city_tours.exception.ResourceCanNotBeDeletedException;
 import com.example.city_tours.exception.ResourceNotFoundException;
 import com.example.city_tours.repository.*;
+import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.Subquery;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -29,6 +32,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
@@ -50,9 +54,10 @@ public class TourServiceImpl implements TourService{
         tour.setDetail(requestDto.getDetail());
         tour.setRating(0.0);
         tour.setNumberOfRating(0);
-        tour.setPrice(requestDto.getPrice());
+        tour.setPriceAdult(requestDto.getPriceAdult());
+        tour.setPriceChild(requestDto.getPriceChild());
+        tour.setPriceBaby(requestDto.getPriceBaby());
         tour.setDiscount(requestDto.getDiscount());
-        tour.setLocations(requestDto.getLocations());
         tour.setDepart(requestDto.getDepart());
         tour.setAdults(requestDto.getAdults());
         tour.setChildren(requestDto.getChildren());
@@ -113,9 +118,10 @@ public class TourServiceImpl implements TourService{
         tourResponseDto.setBaby(updatedTour.getBaby());
         tourResponseDto.setRating(updatedTour.getRating());
         tourResponseDto.setNumberOfRating(updatedTour.getNumberOfRating());
-        tourResponseDto.setPrice(updatedTour.getPrice());
+        tourResponseDto.setPriceAdult(updatedTour.getPriceAdult());
+        tourResponseDto.setPriceChild(updatedTour.getPriceChild());
+        tourResponseDto.setPriceBaby(updatedTour.getPriceBaby());
         tourResponseDto.setDiscount(updatedTour.getDiscount());
-        tourResponseDto.setLocations(updatedTour.getLocations());
         tourResponseDto.setThumbnail(updatedTour.getThumbnail());
         tourResponseDto.setBookedStatus(updatedTour.getBookedStatus().toString());
         tourResponseDto.setActiveStatus(updatedTour.getActiveStatus().toString());
@@ -139,9 +145,10 @@ public class TourServiceImpl implements TourService{
         tour.setDescription(requestDto.getDescription());
         tour.setDetail(requestDto.getDetail());
         tour.setDepart(requestDto.getDepart());
-        tour.setPrice(requestDto.getPrice());
+        tour.setPriceAdult(requestDto.getPriceAdult());
+        tour.setPriceChild(requestDto.getPriceChild());
+        tour.setPriceBaby(requestDto.getPriceBaby());
         tour.setDiscount(requestDto.getDiscount());
-        tour.setLocations(requestDto.getLocations());
         tour.setAdults(requestDto.getAdults());
         tour.setChildren(requestDto.getChildren());
         tour.setBaby(requestDto.getBaby());
@@ -221,9 +228,10 @@ public class TourServiceImpl implements TourService{
         tourResponseDto.setDepart(updatedTour.getDepart());
         tourResponseDto.setRating(updatedTour.getRating());
         tourResponseDto.setNumberOfRating(updatedTour.getNumberOfRating());
-        tourResponseDto.setPrice(updatedTour.getPrice());
+        tourResponseDto.setPriceAdult(updatedTour.getPriceAdult());
+        tourResponseDto.setPriceChild(updatedTour.getPriceChild());
+        tourResponseDto.setPriceBaby(updatedTour.getPriceBaby());
         tourResponseDto.setDiscount(updatedTour.getDiscount());
-        tourResponseDto.setLocations(updatedTour.getLocations());
         tourResponseDto.setAdults(updatedTour.getAdults());
         tourResponseDto.setChildren(updatedTour.getChildren());
         tourResponseDto.setBaby(updatedTour.getBaby());
@@ -262,7 +270,7 @@ public class TourServiceImpl implements TourService{
     }
 
     @Override
-    public PageResponseDto getAllTours(int page, int limit, String search, String date, String status, Double startPrice, Double endPrice, String review, String rating) {
+    public PageResponseDto getAllTours(int page, int limit, String search, String date, String status, Double startPrice, Double endPrice, String review, String rating, String depart, String startDate, Boolean completed) {
         Specification<Tour> spec = (root, query, cb) -> {
             Predicate predicate = cb.conjunction(); // Start with an "AND" conjunction
 
@@ -284,7 +292,7 @@ public class TourServiceImpl implements TourService{
 
             // Add condition to filter by price range if startPrice and endPrice parameters are provided
             if (startPrice != null && endPrice != null) {
-                predicate = cb.and(predicate, cb.between(root.get("price"), startPrice, endPrice));
+                predicate = cb.and(predicate, cb.between(root.get("priceAdult"), startPrice, endPrice));
             }
 
             // Add condition to search for username or email if search parameter is provided
@@ -294,6 +302,58 @@ public class TourServiceImpl implements TourService{
                 Predicate ratingPredicate = cb.between(root.get("rating").as(Double.class), reviewValue, upperReviewValue);
                 predicate = cb.and(predicate, ratingPredicate);
             }
+
+            // Add condition to filter by depart if depart parameter is provided
+            if (depart != null && !depart.isEmpty()) {
+                predicate = cb.and(predicate, cb.like(cb.lower(root.get("depart")), "%" + depart.toLowerCase() + "%"));
+            }
+
+            // Add condition to filter by startTime if startTime parameter is provided
+            if (startDate != null && !startDate.isEmpty()) {
+                predicate = cb.and(predicate, cb.equal(root.join("tourTimes").get("startDate"), startDate));
+            }
+
+            if (completed != null) {
+                LocalDateTime now = LocalDateTime.now();
+
+                // Define the format for parsing the endDate
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss - dd/MM/yyyy");
+
+                // Subquery to handle the endDate conversion
+                Subquery<Long> subquery = query.subquery(Long.class);
+                Root<TourTime> tourTimeRoot = subquery.from(TourTime.class);
+
+                // Convert endDate to LocalDateTime using the correct SQL function
+                Expression<LocalDateTime> endDateExpr = cb.function(
+                        "STR_TO_DATE",
+                        LocalDateTime.class,
+                        tourTimeRoot.get("endDate"),
+                        cb.literal("%H:%i:%s - %d/%m/%Y")
+                );
+
+                Expression<LocalDateTime> startDateExpr = cb.function(
+                        "STR_TO_DATE",
+                        LocalDateTime.class,
+                        tourTimeRoot.get("startDate"),
+                        cb.literal("%H:%i:%s - %d/%m/%Y")
+                );
+
+                Predicate endDatePredicate;
+                if (completed) {
+                    // If completed is true, filter tours with endDate before now
+                    endDatePredicate = cb.lessThan(endDateExpr, now);
+                } else {
+                    // If completed is false, filter tours with endDate after now
+                    endDatePredicate = cb.greaterThan(startDateExpr, now);
+                }
+
+                // Construct the subquery
+                subquery.select(tourTimeRoot.get("tour").get("id")).where(endDatePredicate);
+
+                // Apply the subquery to the main query predicate
+                predicate = cb.and(predicate, root.get("id").in(subquery));
+            }
+
 
             return predicate;
         };
@@ -333,13 +393,14 @@ public class TourServiceImpl implements TourService{
             responseDto.setDescription(tour.getDescription());
             responseDto.setRating(tour.getRating());
             responseDto.setNumberOfRating(tour.getNumberOfRating());
-            responseDto.setPrice(tour.getPrice());
+            responseDto.setPriceAdult(tour.getPriceAdult());
+            responseDto.setPriceChild(tour.getPriceChild());
+            responseDto.setPriceBaby(tour.getPriceBaby());
             responseDto.setDiscount(tour.getDiscount());
             responseDto.setDepart(tour.getDepart());
             responseDto.setAdults(tour.getAdults());
             responseDto.setChild(tour.getChildren());
             responseDto.setBaby(tour.getBaby());
-            responseDto.setLocations(tour.getLocations());
             responseDto.setThumbnail(tour.getThumbnail());
             responseDto.setBookedStatus(tour.getBookedStatus().toString());
             responseDto.setActiveStatus(tour.getActiveStatus().toString());
@@ -410,9 +471,10 @@ public class TourServiceImpl implements TourService{
         responseDto.setDescription(tour.getDescription());
         responseDto.setDetail(tour.getDetail());
         responseDto.setDepart(tour.getDepart());
-        responseDto.setPrice(tour.getPrice());
+        responseDto.setPriceAdult(tour.getPriceAdult());
+        responseDto.setPriceChild(tour.getPriceChild());
+        responseDto.setPriceBaby(tour.getPriceBaby());
         responseDto.setDiscount(tour.getDiscount());
-        responseDto.setLocations(tour.getLocations());
         responseDto.setThumbnail(tour.getThumbnail());
         responseDto.setRating(tour.getRating());
         responseDto.setNumberOfRating(tour.getNumberOfRating());

@@ -18,5 +18,7 @@ public class CreateRoomBookingRequestDto {
     private String endHour;
     private Double price;
     private String roomType;
+//    private String roomCategory;
+//    private String roomNumber;
 
 }

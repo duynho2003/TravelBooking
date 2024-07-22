@@ -229,7 +229,7 @@ public class UserServiceImpl implements UserService{
                 aTourBookingResponseDto.setId(tourBooking.getId());
                 aTourBookingResponseDto.setAdults(tourBooking.getAdults());
                 aTourBookingResponseDto.setChildren(tourBooking.getChildren());
-                aTourBookingResponseDto.setBaby(tourBooking.getBaby());
+                aTourBookingResponseDto.setBabies(tourBooking.getBaby());
                 aTourBookingResponseDto.setAmount(tourBooking.getAmount());
                 aTourBookingResponseDto.setBookingStatus(tourBooking.getBookingStatus().toString());
                 aTourBookingResponseDto.setTourId(tourBooking.getTour().getId());

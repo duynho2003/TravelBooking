@@ -92,7 +92,7 @@ public class TourBookingServiceImpl implements TourBookingService{
         tourBookingResponseDto.setBookingStatus(savedTourBooking.getBookingStatus().toString());
         tourBookingResponseDto.setCreatedAt(savedTourBooking.getCreatedAt());
         tourBookingResponseDto.setTourId(savedTourBooking.getTour().getId());
-        tourBookingResponseDto.setCustomerId(savedTourBooking.getCustomer().getId());
+//        tourBookingResponseDto.setCustomerId(savedTourBooking.getCustomer().getId());
 
         return tourBookingResponseDto;
     }
@@ -280,7 +280,7 @@ public class TourBookingServiceImpl implements TourBookingService{
             GetAllTourBookingsResponseDto responseDto = new GetAllTourBookingsResponseDto();
             responseDto.setId(tourBooking.getId());
             responseDto.setAdults(tourBooking.getAdults());
-            responseDto.setChildren(tourBooking.getChildren());
+            responseDto.setChild(tourBooking.getChildren());
             responseDto.setBaby(tourBooking.getBaby());
             responseDto.setAmount(tourBooking.getAmount());
             responseDto.setBookingStatus(tourBooking.getBookingStatus().toString());
@@ -362,7 +362,6 @@ public class TourBookingServiceImpl implements TourBookingService{
             responseDto.setUpdatedAt(tourBooking.getUpdatedAt());
             responseDto.setTourCode(tourBooking.getTour().getCode());
             responseDto.setThumbnail(tourBooking.getTour().getThumbnail());
-            responseDto.setLocations(tourBooking.getTour().getLocations());
 
             // Add responseDto to the list
             responseDtoList.add(responseDto);

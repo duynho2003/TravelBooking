@@ -9,6 +9,7 @@ import com.example.city_tours.dto.response.Hotel.UpdateHotelResponseDto;
 import com.example.city_tours.dto.response.Room.RoomResponseDto;
 import com.example.city_tours.dto.response.RoomHoliday.CreateRoomHolidayResponseDto;
 import com.example.city_tours.dto.response.RoomHoliday.GetAllRoomHolidaysResponseDto;
+import com.example.city_tours.dto.response.RoomView.GetARoomViewResponseDto;
 import com.example.city_tours.dto.response.Tour.GetAllToursResponseDto;
 import com.example.city_tours.dto.response.Tour.GetTourRoomBookingResponseDto;
 import com.example.city_tours.dto.response.User.PageResponseDto;
@@ -249,10 +250,10 @@ public class HotelServiceImpl implements HotelService{
                 roomDto.setId(room.getId());
                 roomDto.setRoomNumber(room.getRoomNumber());
                 roomDto.setType(room.getType());
-                roomDto.setBasePrice(room.getBasePrice());
                 roomDto.setWeekendPrice(room.getWeekendPrice());
                 roomDto.setDiscount(room.getDiscount());
-                roomDto.setNumberOfResidents(room.getNumberOfResidents());
+                roomDto.setQuantityAdult(room.getQuantityAdult());
+                roomDto.setQuantityChild(room.getQuantityChild());
                 roomDto.setBookedStatus(room.getBookedStatus().toString());
                 roomDto.setActiveStatus(room.getActiveStatus().toString());
                 roomDto.setCreatedAt(room.getCreatedAt());
@@ -371,13 +372,29 @@ public class HotelServiceImpl implements HotelService{
             roomDto.setId(room.getId());
             roomDto.setRoomNumber(room.getRoomNumber());
             roomDto.setType(room.getType());
-            roomDto.setBasePrice(room.getBasePrice());
+            roomDto.setCategory(room.getCategory());
+            roomDto.setDefaultPrice(room.getDefaultPrice());
+            roomDto.setWeekdayPrice(room.getWeekdayPrice());
             roomDto.setWeekendPrice(room.getWeekendPrice());
             roomDto.setDiscount(room.getDiscount());
-            roomDto.setNumberOfResidents(room.getNumberOfResidents());
+            roomDto.setQuantityAdult(room.getQuantityAdult());
+            roomDto.setQuantityChild(room.getQuantityChild());
+            roomDto.setChildCharge(room.getChildCharge());
+            roomDto.setQuantityBaby(room.getQuantityBaby());
+            roomDto.setBabyCharge(room.getBabyCharge());
             roomDto.setBookedStatus(room.getBookedStatus().toString());
             roomDto.setActiveStatus(room.getActiveStatus().toString());
             roomDto.setCreatedAt(room.getCreatedAt());
+
+            List<GetARoomViewResponseDto> roomViewResponseDtos = new ArrayList<>();
+            for (RoomView roomView : room.getRoomViews()) {
+                GetARoomViewResponseDto roomViewDto = new GetARoomViewResponseDto();
+                roomViewDto.setId(roomView.getId());
+                roomViewDto.setName(roomView.getName());
+                roomViewDto.setImages(roomView.getImages());
+                roomViewResponseDtos.add(roomViewDto);
+            }
+            roomDto.setRoomViews(roomViewResponseDtos);
 
             List<GetAllRoomHolidaysResponseDto> roomHolidayResponseDtos = new ArrayList<>();
             for (RoomHoliday roomHoliday : room.getRoomHolidays()) {

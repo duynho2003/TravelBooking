@@ -87,6 +87,12 @@ public class CustomerServiceImpl implements CustomerService{
 
         Customer customer = user.getCustomer();
 
+        if (customer == null) {
+            customer = new Customer();
+            customer.setUser(user);
+            user.setCustomer(customer);
+        }
+
         customer.setName(requestDto.getName());
         customer.setPhone(requestDto.getPhone());
         customer.setAddress(requestDto.getAddress());

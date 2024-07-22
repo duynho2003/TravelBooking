@@ -3,8 +3,13 @@ package com.example.city_tours.controller;
 import com.example.city_tours.common.ApiErrorResponse;
 import com.example.city_tours.common.ApiSuccessResponse;
 import com.example.city_tours.common.ErrorCode;
+import com.example.city_tours.dto.request.Blog.CreateBlogRequestDto;
+import com.example.city_tours.dto.request.Blog.UpdateBlogRequestDto;
 import com.example.city_tours.dto.request.Tour.CreateTourRequestDto;
 import com.example.city_tours.dto.request.Tour.UpdateTourRequestDto;
+import com.example.city_tours.dto.response.Blog.CreateBlogResponseDto;
+import com.example.city_tours.dto.response.Blog.GetBlogByIdResponseDto;
+import com.example.city_tours.dto.response.Blog.UpdateBlogResponseDto;
 import com.example.city_tours.dto.response.Tour.CreateTourResponseDto;
 import com.example.city_tours.dto.response.Tour.GetTourByIdResponseDto;
 import com.example.city_tours.dto.response.Tour.UpdateTourResponseDto;
@@ -13,6 +18,7 @@ import com.example.city_tours.exception.ResourceCanNotBeDeletedException;
 import com.example.city_tours.exception.ResourceNotFoundException;
 import com.example.city_tours.exception.ServerErrorException;
 import com.example.city_tours.repository.TourRepository;
+import com.example.city_tours.service.BlogService;
 import com.example.city_tours.service.TourService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -22,23 +28,22 @@ import org.springframework.web.bind.annotation.*;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping("/api/v1/tours")
-public class TourController {
+@RequestMapping("/api/v1/blogs")
+public class BlogController {
 
-    private TourService tourService;
-    private final TourRepository tourRepository;
+    private BlogService blogService;
 
-    @PreAuthorize("hasAuthority('CREATE_TOUR')")
+    @PreAuthorize("hasAnyRole('ROLE_STAFF', 'ROLE_ADMIN')")
     @PostMapping("/create")
-    public ResponseEntity<?> createTour( @RequestBody CreateTourRequestDto createTourRequestDto ) {
+    public ResponseEntity<?> createBlog(@RequestBody CreateBlogRequestDto requestDto) {
         try {
-            CreateTourResponseDto responseDto = tourService.createTour(createTourRequestDto);
+            CreateBlogResponseDto responseDto = blogService.createBlog(requestDto);
 
             return ResponseEntity
                     .status(HttpStatus.CREATED)
                     .body(new ApiSuccessResponse<>(
                             HttpStatus.CREATED.value(),
-                            "Created tour successfully",
+                            "Created blog successfully",
                             responseDto
                     ));
         } catch (ServerErrorException e) {
@@ -53,20 +58,29 @@ public class TourController {
         }
     }
 
-    @PreAuthorize("hasAuthority('UPDATE_TOUR')")
-    @PutMapping("/{tourId}")
-    public ResponseEntity<?> updateTour(@PathVariable Long tourId, @RequestBody UpdateTourRequestDto updateTourRequestDto) {
+    @PreAuthorize("hasAnyRole('ROLE_STAFF', 'ROLE_ADMIN')")
+    @PutMapping("/{blogId}")
+    public ResponseEntity<?> updateBlog(@PathVariable Long blogId, @RequestBody UpdateBlogRequestDto requestDto) {
         try {
-            UpdateTourResponseDto responseDto = tourService.updateTour(tourId, updateTourRequestDto);
+            UpdateBlogResponseDto responseDto = blogService.updateBlog(blogId, requestDto);
 
             return ResponseEntity
                     .status(HttpStatus.CREATED)
                     .body(new ApiSuccessResponse<>(
                             HttpStatus.CREATED.value(),
-                            "Updated tour successfully",
+                            "Updated blog successfully",
                             responseDto
                     ));
-        } catch (ServerErrorException e) {
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(new ApiErrorResponse(
+                            HttpStatus.NOT_FOUND.value(),
+                            e.getMessage(),
+                            ErrorCode.NOT_FOUND,
+                            "http://localhost:5050/docs/errors/1012"
+                    ));
+        }  catch (ServerErrorException e) {
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ApiErrorResponse(
@@ -78,21 +92,29 @@ public class TourController {
         }
     }
 
-    @PreAuthorize("hasAuthority('UPDATE_TOUR')")
-    @DeleteMapping("/{tourId}")
-    public ResponseEntity<?> deleteTour(@PathVariable Long tourId) {
+    @PreAuthorize("hasAnyRole('ROLE_STAFF', 'ROLE_ADMIN')")
+    @DeleteMapping("/{blogId}")
+    public ResponseEntity<?> deleteBlog(@PathVariable Long blogId) {
         try {
-            tourService.deleteTour(tourId);
+            blogService.deleteBlog(blogId);
 
             return ResponseEntity
                     .status(HttpStatus.OK)
                     .body(new ApiSuccessResponse<>(
                             HttpStatus.OK.value(),
-                            "Deleted tour successfully",
+                            "Deleted blog successfully",
                             null
                     ));
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(new ApiErrorResponse(
+                            HttpStatus.NOT_FOUND.value(),
+                            e.getMessage(),
+                            ErrorCode.NOT_FOUND,
+                            "http://localhost:5050/docs/errors/1012"
+                    ));
         } catch (ResourceCanNotBeDeletedException e) {
-            // Return error response for resource not found
             return ResponseEntity
                     .status(HttpStatus.CONFLICT)
                     .body(new ApiErrorResponse(
@@ -113,36 +135,23 @@ public class TourController {
         }
     }
 
-//    @PreAuthorize("hasAuthority('READ_TOUR')")
+    @PreAuthorize("hasAnyRole('ROLE_CUSTOMER', 'ROLE_STAFF', 'ROLE_ADMIN')")
     @GetMapping("")
-    public ResponseEntity<?> getAllTours(
+    public ResponseEntity<?> getAllBlogs(
             @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "10") int limit,
-            @RequestParam(defaultValue = "") String search,
-            @RequestParam(defaultValue = "") String date,
-            @RequestParam(defaultValue = "") String status,
-            @RequestParam(defaultValue = "0") Double startPrice,
-            @RequestParam(defaultValue = "10000000") Double endPrice,
-            @RequestParam(defaultValue = "") String review,
-            @RequestParam(defaultValue = "") String rating,
-            @RequestParam(defaultValue = "") String depart,
-            @RequestParam(defaultValue = "") String startDate,
-            @RequestParam(defaultValue = "") Boolean completed
+            @RequestParam(defaultValue = "10") int limit
     ) {
         try {
-            // Call userService to get a page of accounts
-            PageResponseDto responsePage = tourService.getAllTours(page, limit, search, date, status, startPrice, endPrice, review, rating, depart, startDate, completed);
+            PageResponseDto responsePage = blogService.getAllBlogs(page, limit);
 
-            // Return success response
             return ResponseEntity
                     .status(HttpStatus.OK)
                     .body(new ApiSuccessResponse<>(
                             HttpStatus.OK.value(),
-                            "Get all tours successfully",
+                            "Get all blogs successfully",
                             responsePage
                     ));
         } catch (ResourceNotFoundException e) {
-            // Return error response for resource not found
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
                     .body(new ApiErrorResponse(
@@ -152,7 +161,6 @@ public class TourController {
                             "http://localhost:5050/docs/errors/1015"
                     ));
         } catch (ServerErrorException e) {
-            // Return error response for server error
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ApiErrorResponse(
@@ -164,16 +172,16 @@ public class TourController {
         }
     }
 
-//    @PreAuthorize("hasAuthority('READ_TOUR')")
-    @GetMapping("/{tourId}")
-    public ResponseEntity<?> getTourById(@PathVariable Long tourId) {
+    @PreAuthorize("hasAnyRole('ROLE_CUSTOMER', 'ROLE_STAFF', 'ROLE_ADMIN')")
+    @GetMapping("/{blogId}")
+    public ResponseEntity<?> getBlogById(@PathVariable Long blogId) {
         try {
-            GetTourByIdResponseDto responseDto = tourService.getTourById(tourId);
+            GetBlogByIdResponseDto responseDto = blogService.getBlogById(blogId);
             return ResponseEntity
                     .status(HttpStatus.OK)
                     .body(new ApiSuccessResponse<>(
                             HttpStatus.OK.value(),
-                            "Get tour by id successfully",
+                            "Get blog by id successfully",
                             responseDto
                     ));
         } catch (ResourceNotFoundException e) {

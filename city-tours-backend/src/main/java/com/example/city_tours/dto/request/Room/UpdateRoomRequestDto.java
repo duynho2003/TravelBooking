@@ -19,7 +19,8 @@ public class UpdateRoomRequestDto {
     private Double basePrice;
     private Double weekendPrice;
     private Double discount;
-    private int numberOfResidents;
+    private int quantityAdult;
+    private int quantityChild;
     private String bookedStatus;
     private String activeStatus;
     private Set<UpdateRoomHolidayRequestDto> roomHolidays;

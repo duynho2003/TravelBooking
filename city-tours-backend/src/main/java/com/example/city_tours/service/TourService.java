@@ -18,7 +18,7 @@ public interface TourService {
 
     void deleteTour(Long tourId);
 
-    PageResponseDto getAllTours(int page, int limit, String search, String date, String status, Double startPrice, Double endPrice, String review, String rating);
+    PageResponseDto getAllTours(int page, int limit, String search, String date, String status, Double startPrice, Double endPrice, String review, String rating, String depart, String startDate, Boolean completed);
 
     GetTourByIdResponseDto getTourById(Long tourId);
 

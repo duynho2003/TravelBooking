@@ -16,7 +16,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"username\": \"customer4\",\r\n    \"email\": \"customer4@gmail.com\",\r\n    \"password\": \"customer4\",\r\n    \"roles\": [\"ROLE_CUSTOMER\"]\r\n}",
+							"raw": "{\r\n    \"username\": \"customer5\",\r\n    \"email\": \"customer5@gmail.com\",\r\n    \"password\": \"customer4\",\r\n    \"roles\": [\"ROLE_CUSTOMER\"]\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -372,7 +372,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhZG1pbiIsImlkIjoyNSwiZW1haWwiOiJhZG1pbkBnbWFpbC5jb20iLCJzdGF0dXMiOiJBQ1RJVkUiLCJjdXN0b21lck5hbWUiOiJBZG1pbiIsInBob25lIjoiMTIzNDU2Nzg5IiwiYWRkcmVzcyI6Ikjhu5MgQ2jDrSBNaW5oIiwiYXV0aG9yaXRpZXMiOlsiQ1JFQVRFX0FDQ09VTlQiLCJDUkVBVEVfQ0hBVCIsIkNSRUFURV9IT1RFTCIsIkNSRUFURV9QRVJNSVNTSU9OIiwiQ1JFQVRFX1RPVVIiLCJDUkVBVEVfV0VCX0lORk8iLCJSRUFEX0FDQ09VTlQiLCJSRUFEX0NIQVQiLCJSRUFEX0hPVEVMIiwiUkVBRF9QRVJNSVNTSU9OIiwiUkVBRF9UT1VSIiwiUkVBRF9XRUJfSU5GTyIsIlJPTEVfQURNSU4iLCJVUERBVEVfQUNDT1VOVCIsIlVQREFURV9IT1RFTCIsIlVQREFURV9QRVJNSVNTSU9OIiwiVVBEQVRFX1RPVVIiLCJVUERBVEVfV0VCX0lORk8iXSwiaWF0IjoxNzIwMjUwMjE1LCJleHAiOjE3MjAyNTM4MTV9._fdZjNoIv5EC5szTsU84JkfZQ8uPlvLTzYJ6D3nRcRa2olo8Hm8K2UiLoQCu7_Ya",
+									"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJzdGFmZiIsImlkIjoyLCJlbWFpbCI6InN0YWZmQGdtYWlsLmNvbSIsInN0YXR1cyI6IkFDVElWRSIsImN1c3RvbWVyTmFtZSI6Ik5ndXnhu4VuIFRo4buLIFN0YWZmIiwicGhvbmUiOiIwMTIzNDU2Nzg5IiwiYWRkcmVzcyI6Ikjhu5MgQ2jDrSBNaW5oIiwiYXV0aG9yaXRpZXMiOlsiQ1JFQVRFX0NIQVQiLCJSRUFEX0NIQVQiLCJST0xFX1NUQUZGIl0sImlhdCI6MTcyMTM2MDE0NiwiZXhwIjoxNzIxMzYzNzQ2fQ.w2gJRXV1Zax0MrRd-k2NdGYAnMQCZ-OPqZ7QKuF1Sm9kOC_tc5gfOr1PVAHk07sn",
 									"type": "string"
 								}
 							]
@@ -380,7 +380,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:5050/api/v1/users/26",
+							"raw": "http://localhost:5050/api/v1/users/2",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -390,7 +390,7 @@
 								"api",
 								"v1",
 								"users",
-								"26"
+								"2"
 							]
 						}
 					},
@@ -544,7 +544,7 @@
 								},
 								{
 									"key": "search",
-									"value": "Tour 1",
+									"value": "00:00:00 - 20/07/2024",
 									"disabled": true
 								},
 								{
@@ -568,8 +568,28 @@
 									"disabled": true
 								},
 								{
+									"key": "rating",
+									"value": "decrement",
+									"disabled": true
+								},
+								{
 									"key": "limit",
-									"value": "5",
+									"value": "4",
+									"disabled": true
+								},
+								{
+									"key": "depart",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "startDate",
+									"value": "00:00:00 - 20/07/2024",
+									"disabled": true
+								},
+								{
+									"key": "completed",
+									"value": "true",
 									"disabled": true
 								}
 							]
@@ -580,20 +600,10 @@
 				{
 					"name": "Get tour by id (ALL)",
 					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhZG1pbiIsImlkIjoyNSwiZW1haWwiOiJhZG1pbkBnbWFpbC5jb20iLCJzdGF0dXMiOiJBQ1RJVkUiLCJhdXRob3JpdGllcyI6WyJDUkVBVEVfQUNDT1VOVCIsIkNSRUFURV9DSEFUIiwiQ1JFQVRFX0hPVEVMIiwiQ1JFQVRFX1BFUk1JU1NJT04iLCJDUkVBVEVfVE9VUiIsIkNSRUFURV9XRUJfSU5GTyIsIlJFQURfQUNDT1VOVCIsIlJFQURfQ0hBVCIsIlJFQURfSE9URUwiLCJSRUFEX1BFUk1JU1NJT04iLCJSRUFEX1RPVVIiLCJSRUFEX1dFQl9JTkZPIiwiUk9MRV9BRE1JTiIsIlVQREFURV9BQ0NPVU5UIiwiVVBEQVRFX0hPVEVMIiwiVVBEQVRFX1BFUk1JU1NJT04iLCJVUERBVEVfVE9VUiIsIlVQREFURV9XRUJfSU5GTyJdLCJpYXQiOjE3MTkxOTYxNjAsImV4cCI6MTcxOTE5OTc2MH0.LLWexISRW_9AUg2DO6vffkmevcAnE85aG-5cTXJPzdoBNTfzPFRxZx2k6iFbBVGt",
-									"type": "string"
-								}
-							]
-						},
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:5050/api/v1/tours/44",
+							"raw": "http://localhost:5050/api/v1/tours/1",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -603,7 +613,7 @@
 								"api",
 								"v1",
 								"tours",
-								"44"
+								"1"
 							]
 						}
 					},
@@ -699,7 +709,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhZG1pbiIsImlkIjoyNSwiZW1haWwiOiJhZG1pbkBnbWFpbC5jb20iLCJzdGF0dXMiOiJBQ1RJVkUiLCJhdXRob3JpdGllcyI6WyJDUkVBVEVfQUNDT1VOVCIsIkNSRUFURV9DSEFUIiwiQ1JFQVRFX0hPVEVMIiwiQ1JFQVRFX1BFUk1JU1NJT04iLCJDUkVBVEVfVE9VUiIsIkNSRUFURV9XRUJfSU5GTyIsIlJFQURfQUNDT1VOVCIsIlJFQURfQ0hBVCIsIlJFQURfSE9URUwiLCJSRUFEX1BFUk1JU1NJT04iLCJSRUFEX1RPVVIiLCJSRUFEX1dFQl9JTkZPIiwiUk9MRV9BRE1JTiIsIlVQREFURV9BQ0NPVU5UIiwiVVBEQVRFX0hPVEVMIiwiVVBEQVRFX1BFUk1JU1NJT04iLCJVUERBVEVfVE9VUiIsIlVQREFURV9XRUJfSU5GTyJdLCJpYXQiOjE3MTkxOTgyMjYsImV4cCI6MTcxOTIwMTgyNn0.hAi-V1B1Rbjk4MY3fymLhl4TXq9xPyxzvjkf7mRYayLm4G3eD5KLzX19ELUzgo8s",
+									"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhZG1pbiIsImlkIjoyNSwiZW1haWwiOiJhZG1pbkBnbWFpbC5jb20iLCJzdGF0dXMiOiJBQ1RJVkUiLCJjdXN0b21lck5hbWUiOiJBZG1pbiIsInBob25lIjoiMTIzNDU2Nzg5IiwiYWRkcmVzcyI6Ikjhu5MgQ2jDrSBNaW5oIiwiYXV0aG9yaXRpZXMiOlsiQ1JFQVRFX0FDQ09VTlQiLCJDUkVBVEVfQ0hBVCIsIkNSRUFURV9IT1RFTCIsIkNSRUFURV9QRVJNSVNTSU9OIiwiQ1JFQVRFX1RPVVIiLCJDUkVBVEVfV0VCX0lORk8iLCJSRUFEX0FDQ09VTlQiLCJSRUFEX0NIQVQiLCJSRUFEX0hPVEVMIiwiUkVBRF9QRVJNSVNTSU9OIiwiUkVBRF9UT1VSIiwiUkVBRF9XRUJfSU5GTyIsIlJPTEVfQURNSU4iLCJVUERBVEVfQUNDT1VOVCIsIlVQREFURV9IT1RFTCIsIlVQREFURV9QRVJNSVNTSU9OIiwiVVBEQVRFX1RPVVIiLCJVUERBVEVfV0VCX0lORk8iXSwiaWF0IjoxNzIwOTI5ODUwLCJleHAiOjE3MjA5MzM0NTB9.nAW8R_zGJdVOda5sdyOVeg7bp_mNStrSy7BtqQrXX0NMC4PqHSFwjqLeHk8tGr-I",
 									"type": "string"
 								}
 							]
@@ -716,7 +726,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:5050/api/v1/tours/47",
+							"raw": "http://localhost:5050/api/v1/tours/70",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -726,7 +736,7 @@
 								"api",
 								"v1",
 								"tours",
-								"47"
+								"70"
 							]
 						}
 					},
@@ -743,7 +753,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:5050/api/v1/hotels",
+							"raw": "http://localhost:5050/api/v1/hotels?rating=increment",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -759,6 +769,10 @@
 									"key": "review",
 									"value": "1",
 									"disabled": true
+								},
+								{
+									"key": "rating",
+									"value": "increment"
 								}
 							]
 						}
@@ -769,19 +783,12 @@
 					"name": "Get hotel by id (ALL)",
 					"request": {
 						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhZG1pbiIsImlkIjoyNSwiZW1haWwiOiJhZG1pbkBnbWFpbC5jb20iLCJzdGF0dXMiOiJBQ1RJVkUiLCJhdXRob3JpdGllcyI6WyJDUkVBVEVfQUNDT1VOVCIsIkNSRUFURV9DSEFUIiwiQ1JFQVRFX0hPVEVMIiwiQ1JFQVRFX1BFUk1JU1NJT04iLCJDUkVBVEVfVE9VUiIsIkNSRUFURV9XRUJfSU5GTyIsIlJFQURfQUNDT1VOVCIsIlJFQURfQ0hBVCIsIlJFQURfSE9URUwiLCJSRUFEX1BFUk1JU1NJT04iLCJSRUFEX1RPVVIiLCJSRUFEX1dFQl9JTkZPIiwiUk9MRV9BRE1JTiIsIlVQREFURV9BQ0NPVU5UIiwiVVBEQVRFX0hPVEVMIiwiVVBEQVRFX1BFUk1JU1NJT04iLCJVUERBVEVfVE9VUiIsIlVQREFURV9XRUJfSU5GTyJdLCJpYXQiOjE3MTk1MDg4MTgsImV4cCI6MTcxOTUxMjQxOH0.oca-pLejuAu4otjZuAyyewMNa4DxEQpbF-3RD2w7p1RN47GrvrlpDTq2mpQpiI6O",
-									"type": "string"
-								}
-							]
+							"type": "noauth"
 						},
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:5050/api/v1/hotels/14",
+							"raw": "http://localhost:5050/api/v1/hotels/2",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -791,7 +798,7 @@
 								"api",
 								"v1",
 								"hotels",
-								"14"
+								"2"
 							]
 						}
 					},
@@ -878,7 +885,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhZG1pbiIsImlkIjoyNSwiZW1haWwiOiJhZG1pbkBnbWFpbC5jb20iLCJzdGF0dXMiOiJBQ1RJVkUiLCJhdXRob3JpdGllcyI6WyJDUkVBVEVfQUNDT1VOVCIsIkNSRUFURV9DSEFUIiwiQ1JFQVRFX0hPVEVMIiwiQ1JFQVRFX1BFUk1JU1NJT04iLCJDUkVBVEVfVE9VUiIsIkNSRUFURV9XRUJfSU5GTyIsIlJFQURfQUNDT1VOVCIsIlJFQURfQ0hBVCIsIlJFQURfSE9URUwiLCJSRUFEX1BFUk1JU1NJT04iLCJSRUFEX1RPVVIiLCJSRUFEX1dFQl9JTkZPIiwiUk9MRV9BRE1JTiIsIlVQREFURV9BQ0NPVU5UIiwiVVBEQVRFX0hPVEVMIiwiVVBEQVRFX1BFUk1JU1NJT04iLCJVUERBVEVfVE9VUiIsIlVQREFURV9XRUJfSU5GTyJdLCJpYXQiOjE3MTkyNDUzNDEsImV4cCI6MTcxOTI0ODk0MX0._mdEJFSUDY8GhrRoOaSqxkhUdJHehn8kx0g0zQZ_3b29qIma5H_E3zWlTTK9ML1z",
+									"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhZG1pbiIsImlkIjoxLCJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsInN0YXR1cyI6IkFDVElWRSIsImN1c3RvbWVyTmFtZSI6Ik5ndXllbiBWYW4gQUJDIiwicGhvbmUiOiIwMTIzNDU2Nzg5IiwiYWRkcmVzcyI6IkhvIENoaSBNaW5oIiwiYXV0aG9yaXRpZXMiOlsiQ1JFQVRFX0FDQ09VTlQiLCJDUkVBVEVfQ0hBVCIsIkNSRUFURV9IT1RFTCIsIkNSRUFURV9QRVJNSVNTSU9OIiwiQ1JFQVRFX1RPVVIiLCJDUkVBVEVfV0VCX0lORk8iLCJSRUFEX0FDQ09VTlQiLCJSRUFEX0NIQVQiLCJSRUFEX0hPVEVMIiwiUkVBRF9QRVJNSVNTSU9OIiwiUkVBRF9UT1VSIiwiUkVBRF9XRUJfSU5GTyIsIlJPTEVfQURNSU4iLCJVUERBVEVfQUNDT1VOVCIsIlVQREFURV9IT1RFTCIsIlVQREFURV9QRVJNSVNTSU9OIiwiVVBEQVRFX1RPVVIiLCJVUERBVEVfV0VCX0lORk8iXSwiaWF0IjoxNzIxNDU4NDAyLCJleHAiOjE3MjE0NjIwMDJ9.7TCAllWHB06ddvjkWovBDUqlemHKnvNeuuaB2uOMDDWbCJA_Uc5R06du-o_HIJRe",
 									"type": "string"
 								}
 							]
@@ -887,7 +894,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"roomNumber\": \"Room 1\",\r\n    \"type\": \"Alone\",\r\n    \"price\": 10.0,\r\n    \"imageUrls\": [\r\n        \"Image-1\",\r\n        \"Image-2\",\r\n        \"Image-3\"\r\n    ]\r\n}\r\n",
+							"raw": "{\r\n    \"roomNumber\": \"199\",\r\n    \"type\": \"Double Room\",\r\n    \"basePrice\": 10,\r\n    \"weekendPrice\": 15,\r\n    \"discount\": 5,\r\n    \"quantityAdult\": 2,\r\n    \"quantityChild\": 2,\r\n    \"roomHolidays\": [\r\n        {\r\n            \"date\": \"2024-07-09\",\r\n            \"price\": 30\r\n        },\r\n        {\r\n            \"date\": \"2024-07-10\",\r\n            \"price\": 40\r\n        }\r\n    ],\r\n    \"imageUrls\": [\r\n        \"Image-1\",\r\n        \"Image-2\",\r\n        \"Image-3\"\r\n    ],\r\n    \"roomViews\": [\r\n        {\r\n            \"view\": \"Hướng biển\",\r\n            \"viewImages\": \"123.png\"\r\n        }\r\n    ]\r\n}\r\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -895,7 +902,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:5050/api/v1/rooms/hotels/8/create",
+							"raw": "http://localhost:5050/api/v1/rooms/hotels/2/create",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -906,7 +913,7 @@
 								"v1",
 								"rooms",
 								"hotels",
-								"8",
+								"2",
 								"create"
 							]
 						}
@@ -962,7 +969,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhZG1pbiIsImlkIjoyNSwiZW1haWwiOiJhZG1pbkBnbWFpbC5jb20iLCJzdGF0dXMiOiJBQ1RJVkUiLCJhdXRob3JpdGllcyI6WyJDUkVBVEVfQUNDT1VOVCIsIkNSRUFURV9DSEFUIiwiQ1JFQVRFX0hPVEVMIiwiQ1JFQVRFX1BFUk1JU1NJT04iLCJDUkVBVEVfVE9VUiIsIkNSRUFURV9XRUJfSU5GTyIsIlJFQURfQUNDT1VOVCIsIlJFQURfQ0hBVCIsIlJFQURfSE9URUwiLCJSRUFEX1BFUk1JU1NJT04iLCJSRUFEX1RPVVIiLCJSRUFEX1dFQl9JTkZPIiwiUk9MRV9BRE1JTiIsIlVQREFURV9BQ0NPVU5UIiwiVVBEQVRFX0hPVEVMIiwiVVBEQVRFX1BFUk1JU1NJT04iLCJVUERBVEVfVE9VUiIsIlVQREFURV9XRUJfSU5GTyJdLCJpYXQiOjE3MTkzMzUxMjUsImV4cCI6MTcxOTMzODcyNX0.g_3GE0gF3McksZChvp4K7U7zxiyZS0sv97jNgvFUKqDOyFj1nh8M8A9WNy6yVIje",
+									"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhZG1pbiIsImlkIjoyNSwiZW1haWwiOiJhZG1pbkBnbWFpbC5jb20iLCJzdGF0dXMiOiJBQ1RJVkUiLCJjdXN0b21lck5hbWUiOiJBZG1pbiIsInBob25lIjoiMTIzNDU2Nzg5IiwiYWRkcmVzcyI6Ikjhu5MgQ2jDrSBNaW5oIiwiYXV0aG9yaXRpZXMiOlsiQ1JFQVRFX0FDQ09VTlQiLCJDUkVBVEVfQ0hBVCIsIkNSRUFURV9IT1RFTCIsIkNSRUFURV9QRVJNSVNTSU9OIiwiQ1JFQVRFX1RPVVIiLCJDUkVBVEVfV0VCX0lORk8iLCJSRUFEX0FDQ09VTlQiLCJSRUFEX0NIQVQiLCJSRUFEX0hPVEVMIiwiUkVBRF9QRVJNSVNTSU9OIiwiUkVBRF9UT1VSIiwiUkVBRF9XRUJfSU5GTyIsIlJPTEVfQURNSU4iLCJVUERBVEVfQUNDT1VOVCIsIlVQREFURV9IT1RFTCIsIlVQREFURV9QRVJNSVNTSU9OIiwiVVBEQVRFX1RPVVIiLCJVUERBVEVfV0VCX0lORk8iXSwiaWF0IjoxNzIwNTk2MTQ1LCJleHAiOjE3MjA1OTk3NDV9.5j5fhnBX95lcCMj8zPFIyu6eB0sp7BCGjDXVb84yTg2-DqtqfHdReDb4knBSd5ux",
 									"type": "string"
 								}
 							]
@@ -971,7 +978,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"roomNumber\": \"777\",\r\n    \"type\": \"Tripper\",\r\n    \"price\": 777,\r\n    \"bookedStatus\": \"NOT_BOOKED\",\r\n    \"activeStatus\": \"ACTIVE\",\r\n    \"imageUrls\": [\r\n        \"Image-1\",\r\n        \"Image-2\",\r\n        \"Image-3\"\r\n    ]\r\n}\r\n",
+							"raw": "{\r\n    \"roomNumber\": \"777\",\r\n    \"type\": \"Tripper\",\r\n    \"basePrice\": 1,\r\n    \"weekendPrice\": 2,\r\n    \"discount\": 3,\r\n    \"numberOfResidents\": 4,\r\n    \"bookedStatus\": \"NOT_BOOKED\",\r\n    \"activeStatus\": \"ACTIVE\",\r\n    \"roomHolidays\": [\r\n        {\r\n            // \"id\": 31,\r\n            \"date\": \"2024-07-12\",\r\n            \"price\": 777\r\n        }\r\n    ],\r\n    \"imageUrls\": [\r\n        \"Image-1\",\r\n        \"Image-2\",\r\n        \"Image-3\"\r\n    ]\r\n}\r\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -979,7 +986,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:5050/api/v1/rooms/9",
+							"raw": "http://localhost:5050/api/v1/rooms/28",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -989,7 +996,7 @@
 								"api",
 								"v1",
 								"rooms",
-								"9"
+								"28"
 							]
 						}
 					},
@@ -1044,7 +1051,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhZG1pbiIsImlkIjoyNSwiZW1haWwiOiJhZG1pbkBnbWFpbC5jb20iLCJzdGF0dXMiOiJBQ1RJVkUiLCJhdXRob3JpdGllcyI6WyJDUkVBVEVfQUNDT1VOVCIsIkNSRUFURV9DSEFUIiwiQ1JFQVRFX0hPVEVMIiwiQ1JFQVRFX1BFUk1JU1NJT04iLCJDUkVBVEVfVE9VUiIsIkNSRUFURV9XRUJfSU5GTyIsIlJFQURfQUNDT1VOVCIsIlJFQURfQ0hBVCIsIlJFQURfSE9URUwiLCJSRUFEX1BFUk1JU1NJT04iLCJSRUFEX1RPVVIiLCJSRUFEX1dFQl9JTkZPIiwiUk9MRV9BRE1JTiIsIlVQREFURV9BQ0NPVU5UIiwiVVBEQVRFX0hPVEVMIiwiVVBEQVRFX1BFUk1JU1NJT04iLCJVUERBVEVfVE9VUiIsIlVQREFURV9XRUJfSU5GTyJdLCJpYXQiOjE3MTkzNjA5OTUsImV4cCI6MTcxOTM2NDU5NX0.PBVj85YRd13t4wc9MxWXsbjT29_HQwMFvF09ZftrVrI9TcQAhGRYFoKo7uSoenYZ",
+									"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhZG1pbiIsImlkIjoxLCJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsInN0YXR1cyI6IkFDVElWRSIsImN1c3RvbWVyTmFtZSI6Ik5ndXllbiBWYW4gQUJDIiwicGhvbmUiOiIwMTIzNDU2Nzg5IiwiYWRkcmVzcyI6IkhvIENoaSBNaW5oIiwiYXV0aG9yaXRpZXMiOlsiQ1JFQVRFX0FDQ09VTlQiLCJDUkVBVEVfQ0hBVCIsIkNSRUFURV9IT1RFTCIsIkNSRUFURV9QRVJNSVNTSU9OIiwiQ1JFQVRFX1RPVVIiLCJDUkVBVEVfV0VCX0lORk8iLCJSRUFEX0FDQ09VTlQiLCJSRUFEX0NIQVQiLCJSRUFEX0hPVEVMIiwiUkVBRF9QRVJNSVNTSU9OIiwiUkVBRF9UT1VSIiwiUkVBRF9XRUJfSU5GTyIsIlJPTEVfQURNSU4iLCJVUERBVEVfQUNDT1VOVCIsIlVQREFURV9IT1RFTCIsIlVQREFURV9QRVJNSVNTSU9OIiwiVVBEQVRFX1RPVVIiLCJVUERBVEVfV0VCX0lORk8iXSwiaWF0IjoxNzIxNDk2MDkzLCJleHAiOjE3MjE0OTk2OTN9.bUQLBCCuLa3Lm37qo98wy88OQ3hKpQtz5yvA09Xdlerx-XKSR7ne-w8zbIl7aa6L",
 									"type": "string"
 								}
 							]
@@ -1052,7 +1059,7 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:5050/api/v1/rooms/7",
+							"raw": "http://localhost:5050/api/v1/rooms/11",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -1062,7 +1069,7 @@
 								"api",
 								"v1",
 								"rooms",
-								"7"
+								"11"
 							]
 						}
 					},
@@ -1081,7 +1088,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhZG1pbiIsImlkIjoxLCJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsInN0YXR1cyI6IkFDVElWRSIsImF1dGhvcml0aWVzIjpbIkNSRUFURV9BQ0NPVU5UIiwiQ1JFQVRFX0NIQVQiLCJDUkVBVEVfSE9URUwiLCJDUkVBVEVfUEVSTUlTU0lPTiIsIkNSRUFURV9UT1VSIiwiQ1JFQVRFX1dFQl9JTkZPIiwiUkVBRF9BQ0NPVU5UIiwiUkVBRF9DSEFUIiwiUkVBRF9IT1RFTCIsIlJFQURfUEVSTUlTU0lPTiIsIlJFQURfVE9VUiIsIlJFQURfV0VCX0lORk8iLCJST0xFX0FETUlOIiwiVVBEQVRFX0FDQ09VTlQiLCJVUERBVEVfSE9URUwiLCJVUERBVEVfUEVSTUlTU0lPTiIsIlVQREFURV9UT1VSIiwiVVBEQVRFX1dFQl9JTkZPIl0sImlhdCI6MTcxOTk3MzgzNywiZXhwIjoxNzE5OTc3NDM3fQ.hRhbdAPRI0XwIJiNhep6sQ7YO2mC1UYd5WseZejdiT2Jh_Z7jRRJDiHV6u9grpAL",
+									"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhZG1pbiIsImlkIjoyNSwiZW1haWwiOiJhZG1pbkBnbWFpbC5jb20iLCJzdGF0dXMiOiJBQ1RJVkUiLCJjdXN0b21lck5hbWUiOiJBZG1pbiIsInBob25lIjoiMTIzNDU2Nzg5IiwiYWRkcmVzcyI6Ikjhu5MgQ2jDrSBNaW5oIiwiYXV0aG9yaXRpZXMiOlsiQ1JFQVRFX0FDQ09VTlQiLCJDUkVBVEVfQ0hBVCIsIkNSRUFURV9IT1RFTCIsIkNSRUFURV9QRVJNSVNTSU9OIiwiQ1JFQVRFX1RPVVIiLCJDUkVBVEVfV0VCX0lORk8iLCJSRUFEX0FDQ09VTlQiLCJSRUFEX0NIQVQiLCJSRUFEX0hPVEVMIiwiUkVBRF9QRVJNSVNTSU9OIiwiUkVBRF9UT1VSIiwiUkVBRF9XRUJfSU5GTyIsIlJPTEVfQURNSU4iLCJVUERBVEVfQUNDT1VOVCIsIlVQREFURV9IT1RFTCIsIlVQREFURV9QRVJNSVNTSU9OIiwiVVBEQVRFX1RPVVIiLCJVUERBVEVfV0VCX0lORk8iXSwiaWF0IjoxNzIwNjYyMDYxLCJleHAiOjE3MjA2NjU2NjF9.pjWFuEj8yGDARo9fflXxIUygWKsZbU50A3uwkB7IKhts8ypBhVZysUCNdb-o9QT4",
 									"type": "string"
 								}
 							]
@@ -1089,7 +1096,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:5050/api/v1/tourBookings",
+							"raw": "http://localhost:5050/api/v1/tourBookings?tourId=null",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -1099,6 +1106,61 @@
 								"api",
 								"v1",
 								"tourBookings"
+							],
+							"query": [
+								{
+									"key": "tourName",
+									"value": "z",
+									"disabled": true
+								},
+								{
+									"key": "tourId",
+									"value": "null"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all tour bookings by userId (ALL)",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJzdGFmZiIsImlkIjoyNiwiZW1haWwiOiJzdGFmZkBnbWFpbC5jb20iLCJzdGF0dXMiOiJBQ1RJVkUiLCJjdXN0b21lck5hbWUiOiJOZ3V5ZW4gVmFuIFN0YWZmIiwicGhvbmUiOiIwMTIzNDU2Nzg5IiwiYWRkcmVzcyI6IkhvIENoaSBNaW5oIiwiYXV0aG9yaXRpZXMiOlsiQ1JFQVRFX0NIQVQiLCJSRUFEX0NIQVQiLCJST0xFX1NUQUZGIl0sImlhdCI6MTcyMDg1NTc4NywiZXhwIjoxNzIwODU5Mzg3fQ.fcZYyTE_lCy4DSL_t4SYM_5kFuZcJNji3R0ksR8hGNSEJpcx3sGvJRHQ9UPr6S5_",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n        \"userId\": 25,\r\n        \"roomId\": 18,\r\n        \"date\": \"2024-06-29\",\r\n        \"startHour\": \"07:00:00\",\r\n        \"endHour\": \"09:00:00\",\r\n        \"price\": 200.0\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5050/api/v1/tourBookings/26",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5050",
+							"path": [
+								"api",
+								"v1",
+								"tourBookings",
+								"26"
 							]
 						}
 					},
@@ -1685,6 +1747,47 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Update a customer",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhZG1pbiIsImlkIjoxLCJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsInN0YXR1cyI6IkFDVElWRSIsImN1c3RvbWVyTmFtZSI6IiIsInBob25lIjoiIiwiYWRkcmVzcyI6IiIsImF1dGhvcml0aWVzIjpbIkNSRUFURV9BQ0NPVU5UIiwiQ1JFQVRFX0NIQVQiLCJDUkVBVEVfSE9URUwiLCJDUkVBVEVfUEVSTUlTU0lPTiIsIkNSRUFURV9UT1VSIiwiQ1JFQVRFX1dFQl9JTkZPIiwiUkVBRF9BQ0NPVU5UIiwiUkVBRF9DSEFUIiwiUkVBRF9IT1RFTCIsIlJFQURfUEVSTUlTU0lPTiIsIlJFQURfVE9VUiIsIlJFQURfV0VCX0lORk8iLCJST0xFX0FETUlOIiwiVVBEQVRFX0FDQ09VTlQiLCJVUERBVEVfSE9URUwiLCJVUERBVEVfUEVSTUlTU0lPTiIsIlVQREFURV9UT1VSIiwiVVBEQVRFX1dFQl9JTkZPIl0sImlhdCI6MTcyMTM3MzEwNSwiZXhwIjoxNzIxMzc2NzA1fQ.JmbMAPU5a2I6wMKrWQF4Ib8MHB8lp_z76eN_PsL6DRhfjh6XsdMrGmIGAtMShuGv",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Nguyen Van A\",\r\n    \"phone\": \"0123456789\",\r\n    \"address\": \"Ho Chi Minh\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5050/api/v1/customers/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5050",
+							"path": [
+								"api",
+								"v1",
+								"customers",
+								"1"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -1699,7 +1802,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhZG1pbiIsImlkIjoyNSwiZW1haWwiOiJhZG1pbkBnbWFpbC5jb20iLCJzdGF0dXMiOiJBQ1RJVkUiLCJjdXN0b21lck5hbWUiOiJBZG1pbiIsInBob25lIjoiMTIzNDU2Nzg5IiwiYWRkcmVzcyI6Ikjhu5MgQ2jDrSBNaW5oIiwiYXV0aG9yaXRpZXMiOlsiQ1JFQVRFX0FDQ09VTlQiLCJDUkVBVEVfQ0hBVCIsIkNSRUFURV9IT1RFTCIsIkNSRUFURV9QRVJNSVNTSU9OIiwiQ1JFQVRFX1RPVVIiLCJDUkVBVEVfV0VCX0lORk8iLCJSRUFEX0FDQ09VTlQiLCJSRUFEX0NIQVQiLCJSRUFEX0hPVEVMIiwiUkVBRF9QRVJNSVNTSU9OIiwiUkVBRF9UT1VSIiwiUkVBRF9XRUJfSU5GTyIsIlJPTEVfQURNSU4iLCJVUERBVEVfQUNDT1VOVCIsIlVQREFURV9IT1RFTCIsIlVQREFURV9QRVJNSVNTSU9OIiwiVVBEQVRFX1RPVVIiLCJVUERBVEVfV0VCX0lORk8iXSwiaWF0IjoxNzIwMTYzNjQ0LCJleHAiOjE3MjAxNjcyNDR9.h0pd-hUPyiu9Mhaua0FOjqCwM6JULr4dsgfFDYq05n9L4NiWyx5ZBX7DWt7gebEy",
+									"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJjdXN0b21lcjMiLCJpZCI6NTAsImVtYWlsIjoiY3VzdG9tZXIzQGdtYWlsLmNvbSIsInN0YXR1cyI6IkFDVElWRSIsImN1c3RvbWVyTmFtZSI6IjEyMzQ0NDQiLCJwaG9uZSI6IjIyMjIiLCJhZGRyZXNzIjoiNTU1NTg4ODg4IiwiYXV0aG9yaXRpZXMiOlsiUkVBRF9IT1RFTCIsIlJFQURfUEVSTUlTU0lPTiIsIlJFQURfVE9VUiIsIlJPTEVfQ1VTVE9NRVIiXSwiaWF0IjoxNzIwODAxNDg4LCJleHAiOjE3MjA4MDUwODh9.xSY7xIUKBjoh2GDMCcZ_tq4ZMsX0K91BxwwIS2k_ygz9KaDIXu1mrgYq7_tcSz-0",
 									"type": "string"
 								}
 							]
@@ -1708,7 +1811,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n        \"userId\": 25,\r\n        \"roomId\": 18,\r\n        \"date\": \"2024-06-29\",\r\n        \"startHour\": \"07:00:00\",\r\n        \"endHour\": \"09:00:00\",\r\n        \"price\": 200.0\r\n}",
+							"raw": "{\r\n        \"userId\": 26,\r\n        \"roomId\": 28,\r\n        \"date\": \"2024-06-29\",\r\n        \"startHour\": \"07:00:00\",\r\n        \"endHour\": \"09:00:00\",\r\n        \"price\": 200.0\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1733,7 +1836,7 @@
 					"response": []
 				},
 				{
-					"name": "Create room booking (ADMIN) Copy",
+					"name": "Get all room bookings (ADMIN)",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -1743,7 +1846,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhZG1pbiIsImlkIjoxLCJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsInN0YXR1cyI6IkFDVElWRSIsImN1c3RvbWVyTmFtZSI6IiIsInBob25lIjoiIiwiYWRkcmVzcyI6IiIsImF1dGhvcml0aWVzIjpbIkNSRUFURV9BQ0NPVU5UIiwiQ1JFQVRFX0NIQVQiLCJDUkVBVEVfSE9URUwiLCJDUkVBVEVfUEVSTUlTU0lPTiIsIkNSRUFURV9UT1VSIiwiQ1JFQVRFX1dFQl9JTkZPIiwiUkVBRF9BQ0NPVU5UIiwiUkVBRF9DSEFUIiwiUkVBRF9IT1RFTCIsIlJFQURfUEVSTUlTU0lPTiIsIlJFQURfVE9VUiIsIlJFQURfV0VCX0lORk8iLCJST0xFX0FETUlOIiwiVVBEQVRFX0FDQ09VTlQiLCJVUERBVEVfSE9URUwiLCJVUERBVEVfUEVSTUlTU0lPTiIsIlVQREFURV9UT1VSIiwiVVBEQVRFX1dFQl9JTkZPIl0sImlhdCI6MTcyMDM2MjEzNSwiZXhwIjoxNzIwMzY1NzM1fQ.TpvyC0bQf1TO5NQxcYc8-8UQLIk54IR4hb4atBaOZP4DiXLsnqug2igdA1ZWxPDr",
+									"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhZG1pbiIsImlkIjoxLCJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsInN0YXR1cyI6IkFDVElWRSIsImN1c3RvbWVyTmFtZSI6Ik5ndXllbiBWYW4gQUJDIiwicGhvbmUiOiIwMTIzNDU2Nzg5IiwiYWRkcmVzcyI6IkhvIENoaSBNaW5oIiwiYXV0aG9yaXRpZXMiOlsiQ1JFQVRFX0FDQ09VTlQiLCJDUkVBVEVfQ0hBVCIsIkNSRUFURV9IT1RFTCIsIkNSRUFURV9QRVJNSVNTSU9OIiwiQ1JFQVRFX1RPVVIiLCJDUkVBVEVfV0VCX0lORk8iLCJSRUFEX0FDQ09VTlQiLCJSRUFEX0NIQVQiLCJSRUFEX0hPVEVMIiwiUkVBRF9QRVJNSVNTSU9OIiwiUkVBRF9UT1VSIiwiUkVBRF9XRUJfSU5GTyIsIlJPTEVfQURNSU4iLCJVUERBVEVfQUNDT1VOVCIsIlVQREFURV9IT1RFTCIsIlVQREFURV9QRVJNSVNTSU9OIiwiVVBEQVRFX1RPVVIiLCJVUERBVEVfV0VCX0lORk8iXSwiaWF0IjoxNzIxNjEwNTExLCJleHAiOjE3MjE2MTQxMTF9.CdWY25WpAzwPac15ALt98MAqyjYOqbbtzmd8fkw8nvbVXpINU6tJjwHjGQJiFOu8",
 									"type": "string"
 								}
 							]
@@ -1770,6 +1873,50 @@
 								"api",
 								"v1",
 								"roomBookings"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all room bookings by userId (ADMIN)",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhZG1pbiIsImlkIjoyNSwiZW1haWwiOiJhZG1pbkBnbWFpbC5jb20iLCJzdGF0dXMiOiJBQ1RJVkUiLCJjdXN0b21lck5hbWUiOiJBZG1pbiIsInBob25lIjoiMTIzNDU2Nzg5IiwiYWRkcmVzcyI6Ikjhu5MgQ2jDrSBNaW5oIiwiYXV0aG9yaXRpZXMiOlsiQ1JFQVRFX0FDQ09VTlQiLCJDUkVBVEVfQ0hBVCIsIkNSRUFURV9IT1RFTCIsIkNSRUFURV9QRVJNSVNTSU9OIiwiQ1JFQVRFX1RPVVIiLCJDUkVBVEVfV0VCX0lORk8iLCJSRUFEX0FDQ09VTlQiLCJSRUFEX0NIQVQiLCJSRUFEX0hPVEVMIiwiUkVBRF9QRVJNSVNTSU9OIiwiUkVBRF9UT1VSIiwiUkVBRF9XRUJfSU5GTyIsIlJPTEVfQURNSU4iLCJVUERBVEVfQUNDT1VOVCIsIlVQREFURV9IT1RFTCIsIlVQREFURV9QRVJNSVNTSU9OIiwiVVBEQVRFX1RPVVIiLCJVUERBVEVfV0VCX0lORk8iXSwiaWF0IjoxNzIwODAxNjIyLCJleHAiOjE3MjA4MDUyMjJ9.bl1pzAvBUMIaDZ7XFxAsdC52a_H45dhWVgKSdRlcMlirbmplWCasoEzUxC1yW6dl",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n        \"userId\": 25,\r\n        \"roomId\": 18,\r\n        \"date\": \"2024-06-29\",\r\n        \"startHour\": \"07:00:00\",\r\n        \"endHour\": \"09:00:00\",\r\n        \"price\": 200.0\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5050/api/v1/roomBookings/26",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5050",
+							"path": [
+								"api",
+								"v1",
+								"roomBookings",
+								"26"
 							]
 						}
 					},
@@ -1883,6 +2030,499 @@
 								"api",
 								"v1",
 								"hotelReviews"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Wishlist",
+			"item": [
+				{
+					"name": "Get all wishlists",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhZG1pbiIsImlkIjoyNSwiZW1haWwiOiJhZG1pbkBnbWFpbC5jb20iLCJzdGF0dXMiOiJBQ1RJVkUiLCJjdXN0b21lck5hbWUiOiJBZG1pbiIsInBob25lIjoiMTIzNDU2Nzg5IiwiYWRkcmVzcyI6Ikjhu5MgQ2jDrSBNaW5oIiwiYXV0aG9yaXRpZXMiOlsiQ1JFQVRFX0FDQ09VTlQiLCJDUkVBVEVfQ0hBVCIsIkNSRUFURV9IT1RFTCIsIkNSRUFURV9QRVJNSVNTSU9OIiwiQ1JFQVRFX1RPVVIiLCJDUkVBVEVfV0VCX0lORk8iLCJSRUFEX0FDQ09VTlQiLCJSRUFEX0NIQVQiLCJSRUFEX0hPVEVMIiwiUkVBRF9QRVJNSVNTSU9OIiwiUkVBRF9UT1VSIiwiUkVBRF9XRUJfSU5GTyIsIlJPTEVfQURNSU4iLCJVUERBVEVfQUNDT1VOVCIsIlVQREFURV9IT1RFTCIsIlVQREFURV9QRVJNSVNTSU9OIiwiVVBEQVRFX1RPVVIiLCJVUERBVEVfV0VCX0lORk8iXSwiaWF0IjoxNzIwNDk1Mzg3LCJleHAiOjE3MjA0OTg5ODd9.IVuta2hvb6g18Z9_EQU4WpG6Wei9aL8EJweIPZSNPnj-C26bg4lLw2gsGY3x3eLW",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Hotel 1\",\r\n    \"rating\": 5,\r\n    \"numberOfRating\": 1,\r\n    \"price\": \"123.000đ\",\r\n    \"description\": \"New\",\r\n    \"thumbnail\": \"123.png\",\r\n    \"userId\": 25\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5050/api/v1/wishlists/25",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5050",
+							"path": [
+								"api",
+								"v1",
+								"wishlists",
+								"25"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete wishlist",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhZG1pbiIsImlkIjoyNSwiZW1haWwiOiJhZG1pbkBnbWFpbC5jb20iLCJzdGF0dXMiOiJBQ1RJVkUiLCJjdXN0b21lck5hbWUiOiJBZG1pbiIsInBob25lIjoiMTIzNDU2Nzg5IiwiYWRkcmVzcyI6Ikjhu5MgQ2jDrSBNaW5oIiwiYXV0aG9yaXRpZXMiOlsiQ1JFQVRFX0FDQ09VTlQiLCJDUkVBVEVfQ0hBVCIsIkNSRUFURV9IT1RFTCIsIkNSRUFURV9QRVJNSVNTSU9OIiwiQ1JFQVRFX1RPVVIiLCJDUkVBVEVfV0VCX0lORk8iLCJSRUFEX0FDQ09VTlQiLCJSRUFEX0NIQVQiLCJSRUFEX0hPVEVMIiwiUkVBRF9QRVJNSVNTSU9OIiwiUkVBRF9UT1VSIiwiUkVBRF9XRUJfSU5GTyIsIlJPTEVfQURNSU4iLCJVUERBVEVfQUNDT1VOVCIsIlVQREFURV9IT1RFTCIsIlVQREFURV9QRVJNSVNTSU9OIiwiVVBEQVRFX1RPVVIiLCJVUERBVEVfV0VCX0lORk8iXSwiaWF0IjoxNzIwNDg5Mzc0LCJleHAiOjE3MjA0OTI5NzR9.LCswBsT-4oqm-ODcopncuawYdHFD6YQpfelMso-81otjFJ78YlE4P39KxTAgWIZL",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Hotel 1\",\r\n    \"rating\": 5,\r\n    \"numberOfRating\": 1,\r\n    \"price\": \"123.000đ\",\r\n    \"description\": \"New\",\r\n    \"thumbnail\": \"123.png\",\r\n    \"userId\": 25\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5050/api/v1/wishlists/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5050",
+							"path": [
+								"api",
+								"v1",
+								"wishlists",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create wishlist",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhZG1pbiIsImlkIjoyNSwiZW1haWwiOiJhZG1pbkBnbWFpbC5jb20iLCJzdGF0dXMiOiJBQ1RJVkUiLCJjdXN0b21lck5hbWUiOiJBZG1pbiIsInBob25lIjoiMTIzNDU2Nzg5IiwiYWRkcmVzcyI6Ikjhu5MgQ2jDrSBNaW5oIiwiYXV0aG9yaXRpZXMiOlsiQ1JFQVRFX0FDQ09VTlQiLCJDUkVBVEVfQ0hBVCIsIkNSRUFURV9IT1RFTCIsIkNSRUFURV9QRVJNSVNTSU9OIiwiQ1JFQVRFX1RPVVIiLCJDUkVBVEVfV0VCX0lORk8iLCJSRUFEX0FDQ09VTlQiLCJSRUFEX0NIQVQiLCJSRUFEX0hPVEVMIiwiUkVBRF9QRVJNSVNTSU9OIiwiUkVBRF9UT1VSIiwiUkVBRF9XRUJfSU5GTyIsIlJPTEVfQURNSU4iLCJVUERBVEVfQUNDT1VOVCIsIlVQREFURV9IT1RFTCIsIlVQREFURV9QRVJNSVNTSU9OIiwiVVBEQVRFX1RPVVIiLCJVUERBVEVfV0VCX0lORk8iXSwiaWF0IjoxNzIwNDg5Mzc0LCJleHAiOjE3MjA0OTI5NzR9.LCswBsT-4oqm-ODcopncuawYdHFD6YQpfelMso-81otjFJ78YlE4P39KxTAgWIZL",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Hotel 1\",\r\n    \"rating\": 5,\r\n    \"numberOfRating\": 1,\r\n    \"price\": \"123.000đ\",\r\n    \"description\": \"New\",\r\n    \"thumbnail\": \"123.png\",\r\n    \"type\": \"HOTEL\",\r\n    \"itemId\": 2,\r\n    \"userId\": 25\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5050/api/v1/wishlists",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5050",
+							"path": [
+								"api",
+								"v1",
+								"wishlists"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Tour Time",
+			"item": [
+				{
+					"name": "Delete tour time (ADMIN)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhZG1pbiIsImlkIjoyNSwiZW1haWwiOiJhZG1pbkBnbWFpbC5jb20iLCJzdGF0dXMiOiJBQ1RJVkUiLCJjdXN0b21lck5hbWUiOiJBZG1pbiIsInBob25lIjoiMTIzNDU2Nzg5IiwiYWRkcmVzcyI6Ikjhu5MgQ2jDrSBNaW5oIiwiYXV0aG9yaXRpZXMiOlsiQ1JFQVRFX0FDQ09VTlQiLCJDUkVBVEVfQ0hBVCIsIkNSRUFURV9IT1RFTCIsIkNSRUFURV9QRVJNSVNTSU9OIiwiQ1JFQVRFX1RPVVIiLCJDUkVBVEVfV0VCX0lORk8iLCJSRUFEX0FDQ09VTlQiLCJSRUFEX0NIQVQiLCJSRUFEX0hPVEVMIiwiUkVBRF9QRVJNSVNTSU9OIiwiUkVBRF9UT1VSIiwiUkVBRF9XRUJfSU5GTyIsIlJPTEVfQURNSU4iLCJVUERBVEVfQUNDT1VOVCIsIlVQREFURV9IT1RFTCIsIlVQREFURV9QRVJNSVNTSU9OIiwiVVBEQVRFX1RPVVIiLCJVUERBVEVfV0VCX0lORk8iXSwiaWF0IjoxNzIwOTI1ODA1LCJleHAiOjE3MjA5Mjk0MDV9.dGxs5updVWi_PaLQsuhpopLmQocbiKwIKnkMWHzlmXUzlJtgRm51_QPrme8giyCP",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5050/api/v1/tourTimes/3",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5050",
+							"path": [
+								"api",
+								"v1",
+								"tourTimes",
+								"3"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Tour Location",
+			"item": [
+				{
+					"name": "Delete tour location (ADMIN)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhZG1pbiIsImlkIjoyNSwiZW1haWwiOiJhZG1pbkBnbWFpbC5jb20iLCJzdGF0dXMiOiJBQ1RJVkUiLCJjdXN0b21lck5hbWUiOiJBZG1pbiIsInBob25lIjoiMTIzNDU2Nzg5IiwiYWRkcmVzcyI6Ikjhu5MgQ2jDrSBNaW5oIiwiYXV0aG9yaXRpZXMiOlsiQ1JFQVRFX0FDQ09VTlQiLCJDUkVBVEVfQ0hBVCIsIkNSRUFURV9IT1RFTCIsIkNSRUFURV9QRVJNSVNTSU9OIiwiQ1JFQVRFX1RPVVIiLCJDUkVBVEVfV0VCX0lORk8iLCJSRUFEX0FDQ09VTlQiLCJSRUFEX0NIQVQiLCJSRUFEX0hPVEVMIiwiUkVBRF9QRVJNSVNTSU9OIiwiUkVBRF9UT1VSIiwiUkVBRF9XRUJfSU5GTyIsIlJPTEVfQURNSU4iLCJVUERBVEVfQUNDT1VOVCIsIlVQREFURV9IT1RFTCIsIlVQREFURV9QRVJNSVNTSU9OIiwiVVBEQVRFX1RPVVIiLCJVUERBVEVfV0VCX0lORk8iXSwiaWF0IjoxNzIwOTI1ODA1LCJleHAiOjE3MjA5Mjk0MDV9.dGxs5updVWi_PaLQsuhpopLmQocbiKwIKnkMWHzlmXUzlJtgRm51_QPrme8giyCP",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5050/api/v1/tourLocations/5",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5050",
+							"path": [
+								"api",
+								"v1",
+								"tourLocations",
+								"5"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Income",
+			"item": [
+				{
+					"name": "Get daily income",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhZG1pbiIsImlkIjoyNSwiZW1haWwiOiJhZG1pbkBnbWFpbC5jb20iLCJzdGF0dXMiOiJBQ1RJVkUiLCJjdXN0b21lck5hbWUiOiJBZG1pbiIsInBob25lIjoiMTIzNDU2Nzg5IiwiYWRkcmVzcyI6Ikjhu5MgQ2jDrSBNaW5oIiwiYXV0aG9yaXRpZXMiOlsiQ1JFQVRFX0FDQ09VTlQiLCJDUkVBVEVfQ0hBVCIsIkNSRUFURV9IT1RFTCIsIkNSRUFURV9QRVJNSVNTSU9OIiwiQ1JFQVRFX1RPVVIiLCJDUkVBVEVfV0VCX0lORk8iLCJSRUFEX0FDQ09VTlQiLCJSRUFEX0NIQVQiLCJSRUFEX0hPVEVMIiwiUkVBRF9QRVJNSVNTSU9OIiwiUkVBRF9UT1VSIiwiUkVBRF9XRUJfSU5GTyIsIlJPTEVfQURNSU4iLCJVUERBVEVfQUNDT1VOVCIsIlVQREFURV9IT1RFTCIsIlVQREFURV9QRVJNSVNTSU9OIiwiVVBEQVRFX1RPVVIiLCJVUERBVEVfV0VCX0lORk8iXSwiaWF0IjoxNzIwOTcxNTkxLCJleHAiOjE3MjA5NzUxOTF9.lKHm760bWb_n3Sdv2ThkodmQunxIb4Bsrzh7yH3LRewXYxpC_TgndT2f-ix9wWAE",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5050/api/v1/income/daily/2024-07-15",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5050",
+							"path": [
+								"api",
+								"v1",
+								"income",
+								"daily",
+								"2024-07-15"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Statistical",
+			"item": [
+				{
+					"name": "Get statistical (ADMIN)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhZG1pbiIsImlkIjoyNSwiZW1haWwiOiJhZG1pbkBnbWFpbC5jb20iLCJzdGF0dXMiOiJBQ1RJVkUiLCJjdXN0b21lck5hbWUiOiJBZG1pbiIsInBob25lIjoiMTIzNDU2Nzg5IiwiYWRkcmVzcyI6Ikjhu5MgQ2jDrSBNaW5oIiwiYXV0aG9yaXRpZXMiOlsiQ1JFQVRFX0FDQ09VTlQiLCJDUkVBVEVfQ0hBVCIsIkNSRUFURV9IT1RFTCIsIkNSRUFURV9QRVJNSVNTSU9OIiwiQ1JFQVRFX1RPVVIiLCJDUkVBVEVfV0VCX0lORk8iLCJSRUFEX0FDQ09VTlQiLCJSRUFEX0NIQVQiLCJSRUFEX0hPVEVMIiwiUkVBRF9QRVJNSVNTSU9OIiwiUkVBRF9UT1VSIiwiUkVBRF9XRUJfSU5GTyIsIlJPTEVfQURNSU4iLCJVUERBVEVfQUNDT1VOVCIsIlVQREFURV9IT1RFTCIsIlVQREFURV9QRVJNSVNTSU9OIiwiVVBEQVRFX1RPVVIiLCJVUERBVEVfV0VCX0lORk8iXSwiaWF0IjoxNzIwOTcxNTkxLCJleHAiOjE3MjA5NzUxOTF9.lKHm760bWb_n3Sdv2ThkodmQunxIb4Bsrzh7yH3LRewXYxpC_TgndT2f-ix9wWAE",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5050/api/v1/statisticals",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5050",
+							"path": [
+								"api",
+								"v1",
+								"statisticals"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Blog",
+			"item": [
+				{
+					"name": "Get all blogs",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhZG1pbiIsImlkIjoxLCJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsInN0YXR1cyI6IkFDVElWRSIsImN1c3RvbWVyTmFtZSI6Ik5ndXllbiBWYW4gQUJDIiwicGhvbmUiOiIwMTIzNDU2Nzg5IiwiYWRkcmVzcyI6IkhvIENoaSBNaW5oIiwiYXV0aG9yaXRpZXMiOlsiQ1JFQVRFX0FDQ09VTlQiLCJDUkVBVEVfQ0hBVCIsIkNSRUFURV9IT1RFTCIsIkNSRUFURV9QRVJNSVNTSU9OIiwiQ1JFQVRFX1RPVVIiLCJDUkVBVEVfV0VCX0lORk8iLCJSRUFEX0FDQ09VTlQiLCJSRUFEX0NIQVQiLCJSRUFEX0hPVEVMIiwiUkVBRF9QRVJNSVNTSU9OIiwiUkVBRF9UT1VSIiwiUkVBRF9XRUJfSU5GTyIsIlJPTEVfQURNSU4iLCJVUERBVEVfQUNDT1VOVCIsIlVQREFURV9IT1RFTCIsIlVQREFURV9QRVJNSVNTSU9OIiwiVVBEQVRFX1RPVVIiLCJVUERBVEVfV0VCX0lORk8iXSwiaWF0IjoxNzIxNTUxOTI5LCJleHAiOjE3MjE1NTU1Mjl9._4f5RN0IdNNyfvyKzQt0WzI1OOXb2thDzKYDVspZBa4jgzeVFuLPgMMXWCyLY5YE",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"userId\": 1,\r\n    \"title\": \"Blog 1\",\r\n    \"thumbnail\": \"123.jpg\",\r\n    \"content\": \"Blog 1 new\",\r\n    \"activeStatus\": \"ACTIVE\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5050/api/v1/blogs",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5050",
+							"path": [
+								"api",
+								"v1",
+								"blogs"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get a blog by id",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhZG1pbiIsImlkIjoxLCJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsInN0YXR1cyI6IkFDVElWRSIsImN1c3RvbWVyTmFtZSI6Ik5ndXllbiBWYW4gQUJDIiwicGhvbmUiOiIwMTIzNDU2Nzg5IiwiYWRkcmVzcyI6IkhvIENoaSBNaW5oIiwiYXV0aG9yaXRpZXMiOlsiQ1JFQVRFX0FDQ09VTlQiLCJDUkVBVEVfQ0hBVCIsIkNSRUFURV9IT1RFTCIsIkNSRUFURV9QRVJNSVNTSU9OIiwiQ1JFQVRFX1RPVVIiLCJDUkVBVEVfV0VCX0lORk8iLCJSRUFEX0FDQ09VTlQiLCJSRUFEX0NIQVQiLCJSRUFEX0hPVEVMIiwiUkVBRF9QRVJNSVNTSU9OIiwiUkVBRF9UT1VSIiwiUkVBRF9XRUJfSU5GTyIsIlJPTEVfQURNSU4iLCJVUERBVEVfQUNDT1VOVCIsIlVQREFURV9IT1RFTCIsIlVQREFURV9QRVJNSVNTSU9OIiwiVVBEQVRFX1RPVVIiLCJVUERBVEVfV0VCX0lORk8iXSwiaWF0IjoxNzIxNTUxOTI5LCJleHAiOjE3MjE1NTU1Mjl9._4f5RN0IdNNyfvyKzQt0WzI1OOXb2thDzKYDVspZBa4jgzeVFuLPgMMXWCyLY5YE",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"userId\": 1,\r\n    \"title\": \"Blog 1\",\r\n    \"thumbnail\": \"123.jpg\",\r\n    \"content\": \"Blog 1 new\",\r\n    \"activeStatus\": \"ACTIVE\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5050/api/v1/blogs/3",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5050",
+							"path": [
+								"api",
+								"v1",
+								"blogs",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create blog (STAFF, ADMIN)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhZG1pbiIsImlkIjoxLCJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsInN0YXR1cyI6IkFDVElWRSIsImN1c3RvbWVyTmFtZSI6Ik5ndXllbiBWYW4gQUJDIiwicGhvbmUiOiIwMTIzNDU2Nzg5IiwiYWRkcmVzcyI6IkhvIENoaSBNaW5oIiwiYXV0aG9yaXRpZXMiOlsiQ1JFQVRFX0FDQ09VTlQiLCJDUkVBVEVfQ0hBVCIsIkNSRUFURV9IT1RFTCIsIkNSRUFURV9QRVJNSVNTSU9OIiwiQ1JFQVRFX1RPVVIiLCJDUkVBVEVfV0VCX0lORk8iLCJSRUFEX0FDQ09VTlQiLCJSRUFEX0NIQVQiLCJSRUFEX0hPVEVMIiwiUkVBRF9QRVJNSVNTSU9OIiwiUkVBRF9UT1VSIiwiUkVBRF9XRUJfSU5GTyIsIlJPTEVfQURNSU4iLCJVUERBVEVfQUNDT1VOVCIsIlVQREFURV9IT1RFTCIsIlVQREFURV9QRVJNSVNTSU9OIiwiVVBEQVRFX1RPVVIiLCJVUERBVEVfV0VCX0lORk8iXSwiaWF0IjoxNzIxNTUxOTI5LCJleHAiOjE3MjE1NTU1Mjl9._4f5RN0IdNNyfvyKzQt0WzI1OOXb2thDzKYDVspZBa4jgzeVFuLPgMMXWCyLY5YE",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"userId\": 1,\r\n    \"title\": \"Blog 1\",\r\n    \"thumbnail\": \"123.jpg\",\r\n    \"content\": \"Blog 1 new\",\r\n    \"activeStatus\": \"ACTIVE\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5050/api/v1/blogs/create",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5050",
+							"path": [
+								"api",
+								"v1",
+								"blogs",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update blog (STAFF, ADMIN)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhZG1pbiIsImlkIjoxLCJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsInN0YXR1cyI6IkFDVElWRSIsImN1c3RvbWVyTmFtZSI6Ik5ndXllbiBWYW4gQUJDIiwicGhvbmUiOiIwMTIzNDU2Nzg5IiwiYWRkcmVzcyI6IkhvIENoaSBNaW5oIiwiYXV0aG9yaXRpZXMiOlsiQ1JFQVRFX0FDQ09VTlQiLCJDUkVBVEVfQ0hBVCIsIkNSRUFURV9IT1RFTCIsIkNSRUFURV9QRVJNSVNTSU9OIiwiQ1JFQVRFX1RPVVIiLCJDUkVBVEVfV0VCX0lORk8iLCJSRUFEX0FDQ09VTlQiLCJSRUFEX0NIQVQiLCJSRUFEX0hPVEVMIiwiUkVBRF9QRVJNSVNTSU9OIiwiUkVBRF9UT1VSIiwiUkVBRF9XRUJfSU5GTyIsIlJPTEVfQURNSU4iLCJVUERBVEVfQUNDT1VOVCIsIlVQREFURV9IT1RFTCIsIlVQREFURV9QRVJNSVNTSU9OIiwiVVBEQVRFX1RPVVIiLCJVUERBVEVfV0VCX0lORk8iXSwiaWF0IjoxNzIxNTUxOTI5LCJleHAiOjE3MjE1NTU1Mjl9._4f5RN0IdNNyfvyKzQt0WzI1OOXb2thDzKYDVspZBa4jgzeVFuLPgMMXWCyLY5YE",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"Blog 2\",\r\n    \"thumbnail\": \"123.jpg\",\r\n    \"content\": \"Blog 1 new\",\r\n    \"activeStatus\": \"IN_ACTIVE\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5050/api/v1/blogs/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5050",
+							"path": [
+								"api",
+								"v1",
+								"blogs",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete blog (ADMIN)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhZG1pbiIsImlkIjoxLCJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsInN0YXR1cyI6IkFDVElWRSIsImN1c3RvbWVyTmFtZSI6Ik5ndXllbiBWYW4gQUJDIiwicGhvbmUiOiIwMTIzNDU2Nzg5IiwiYWRkcmVzcyI6IkhvIENoaSBNaW5oIiwiYXV0aG9yaXRpZXMiOlsiQ1JFQVRFX0FDQ09VTlQiLCJDUkVBVEVfQ0hBVCIsIkNSRUFURV9IT1RFTCIsIkNSRUFURV9QRVJNSVNTSU9OIiwiQ1JFQVRFX1RPVVIiLCJDUkVBVEVfV0VCX0lORk8iLCJSRUFEX0FDQ09VTlQiLCJSRUFEX0NIQVQiLCJSRUFEX0hPVEVMIiwiUkVBRF9QRVJNSVNTSU9OIiwiUkVBRF9UT1VSIiwiUkVBRF9XRUJfSU5GTyIsIlJPTEVfQURNSU4iLCJVUERBVEVfQUNDT1VOVCIsIlVQREFURV9IT1RFTCIsIlVQREFURV9QRVJNSVNTSU9OIiwiVVBEQVRFX1RPVVIiLCJVUERBVEVfV0VCX0lORk8iXSwiaWF0IjoxNzIxNTUxOTI5LCJleHAiOjE3MjE1NTU1Mjl9._4f5RN0IdNNyfvyKzQt0WzI1OOXb2thDzKYDVspZBa4jgzeVFuLPgMMXWCyLY5YE",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"Blog 2\",\r\n    \"thumbnail\": \"123.jpg\",\r\n    \"content\": \"Blog 1 new\",\r\n    \"activeStatus\": \"IN_ACTIVE\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5050/api/v1/blogs/2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5050",
+							"path": [
+								"api",
+								"v1",
+								"blogs",
+								"2"
 							]
 						}
 					},

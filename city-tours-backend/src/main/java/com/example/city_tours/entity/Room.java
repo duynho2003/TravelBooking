@@ -24,10 +24,16 @@ public class Room {
     private Long id;
     private String roomNumber;
     private String type;
-    private Double basePrice;
+    private String category;
+    private Double defaultPrice;
+    private Double weekdayPrice;
     private Double weekendPrice;
     private Double discount;
-    private int numberOfResidents;
+    private int quantityAdult;
+    private int quantityChild;
+    private Double childCharge;
+    private int quantityBaby;
+    private Double babyCharge;
     private BookedStatus bookedStatus;
     private ActiveStatus activeStatus;
 
@@ -38,6 +44,10 @@ public class Room {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "room_id")
     private Set<RoomHoliday> roomHolidays;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "room_id")
+    private Set<RoomView> roomViews;
 
     @ManyToMany(mappedBy = "rooms")
     private Set<Hotel> hotels;

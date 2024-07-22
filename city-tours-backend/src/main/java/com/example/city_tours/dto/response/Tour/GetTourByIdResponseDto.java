@@ -22,9 +22,10 @@ public class GetTourByIdResponseDto {
     private String detail;
     private Double rating;
     private int numberOfRating;
-    private Double price;
+    private Double priceAdult;
+    private Double priceChild;
+    private Double priceBaby;
     private Double discount;
-    private String locations;
     private String depart;
     private String code;
     private int adults;

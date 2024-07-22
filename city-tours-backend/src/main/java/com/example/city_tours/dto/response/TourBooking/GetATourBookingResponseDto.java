@@ -20,7 +20,7 @@ public class GetATourBookingResponseDto {
     private String customerName;
     private int adults;
     private int children;
-    private int baby;
+    private int babies;
     private Double amount;
     private String bookingStatus;
     private LocalDateTime createdAt;

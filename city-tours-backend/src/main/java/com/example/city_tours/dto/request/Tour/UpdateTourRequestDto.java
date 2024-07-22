@@ -21,7 +21,9 @@ public class UpdateTourRequestDto {
     private String description;
     private String detail;
     private String depart;
-    private Double price;
+    private Double priceAdult;
+    private Double priceChild;
+    private Double priceBaby;
     private Double discount;
     private String locations;
     private int adults;

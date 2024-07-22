@@ -73,10 +73,10 @@ public class ProvinceServiceImpl implements ProvinceService{
                                 roomDto.setId(room.getId());
                                 roomDto.setRoomNumber(room.getRoomNumber());
                                 roomDto.setType(room.getType());
-                                roomDto.setBasePrice(room.getBasePrice());
                                 roomDto.setWeekendPrice(room.getWeekendPrice());
                                 roomDto.setDiscount(room.getDiscount());
-                                roomDto.setNumberOfResidents(room.getNumberOfResidents());
+                                roomDto.setQuantityAdult(room.getQuantityAdult());
+                                roomDto.setQuantityChild(room.getQuantityChild());
                                 roomDto.setBookedStatus(room.getBookedStatus().toString());
                                 roomDto.setActiveStatus(room.getActiveStatus().toString());
                                 roomDto.setCreatedAt(room.getCreatedAt());
@@ -159,10 +159,10 @@ public List<GetAllProvincesResponseDto> getAllProvinces(int page, int limit) {
                                         roomDto.setId(room.getId());
                                         roomDto.setRoomNumber(room.getRoomNumber());
                                         roomDto.setType(room.getType());
-                                        roomDto.setBasePrice(room.getBasePrice());
                                         roomDto.setWeekendPrice(room.getWeekendPrice());
                                         roomDto.setDiscount(room.getDiscount());
-                                        roomDto.setNumberOfResidents(room.getNumberOfResidents());
+                                        roomDto.setQuantityAdult(room.getQuantityAdult());
+                                        roomDto.setQuantityChild(room.getQuantityChild());
                                         roomDto.setBookedStatus(room.getBookedStatus().toString());
                                         roomDto.setActiveStatus(room.getActiveStatus().toString());
                                         roomDto.setCreatedAt(room.getCreatedAt());
