@@ -29,6 +29,10 @@ import badgeSave from "../../assets/images/badge_save.png";
 import { faUser } from "@fortawesome/free-regular-svg-icons";
 import { createWishlist } from "../../features/wishlist/WishlistSlice";
 import { useDispatch } from "react-redux";
+import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
+
+dayjs.extend(customParseFormat);
 
 const { useBreakpoint } = Grid;
 
@@ -108,6 +112,41 @@ export default function TopTours({ userId, tours }) {
           "The server couldn't fulfill a valid request due to an issue with the server.",
       });
     }
+  };
+
+  const findClosestStartDate = (tourTimes) => {
+    // Kiểm tra tourTimes có phải là mảng không
+    if (!Array.isArray(tourTimes)) {
+      console.error("tourTimes is not an array:", tourTimes);
+      return null;
+    }
+
+    // Kiểm tra mảng không rỗng
+    if (tourTimes.length === 0) {
+      return null;
+    }
+
+    const today = dayjs();
+
+    // Chuyển đổi tourTimes thành mảng của các đối tượng có startDate
+    const futureTourTimes = tourTimes
+      .map((time) => ({
+        ...time,
+        startDate: dayjs(time.startDate, "HH:mm:ss - DD/MM/YYYY"),
+      }))
+      .filter((time) => time.startDate.isAfter(today));
+
+    // Kiểm tra không có ngày trong tương lai
+    if (futureTourTimes.length === 0) {
+      return null;
+    }
+
+    // Tìm ngày gần nhất
+    const closestTime = futureTourTimes.reduce((closest, current) => {
+      return current.startDate.isBefore(closest.startDate) ? current : closest;
+    });
+
+    return closestTime.startDate.format("HH:mm:ss - DD/MM/YYYY");
   };
 
   return (
@@ -214,7 +253,7 @@ export default function TopTours({ userId, tours }) {
                 SAVE
               </CustomText>
               <CustomText size={"13px"} weight={"700"} color={"var(--white)"}>
-                {((tour?.discount / tour?.price) * 100).toFixed(0)} %
+                {((tour?.discount / tour?.priceAdult) * 100).toFixed(0)} %
               </CustomText>
             </Col>
 
@@ -287,9 +326,11 @@ export default function TopTours({ userId, tours }) {
                     </div>
 
                     <Col
+                      span={8}
                       style={{
                         display: "flex",
                         flexDirection: "column",
+                        alignItems: "end",
                       }}
                     >
                       <CustomText
@@ -300,7 +341,7 @@ export default function TopTours({ userId, tours }) {
                         {new Intl.NumberFormat("vi-VN", {
                           style: "currency",
                           currency: "VND",
-                        }).format(tour?.price - tour?.discount)}
+                        }).format(tour?.priceAdult - tour?.discount)}
                       </CustomText>
 
                       <CustomText
@@ -313,7 +354,7 @@ export default function TopTours({ userId, tours }) {
                         {new Intl.NumberFormat("vi-VN", {
                           style: "currency",
                           currency: "VND",
-                        }).format(tour?.price)}
+                        }).format(tour?.priceAdult)}
                       </CustomText>
                     </Col>
                   </Col>
@@ -345,7 +386,16 @@ export default function TopTours({ userId, tours }) {
                     weight={"500"}
                     color={"var(--gray-text)"}
                   >
-                    Tourist destinations: {tour?.locations}
+                    Depart at: {tour?.depart}
+                  </CustomText>
+                  <CustomText
+                    size={"14px"}
+                    weight={"500"}
+                    color={"var(--gray-text)"}
+                  >
+                    Start Date:{" "}
+                    {findClosestStartDate(tour?.tourTimes) ||
+                      "No upcoming dates"}
                   </CustomText>
                   <Col
                     style={{

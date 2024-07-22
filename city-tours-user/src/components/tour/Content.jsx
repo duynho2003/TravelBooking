@@ -141,6 +141,7 @@ export default function Content({ tour }) {
   const onChangeStartTime = (value) => {
     console.log("change startTime", value);
     setSelectedStartTime(value);
+    setErrorStartTime(null);
   };
 
   const onChangeAdults = (value) => {
@@ -158,7 +159,14 @@ export default function Content({ tour }) {
     setQuantityBaby(value);
   };
 
+  const [errorStartTime, setErrorStartTime] = useState(null);
+
   const handleNavigateCheckout = (tourId) => {
+    if (!selectedStartTime) {
+      setErrorStartTime("Please choose start time");
+      return;
+    }
+
     if (sub) {
       dispatch(
         tourBooking({
@@ -167,6 +175,14 @@ export default function Content({ tour }) {
           adults: quantityAdults,
           children: quantityChildren,
           baby: quantityBaby,
+          discount: tour.discount,
+          totalAmount:
+            quantityAdults * (tour?.priceAdult - tour?.discount) +
+            quantityChildren * (tour?.priceChild - tour?.discount) +
+            quantityBaby *
+              (tour?.priceBaby === 0
+                ? tour?.priceBaby
+                : tour?.priceBaby - tour?.discount),
         })
       );
       navigate(`/checkout/${tourId}`);
@@ -940,7 +956,7 @@ export default function Content({ tour }) {
             </Row>
 
             {/* Reivews */}
-            <Row
+            {/* <Row
               style={{
                 width: "100%",
                 padding: "20px 0",
@@ -1104,7 +1120,7 @@ export default function Content({ tour }) {
                   </Row>
                 </Row>
               </Col>
-            </Row>
+            </Row> */}
           </Col>
 
           {/* Col booking */}
@@ -1116,7 +1132,7 @@ export default function Content({ tour }) {
               gap: "20px",
             }}
           >
-            <Button
+            {/* <Button
               size="large"
               className="hover-button"
               style={{
@@ -1137,7 +1153,7 @@ export default function Content({ tour }) {
               >
                 View on map
               </CustomText>
-            </Button>
+            </Button> */}
 
             <Row
               style={{
@@ -1237,6 +1253,16 @@ export default function Content({ tour }) {
                         </Option>
                       ))}
                     </Select>
+
+                    {errorStartTime && (
+                      <CustomText
+                        size={"14px"}
+                        weight={"400"}
+                        color={"var(--red)"}
+                      >
+                        {errorStartTime}
+                      </CustomText>
+                    )}
                   </Col>
                 </Row>
 
@@ -1410,7 +1436,7 @@ export default function Content({ tour }) {
                       {new Intl.NumberFormat("vi-VN", {
                         style: "currency",
                         currency: "VND",
-                      }).format(tour?.price - tour?.discount)}
+                      }).format(tour?.priceAdult - tour?.discount)}
                       )
                     </CustomText>
                   </Col>
@@ -1431,7 +1457,7 @@ export default function Content({ tour }) {
                         style: "currency",
                         currency: "VND",
                       }).format(
-                        quantityAdults * (tour?.price - tour?.discount)
+                        quantityAdults * (tour?.priceAdult - tour?.discount)
                       )}
                     </CustomText>
                   </Col>
@@ -1463,7 +1489,7 @@ export default function Content({ tour }) {
                       {new Intl.NumberFormat("vi-VN", {
                         style: "currency",
                         currency: "VND",
-                      }).format(tour?.price - tour?.discount)}
+                      }).format(tour?.priceChild - tour?.discount)}
                       )
                     </CustomText>
                   </Col>
@@ -1484,7 +1510,7 @@ export default function Content({ tour }) {
                         style: "currency",
                         currency: "VND",
                       }).format(
-                        quantityChildren * (tour?.price - tour?.discount)
+                        quantityChildren * (tour?.priceChild - tour?.discount)
                       )}
                     </CustomText>
                   </Col>
@@ -1512,11 +1538,13 @@ export default function Content({ tour }) {
                       weight={"400"}
                       color={"var(--gray-text)"}
                     >
-                      Baby ({quantityBaby} x{" "}
-                      {new Intl.NumberFormat("vi-VN", {
-                        style: "currency",
-                        currency: "VND",
-                      }).format(tour?.price - tour?.discount)}
+                      Baby (
+                      {tour?.priceBaby === 0
+                        ? "Free"
+                        : `${quantityBaby} x ${new Intl.NumberFormat("vi-VN", {
+                            style: "currency",
+                            currency: "VND",
+                          }).format(tour?.priceBaby - tour?.discount)}`}
                       )
                     </CustomText>
                   </Col>
@@ -1536,7 +1564,12 @@ export default function Content({ tour }) {
                       {new Intl.NumberFormat("vi-VN", {
                         style: "currency",
                         currency: "VND",
-                      }).format(quantityBaby * (tour?.price - tour?.discount))}
+                      }).format(
+                        quantityBaby *
+                          (tour?.priceBaby === 0
+                            ? tour?.priceBaby
+                            : tour?.priceBaby - tour?.discount)
+                      )}
                     </CustomText>
                   </Col>
                 </Row>
@@ -1587,96 +1620,6 @@ export default function Content({ tour }) {
                   </Col>
                 </Row>
 
-                {/* Origin price */}
-                <Row
-                  style={{
-                    width: "100%",
-                    padding: "10px 0",
-                    borderBottom: "1px solid var(--border)",
-                  }}
-                  justify={"space-between"}
-                >
-                  <Col
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: "5px",
-                    }}
-                  >
-                    <CustomText
-                      size={"14px"}
-                      weight={"400"}
-                      color={"var(--gray-text)"}
-                    >
-                      Origin price / person
-                    </CustomText>
-                  </Col>
-
-                  <Col
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: "5px",
-                    }}
-                  >
-                    <CustomText
-                      size={"14px"}
-                      weight={"400"}
-                      color={"var(--gray-text)"}
-                    >
-                      {new Intl.NumberFormat("vi-VN", {
-                        style: "currency",
-                        currency: "VND",
-                      }).format(tour?.price)}
-                    </CustomText>
-                  </Col>
-                </Row>
-
-                {/* Total price */}
-                <Row
-                  style={{
-                    width: "100%",
-                    padding: "10px 0",
-                    borderBottom: "1px solid var(--border)",
-                  }}
-                  justify={"space-between"}
-                >
-                  <Col
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: "5px",
-                    }}
-                  >
-                    <CustomText
-                      size={"14px"}
-                      weight={"400"}
-                      color={"var(--gray-text)"}
-                    >
-                      Total price / person
-                    </CustomText>
-                  </Col>
-
-                  <Col
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: "5px",
-                    }}
-                  >
-                    <CustomText
-                      size={"14px"}
-                      weight={"400"}
-                      color={"var(--gray-text)"}
-                    >
-                      {new Intl.NumberFormat("vi-VN", {
-                        style: "currency",
-                        currency: "VND",
-                      }).format(tour?.price - tour?.discount)}
-                    </CustomText>
-                  </Col>
-                </Row>
-
                 {/* Total amount */}
                 <Row
                   style={{
@@ -1719,9 +1662,13 @@ export default function Content({ tour }) {
                         style: "currency",
                         currency: "VND",
                       }).format(
-                        quantityAdults * (tour?.price - tour?.discount) +
-                          quantityChildren * (tour?.price - tour?.discount) +
-                          quantityBaby * (tour?.price - tour?.discount)
+                        quantityAdults * (tour?.priceAdult - tour?.discount) +
+                          quantityChildren *
+                            (tour?.priceChild - tour?.discount) +
+                          quantityBaby *
+                            (tour?.priceBaby === 0
+                              ? tour?.priceBaby
+                              : tour?.priceBaby - tour?.discount)
                       )}
                     </CustomText>
                   </Col>

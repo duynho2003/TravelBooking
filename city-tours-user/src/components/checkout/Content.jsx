@@ -67,6 +67,7 @@ const { useBreakpoint } = Grid;
 export default function Content({ tour }) {
   const tourBookingData = useSelector((state) => state.tours?.tourBooking);
   const userId = useSelector((state) => state.auth?.info?.id);
+  const isCustomer = useSelector((state) => state.customer?.info?.customer);
   const customerName = useSelector(
     (state) => state.customer?.info?.customer?.name
   );
@@ -114,18 +115,16 @@ export default function Content({ tour }) {
 
   // Handle event
   const handleAddCustomer = async () => {
-    if (customerName === "" && phone === "" && address === "") {
-      const token = Cookies.get("token");
+    const token = Cookies.get("token");
 
-      const urlAddCustomer = "http://localhost:5050/api/v1/customers";
-      try {
-        await axios.post(urlAddCustomer, yourDetails, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-      } catch (error) {
-        console.error("Error adding customer:", error);
-        throw error; // Re-throw để bắt lỗi ở handleCheckout
-      }
+    const urlAddCustomer = "http://localhost:5050/api/v1/customers";
+    try {
+      await axios.post(urlAddCustomer, yourDetails, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+    } catch (error) {
+      console.error("Error adding customer:", error);
+      throw error; // Re-throw để bắt lỗi ở handleCheckout
     }
   };
 
@@ -134,10 +133,6 @@ export default function Content({ tour }) {
 
     const urlAddTourBooking =
       "http://localhost:5050/api/v1/tourBookings/create";
-    const amount =
-      tourBookingData?.adults * (tour?.price - tour?.discount) +
-      tourBookingData?.children * (tour?.price - tour?.discount) +
-      tourBookingData?.baby * (tour?.price - tour?.discount);
 
     const dataBooking = {
       tourId: tourBookingData?.tourId,
@@ -146,7 +141,7 @@ export default function Content({ tour }) {
       adults: tourBookingData?.adults,
       children: tourBookingData?.children,
       baby: tourBookingData?.baby,
-      amount: amount,
+      amount: tourBookingData?.totalAmount,
       bookingStatus: "SUCCESS",
     };
 
@@ -161,13 +156,8 @@ export default function Content({ tour }) {
   };
 
   const handleCreateOrder = async () => {
-    const amount =
-      tourBookingData?.adults * (tour?.price - tour?.discount) +
-      tourBookingData?.children * (tour?.price - tour?.discount) +
-      tourBookingData?.baby * (tour?.price - tour?.discount);
-
     const orderInfo = "BOOKING TOUR";
-    const urlVNPay = `http://localhost:5050/api/v1/payments/createOrder?amount=${amount}&orderInfo=${orderInfo}`;
+    const urlVNPay = `http://localhost:5050/api/v1/payments/createOrder?amount=${tourBookingData?.totalAmount}&orderInfo=${orderInfo}`;
 
     try {
       const response = await axios.post(urlVNPay);
@@ -181,7 +171,7 @@ export default function Content({ tour }) {
 
   const handleCheckout = async () => {
     try {
-      if (customerName === "" && phone === "" && address === "") {
+      if (isCustomer === null) {
         await handleAddCustomer();
       }
       await handleAddTourBooking();
@@ -731,8 +721,51 @@ export default function Content({ tour }) {
                   </Col>
                 </Row>
 
+                {/* End Time */}
+                {/* <Row
+                  style={{
+                    width: "100%",
+                    padding: "10px 0",
+                    borderTop: "1px solid var(--border)",
+                    borderBottom: "1px solid var(--border)",
+                  }}
+                  justify={"space-between"}
+                >
+                  <Col
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "5px",
+                    }}
+                  >
+                    <CustomText
+                      size={"14px"}
+                      weight={"400"}
+                      color={"var(--gray-text)"}
+                    >
+                      End Time
+                    </CustomText>
+                  </Col>
+
+                  <Col
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "5px",
+                    }}
+                  >
+                    <CustomText
+                      size={"14px"}
+                      weight={"400"}
+                      color={"var(--gray-text)"}
+                    >
+                      {tourBookingData?.endTime}
+                    </CustomText>
+                  </Col>
+                </Row> */}
+
                 {/* Adults */}
-                <Row
+                {/* <Row
                   style={{
                     width: "100%",
                     padding: "10px 0",
@@ -782,10 +815,10 @@ export default function Content({ tour }) {
                       )}
                     </CustomText>
                   </Col>
-                </Row>
+                </Row> */}
 
                 {/* Children */}
-                <Row
+                {/* <Row
                   style={{
                     width: "100%",
                     padding: "10px 0",
@@ -836,10 +869,10 @@ export default function Content({ tour }) {
                       )}
                     </CustomText>
                   </Col>
-                </Row>
+                </Row> */}
 
                 {/* Baby */}
-                <Row
+                {/* <Row
                   style={{
                     width: "100%",
                     padding: "10px 0",
@@ -889,7 +922,7 @@ export default function Content({ tour }) {
                       )}
                     </CustomText>
                   </Col>
-                </Row>
+                </Row> */}
 
                 {/* Discount */}
                 <Row
@@ -937,96 +970,6 @@ export default function Content({ tour }) {
                   </Col>
                 </Row>
 
-                {/* Origin price */}
-                <Row
-                  style={{
-                    width: "100%",
-                    padding: "10px 0",
-                    borderBottom: "1px solid var(--border)",
-                  }}
-                  justify={"space-between"}
-                >
-                  <Col
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: "5px",
-                    }}
-                  >
-                    <CustomText
-                      size={"14px"}
-                      weight={"400"}
-                      color={"var(--gray-text)"}
-                    >
-                      Origin price / person
-                    </CustomText>
-                  </Col>
-
-                  <Col
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: "5px",
-                    }}
-                  >
-                    <CustomText
-                      size={"14px"}
-                      weight={"400"}
-                      color={"var(--gray-text)"}
-                    >
-                      {new Intl.NumberFormat("vi-VN", {
-                        style: "currency",
-                        currency: "VND",
-                      }).format(tour?.price)}
-                    </CustomText>
-                  </Col>
-                </Row>
-
-                {/* Total price */}
-                <Row
-                  style={{
-                    width: "100%",
-                    padding: "10px 0",
-                    borderBottom: "1px solid var(--border)",
-                  }}
-                  justify={"space-between"}
-                >
-                  <Col
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: "5px",
-                    }}
-                  >
-                    <CustomText
-                      size={"14px"}
-                      weight={"400"}
-                      color={"var(--gray-text)"}
-                    >
-                      Total price / person
-                    </CustomText>
-                  </Col>
-
-                  <Col
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: "5px",
-                    }}
-                  >
-                    <CustomText
-                      size={"14px"}
-                      weight={"400"}
-                      color={"var(--gray-text)"}
-                    >
-                      {new Intl.NumberFormat("vi-VN", {
-                        style: "currency",
-                        currency: "VND",
-                      }).format(tour?.price - tour?.discount)}
-                    </CustomText>
-                  </Col>
-                </Row>
-
                 {/* Total amount */}
                 <Row
                   style={{
@@ -1068,13 +1011,7 @@ export default function Content({ tour }) {
                       {new Intl.NumberFormat("vi-VN", {
                         style: "currency",
                         currency: "VND",
-                      }).format(
-                        tourBookingData?.adults *
-                          (tour?.price - tour?.discount) +
-                          tourBookingData?.children *
-                            (tour?.price - tour?.discount) +
-                          tourBookingData?.baby * (tour?.price - tour?.discount)
-                      )}
+                      }).format(tourBookingData?.totalAmount)}
                     </CustomText>
                   </Col>
                 </Row>

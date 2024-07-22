@@ -16,7 +16,7 @@ export default function Categories() {
         width: "100%",
         height: "675px",
         background: "white",
-        padding: "60px 0",
+        padding: "220px 0 60px 0",
       }}
       justify={"center"}
     >

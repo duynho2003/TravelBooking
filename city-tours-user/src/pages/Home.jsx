@@ -12,6 +12,7 @@ import { getAllHotels } from "../features/hotel/HotelSlice";
 import { initInfoBeforeReload } from "../features/auth/AuthSlice";
 import Loading from "../components/common/Loading";
 import ProminentHotelAreas from "../components/home/ProminentHotelAreas";
+import Search from "../components/home/Search";
 
 export default function Home() {
   // Constants
@@ -44,6 +45,9 @@ export default function Home() {
           maxPrice: "5000000",
           review: "",
           rating: RATING_DESC,
+          depart: "",
+          startDate: "",
+          completed: "false",
         })
       );
 
@@ -100,6 +104,7 @@ export default function Home() {
             }}
           ></Row>
           <CarouselSlider />
+          <Search />
           <Categories />
           <ProminentHotelAreas provinces={provinces} />
           <TopTours userId={userId} tours={tours} />

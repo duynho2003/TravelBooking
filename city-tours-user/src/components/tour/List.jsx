@@ -550,17 +550,18 @@ export default function List({
                         display: "flex",
                         justifyContent: "start",
                         alignItems: "center",
-                        marginBottom: "10px",
                       }}
                     >
-                      <CustomText
-                        size={"16px"}
-                        weight={"600"}
-                        color={"var(--gray-text)"}
-                        isUppercase={true}
-                      >
-                        {tour.name}
-                      </CustomText>
+                      <div className="truncated-text">
+                        <CustomText
+                          size={"16px"}
+                          weight={"600"}
+                          color={"var(--gray-text)"}
+                          isUppercase={true}
+                        >
+                          {tour.name}
+                        </CustomText>
+                      </div>
                     </Col>
 
                     {/* Locations */}

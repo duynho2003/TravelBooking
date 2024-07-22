@@ -217,9 +217,8 @@ export default function Content({
                       }}
                     >
                       <Col
-                        span={16}
+                        span={24}
                         style={{
-                          height: "100%",
                           display: "flex",
                           justifyContent: "start",
                           alignItems: "center",
@@ -254,6 +253,7 @@ export default function Content({
                         >
                           {/* Tour Name */}
                           <Col
+                            span={24}
                             style={{
                               display: "flex",
                               justifyContent: "start",
@@ -320,7 +320,7 @@ export default function Content({
                                 </CustomText>
                               </Tag>
                             )}
-                            {tourBooking?.child && (
+                            {tourBooking?.children && (
                               <Tag color="var(--green-dark)">
                                 <CustomText
                                   size={"12px"}
@@ -328,11 +328,11 @@ export default function Content({
                                   color={"var(--white)"}
                                 >
                                   <FontAwesomeIcon icon={faChild} /> (
-                                  {tourBooking?.child})
+                                  {tourBooking?.children})
                                 </CustomText>
                               </Tag>
                             )}
-                            {tourBooking?.baby && (
+                            {tourBooking?.babies && (
                               <Tag color="var(--green-dark)">
                                 <CustomText
                                   size={"12px"}
@@ -342,77 +342,13 @@ export default function Content({
                                   <FontAwesomeIcon
                                     icon={faPersonBreastfeeding}
                                   />
-                                  ({tourBooking?.baby})
+                                  ({tourBooking?.babies})
                                 </CustomText>
                               </Tag>
                             )}
                           </Col>
                         </Col>
                       </Col>
-
-                      {/* <Col
-                        span={8}
-                        style={{
-                          height: "100%",
-                          display: "flex",
-                          flexDirection: "column",
-                          justifyContent: "center",
-                          alignItems: "end",
-                        }}
-                      >
-                        <Col
-                          style={{
-                            display: "flex",
-                            flexDirection: "column",
-                            justifyContent: "end",
-                            marginBottom: "10px",
-                            textAlign: "right",
-                          }}
-                        >
-                          <CustomText
-                            size={"12px"}
-                            weight={"600"}
-                            color={"var(--gray-text)"}
-                            isUppercase={true}
-                          >
-                            Start time
-                          </CustomText>
-                          <CustomText
-                            size={"12px"}
-                            weight={"400"}
-                            color={"var(--gray-text)"}
-                          >
-                            {tourBooking?.startTime}
-                          </CustomText>
-                        </Col>
-
-                        <Col
-                          style={{
-                            display: "flex",
-                            flexDirection: "column",
-                            justifyContent: "end",
-                            marginBottom: "10px",
-                            textAlign: "right",
-                          }}
-                        >
-                          <CustomText
-                            size={"12px"}
-                            weight={"600"}
-                            color={"var(--gray-text)"}
-                            isUppercase={true}
-                          >
-                            Locations
-                          </CustomText>
-
-                          <CustomText
-                            size={"12px"}
-                            weight={"400"}
-                            color={"var(--gray-text)"}
-                          >
-                            {tourBooking?.locations}
-                          </CustomText>
-                        </Col>
-                      </Col> */}
                     </Row>
                   </Col>
 

@@ -27,22 +27,28 @@ export default function TourList() {
   const isLoading = useSelector((state) => state.tours?.loading);
   const error = useSelector((state) => state.tours?.error);
 
-  // Local State
-  const [pageSize, setPageSize] = useState(INIT_LIMIT);
-  const [pagination, setPagination] = useState({
-    page: INIT_PAGE,
-    limit: pageSize,
-    minPrice: "0",
-    maxPrice: "5000000",
-    review: "",
-  });
-  const [showContent, setShowContent] = useState(false);
-
   const location = useLocation();
   const urlSearchParams = new URLSearchParams(location.search);
   const initialMinPrice = urlSearchParams.get("minPrice");
   const initialMaxPrice = urlSearchParams.get("maxPrice");
   const initialReview = urlSearchParams.get("review");
+  const initialRating = urlSearchParams.get("rating");
+  const initialDepart = urlSearchParams.get("depart");
+  const initialStartDate = urlSearchParams.get("startDate");
+
+  // Local State
+  const [pageSize, setPageSize] = useState(INIT_LIMIT);
+  const [pagination, setPagination] = useState({
+    page: INIT_PAGE,
+    limit: pageSize,
+    minPrice: initialMinPrice,
+    maxPrice: initialMaxPrice,
+    review: initialReview,
+    rating: initialRating,
+    depart: initialDepart,
+    startDate: initialStartDate,
+  });
+  const [showContent, setShowContent] = useState(false);
 
   useEffect(() => {
     setPagination((prevState) => ({
@@ -50,8 +56,18 @@ export default function TourList() {
       minPrice: initialMinPrice,
       maxPrice: initialMaxPrice,
       review: initialReview,
+      rating: initialRating,
+      depart: initialDepart,
+      startDate: initialStartDate,
     }));
-  }, [initialMinPrice, initialMaxPrice, initialReview]);
+  }, [
+    initialMinPrice,
+    initialMaxPrice,
+    initialReview,
+    initialRating,
+    initialDepart,
+    initialStartDate,
+  ]);
 
   // useEffect for loading data
   useEffect(() => {

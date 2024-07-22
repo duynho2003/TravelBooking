@@ -121,7 +121,7 @@ export default function Banner({ tour }) {
                   {new Intl.NumberFormat("vi-VN", {
                     style: "currency",
                     currency: "VND",
-                  }).format(tour?.price - tour?.discount)}
+                  }).format(tour?.priceAdult - tour?.discount)}
                 </CustomText>
               </Col>
             </Row>

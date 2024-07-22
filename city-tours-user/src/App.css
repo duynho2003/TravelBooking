@@ -174,8 +174,8 @@
 }
 
 .truncated-text {
-  white-space: nowrap; /* Prevents text from wrapping */
-  overflow: hidden; /* Hides overflowed text */
-  text-overflow: ellipsis; /* Displays ... for overflowed text */
-  max-width: 250px; /* Set a max width (adjust as necessary) */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
 }

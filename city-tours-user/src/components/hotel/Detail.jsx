@@ -18,6 +18,7 @@ import {
   Form,
   notification,
   Spin,
+  Tag,
 } from "antd";
 import category1 from "../../assets/images/category-1.jpg";
 import category2 from "../../assets/images/category-2.jpg";
@@ -408,7 +409,7 @@ export default function Detail({ hotel, reviews }) {
                     )
                     .map((roomBooking) => (
                       <Option key={roomBooking?.id} value={roomBooking?.id}>
-                        {roomBooking?.roomType}
+                        {roomBooking?.roomType} - {roomBooking?.category}
                       </Option>
                     ))}
                 </Select>
@@ -825,7 +826,7 @@ export default function Detail({ hotel, reviews }) {
               </Col>
             </Row>
 
-            {/* Room Types */}
+            {/* Room List */}
             <Row
               style={{
                 width: "100%",
@@ -850,7 +851,7 @@ export default function Detail({ hotel, reviews }) {
                   weight={"500"}
                   color={"var(--gray-text)"}
                 >
-                  Room Types
+                  Room List
                 </CustomText>
               </Col>
 
@@ -887,7 +888,15 @@ export default function Detail({ hotel, reviews }) {
                       weight={"400"}
                       color={"var(--gray-light)"}
                     >
-                      Room Number: {room?.roomNumber}
+                      Category: <Tag color="var(--pink)">{room?.category} </Tag>
+                    </CustomText>
+
+                    <CustomText
+                      size={"14px"}
+                      weight={"400"}
+                      color={"var(--gray-light)"}
+                    >
+                      Number: {room?.roomNumber}
                     </CustomText>
 
                     <CustomText
@@ -923,10 +932,64 @@ export default function Detail({ hotel, reviews }) {
                         room?.roomHolidays?.find(
                           (holiday) => holiday.date === getCurrentDate()
                         )?.price - room?.discount ||
-                          (isWeekend ? room?.weekendPrice : room?.basePrice) -
-                            room?.discount
+                          (isWeekend
+                            ? room?.weekendPrice +
+                              room?.childCharge +
+                              room?.childBaby
+                            : room?.weekdayPrice +
+                              room?.childCharge +
+                              room?.babyCharge) - room?.discount
                       )}
                     </CustomText>
+
+                    <Col>
+                      {/* Slot */}
+                      <Col span={24}>
+                        <CustomText
+                          size={"14px"}
+                          weight={"400"}
+                          color={"var(--gray-light)"}
+                        >
+                          Remaining seats:
+                        </CustomText>{" "}
+                        <Tag color="var(--green-dark)">
+                          <CustomText
+                            size={"12px"}
+                            weight={"400"}
+                            color={"var(--white)"}
+                          >
+                            <FontAwesomeIcon icon={faUser} /> (
+                            {room?.quantityAdult})
+                          </CustomText>
+                        </Tag>
+                        <Tag color="var(--green-dark)">
+                          <CustomText
+                            size={"12px"}
+                            weight={"400"}
+                            color={"var(--white)"}
+                          >
+                            <FontAwesomeIcon icon={faChild} /> (
+                            {room?.quantityChild === 0
+                              ? "Free"
+                              : room?.quantityChild}
+                            )
+                          </CustomText>
+                        </Tag>
+                        <Tag color="var(--green-dark)">
+                          <CustomText
+                            size={"12px"}
+                            weight={"400"}
+                            color={"var(--white)"}
+                          >
+                            <FontAwesomeIcon icon={faPersonBreastfeeding} /> (
+                            {room?.quantityBaby === 0
+                              ? "Free"
+                              : room?.quantityBaby}
+                            )
+                          </CustomText>
+                        </Tag>
+                      </Col>
+                    </Col>
 
                     <Row
                       gutter={[10, 10]}
@@ -1203,7 +1266,7 @@ export default function Detail({ hotel, reviews }) {
                       {hotel?.rooms.map((room) => {
                         return (
                           <Option key={room?.id} value={room?.id}>
-                            {`${room?.type} - Number ${room?.roomNumber}`}
+                            {`${room?.type} - ${room?.category} - Number ${room?.roomNumber}`}
                           </Option>
                         );
                       })}
@@ -1270,7 +1333,7 @@ export default function Detail({ hotel, reviews }) {
 
                         const basePrice = isWeekend
                           ? selectedRoomRedux?.weekendPrice
-                          : selectedRoomRedux?.basePrice;
+                          : selectedRoomRedux?.weekdayPrice;
                         const finalPrice =
                           holidayPrice ||
                           basePrice - selectedRoomRedux?.discount;
@@ -1344,8 +1407,9 @@ export default function Detail({ hotel, reviews }) {
                         )?.price - selectedRoomRedux?.discount ||
                           (isWeekend
                             ? selectedRoomRedux?.weekendPrice
-                            : selectedRoomRedux?.basePrice) -
-                            selectedRoomRedux?.discount
+                            : selectedRoomRedux?.weekdayPrice) -
+                            selectedRoomRedux?.discount ||
+                          0
                       )}
                     </CustomText>
                   </Col>

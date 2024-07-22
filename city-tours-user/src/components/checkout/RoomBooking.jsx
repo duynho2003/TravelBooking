@@ -856,7 +856,7 @@ export default function RoomBooking({ tour }) {
                 </Row>
 
                 {/* Origin price */}
-                <Row
+                {/* <Row
                   style={{
                     width: "100%",
                     padding: "10px 0",
@@ -900,7 +900,7 @@ export default function RoomBooking({ tour }) {
                       )}
                     </CustomText>
                   </Col>
-                </Row>
+                </Row> */}
 
                 {/* Total price */}
                 <Row
