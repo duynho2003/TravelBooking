@@ -69,7 +69,7 @@ const { Meta } = Card;
 const { Text } = Typography;
 const { Option } = Select;
 
-const UpdateRoom = () => {
+const ViewARoom = () => {
   // Redux State
   const { hotelId, roomId } = useParams();
   const dispatch = useDispatch();
@@ -123,16 +123,19 @@ const UpdateRoom = () => {
         weekendPrice: selectedRoom.weekendPrice,
         discount: selectedRoom?.discount,
         roomType: selectedRoom?.type,
-        category: selectedRoom.roomCategory,
-        quantityAdult: selectedRoom.quantityAdult,
-        quantityChild: selectedRoom.quantityChild,
-        childCharge: selectedRoom.childCharge,
-        quantityBaby: selectedRoom.quantityBaby,
-        babyCharge: selectedRoom.babyCharge,
+        category: selectedRoom?.roomCategory,
+        quantityAdult: selectedRoom?.quantityAdult,
+        quantityChild: selectedRoom?.quantityChild,
+        childCharge: selectedRoom?.childCharge,
+        quantityBaby: selectedRoom?.quantityBaby,
+        babyCharge: selectedRoom?.babyCharge,
         activeStatus: selectedRoom?.activeStatus,
       });
 
       setViews(selectedRoom?.roomViews);
+
+      setIsFreeChild(!selectedRoom.childCharge);
+      setIsFreeBaby(!selectedRoom?.babyCharge);
 
       const initHolidays = selectedRoom?.roomHolidays?.map((holiday) => {
         return holiday?.date;
@@ -619,7 +622,7 @@ const UpdateRoom = () => {
                       color={"var(--black-text)"}
                       isButton={true}
                     >
-                      Update room
+                      View A Room
                     </CustomText>
                   ),
                 },
@@ -642,144 +645,29 @@ const UpdateRoom = () => {
                 gutter={20}
               >
                 <Col xs={12} sm={12} md={12} lg={12} xl={12}>
-                  <Controller
-                    name="roomType"
-                    control={control}
-                    rules={{ required: "Room type is required" }}
-                    render={({ field, fieldState: { error } }) => (
-                      <Form.Item
-                        label="Type"
-                        validateStatus={error ? "error" : ""}
-                        help={error?.message}
-                      >
-                        <Select
-                          {...field}
-                          placeholder="Choose room type"
-                          onChange={(value) => {
-                            field.onChange(value);
-                          }}
-                        >
-                          {roomTypes.map((type) => {
-                            return (
-                              <Option key={type} value={type}>
-                                {type}
-                              </Option>
-                            );
-                          })}
-                        </Select>
-                      </Form.Item>
-                    )}
-                  />
+                  <Form.Item label="Type">
+                    <Input value={selectedRoom?.type} readOnly />
+                  </Form.Item>
 
-                  <Controller
-                    name="roomCategory"
-                    control={control}
-                    rules={{ required: "Room categories is required" }}
-                    render={({ field, fieldState: { error } }) => (
-                      <Form.Item
-                        label="Categories"
-                        validateStatus={error ? "error" : ""}
-                        help={error?.message}
-                      >
-                        <div>
-                          {roomCategories.map((type) => (
-                            <Button
-                              key={type}
-                              type={
-                                field.value === type ? "primary" : "default"
-                              }
-                              onClick={() => field.onChange(type)}
-                              disabled={!roomType}
-                              style={{
-                                margin: "0 8px 8px 0",
-                                backgroundColor:
-                                  field.value === type
-                                    ? "var(--green-dark)"
-                                    : "#fff",
-                                color: field.value === type ? "#fff" : "#000",
-                              }}
-                            >
-                              {type}
-                            </Button>
-                          ))}
-                        </div>
-                      </Form.Item>
-                    )}
-                  />
+                  <Form.Item label="Categories">
+                    <Button
+                      type={"primary"}
+                      style={{
+                        margin: "0 8px 8px 0",
+                        backgroundColor: "var(--green-dark)",
+                        color: "#fff",
+                      }}
+                      disabled
+                    >
+                      {selectedRoom?.category}
+                    </Button>
+                  </Form.Item>
 
-                  <Controller
-                    name="roomNumber"
-                    control={control}
-                    rules={{ required: "Room number is required" }}
-                    render={({ field, fieldState: { error } }) => (
-                      <Form.Item
-                        label="Room Number"
-                        validateStatus={error ? "error" : ""}
-                        help={error?.message}
-                      >
-                        <Input {...field} placeholder="Enter room number" />
-                      </Form.Item>
-                    )}
-                  />
+                  <Form.Item label="Number">
+                    <Input value={selectedRoom?.roomNumber} readOnly />
+                  </Form.Item>
 
-                  <Form.Item
-                    label={
-                      <>
-                        Views{" "}
-                        <FontAwesomeIcon
-                          icon={faPlus}
-                          style={{
-                            cursor: "pointer",
-                            marginLeft: "8px",
-                            color: "var(--white)",
-                            display: "inline-block",
-                            width: "12px",
-                            height: "12px",
-                            border: "1px solid green",
-                            padding: "2px",
-                            borderRadius: "50%",
-                            background: "var(--green-dark)",
-                          }}
-                          onClick={handleOpenViews}
-                        />
-                      </>
-                    }
-                  >
-                    {isOpenViews && (
-                      <>
-                        <Space.Compact
-                          size="middle"
-                          style={{
-                            marginBottom: "15px",
-                            width: "100%",
-                          }}
-                        >
-                          <Input
-                            onChange={(e) => handleChangeView(e.target.value)}
-                            placeholder="Enter view"
-                          />
-                          <input
-                            id="imageInput"
-                            type="file"
-                            multiple
-                            onChange={handleImageChangeViews}
-                            style={{
-                              width: "100%",
-                              border: "1px solid #d9d9d9",
-                              paddingTop: "4px",
-                              paddingLeft: "8px",
-                            }}
-                          />
-                          <Button
-                            onClick={handleAddView}
-                            loading={isLoadingAddView}
-                          >
-                            <PlusOutlined />
-                          </Button>
-                        </Space.Compact>
-                      </>
-                    )}
-
+                  <Form.Item label={<>Views </>}>
                     <List
                       header={<div>List Views</div>}
                       bordered
@@ -795,7 +683,7 @@ const UpdateRoom = () => {
                         >
                           <Tag>{item?.name}</Tag>
                           {item?.images?.split(",")?.map((image, idx) => (
-                            <img
+                            <Image
                               key={idx}
                               src={image}
                               alt={`View ${index + 1} Image ${idx + 1}`}
@@ -806,66 +694,18 @@ const UpdateRoom = () => {
                               }}
                             />
                           ))}
-                          <FontAwesomeIcon
-                            icon={faX}
-                            style={{
-                              cursor: "pointer",
-                              marginLeft: "8px",
-                              color: "var(--white)",
-                              display: "inline-block",
-                              width: "12px",
-                              height: "12px",
-                              border: "1px solid var(--pink)",
-                              padding: "2px",
-                              borderRadius: "50%",
-                              background: "var(--pink)",
-                            }}
-                            onClick={() => handleDeleteView(index)}
-                          />
                         </List.Item>
                       )}
                     />
                   </Form.Item>
 
-                  <Controller
-                    name="quantityAdult"
-                    control={control}
-                    render={({ field, fieldState: { error } }) => (
-                      <Form.Item
-                        label="Quantity Adult"
-                        validateStatus={error ? "error" : ""}
-                        help={error?.message}
-                      >
-                        <InputNumber
-                          {...field}
-                          defaultValue={1}
-                          style={{
-                            width: "100%",
-                          }}
-                        />
-                      </Form.Item>
-                    )}
-                  />
+                  <Form.Item label="Quantity Adult">
+                    <Input value={selectedRoom?.quantityAdult} readOnly />
+                  </Form.Item>
 
-                  <Controller
-                    name="quantityChild"
-                    control={control}
-                    render={({ field, fieldState: { error } }) => (
-                      <Form.Item
-                        label="Quantity Child"
-                        validateStatus={error ? "error" : ""}
-                        help={error?.message}
-                      >
-                        <InputNumber
-                          {...field}
-                          defaultValue={0}
-                          style={{
-                            width: "100%",
-                          }}
-                        />
-                      </Form.Item>
-                    )}
-                  />
+                  <Form.Item label="Quantity Child">
+                    <Input value={selectedRoom?.quantityChild} readOnly />
+                  </Form.Item>
 
                   <Controller
                     name="childCharge"
@@ -882,20 +722,24 @@ const UpdateRoom = () => {
                             direction="horizontal"
                             style={{ width: "100%" }}
                           >
-                            <Button
-                              size="middle"
-                              type={isFreeChild ? "primary" : "default"}
-                              onClick={handleFreeClickChild}
-                            >
-                              Free
-                            </Button>
-                            <Button
-                              size="middle"
-                              type={!isFreeChild ? "primary" : "default"}
-                              onClick={handleChargeClickChild}
-                            >
-                              Charge
-                            </Button>
+                            {isFreeChild && (
+                              <Button
+                                size="middle"
+                                type={isFreeChild ? "primary" : "default"}
+                                onClick={handleFreeClickChild}
+                              >
+                                Free
+                              </Button>
+                            )}
+                            {!isFreeChild && (
+                              <Button
+                                size="middle"
+                                type={!isFreeChild ? "primary" : "default"}
+                                onClick={handleChargeClickChild}
+                              >
+                                Charge
+                              </Button>
+                            )}
                           </Space>
                           {!isFreeChild && (
                             <InputNumber
@@ -909,6 +753,7 @@ const UpdateRoom = () => {
                               parser={(value) => value.replace(/[^\d]/g, "")}
                               placeholder="Enter child charge"
                               style={{ width: "100%" }}
+                              readOnly={selectedRoom?.childCharge !== 0}
                             />
                           )}
                         </Space>
@@ -916,25 +761,9 @@ const UpdateRoom = () => {
                     )}
                   />
 
-                  <Controller
-                    name="quantityBaby"
-                    control={control}
-                    render={({ field, fieldState: { error } }) => (
-                      <Form.Item
-                        label="Quantity Baby"
-                        validateStatus={error ? "error" : ""}
-                        help={error?.message}
-                      >
-                        <InputNumber
-                          {...field}
-                          defaultValue={0}
-                          style={{
-                            width: "100%",
-                          }}
-                        />
-                      </Form.Item>
-                    )}
-                  />
+                  <Form.Item label="Quantity Baby">
+                    <Input value={selectedRoom?.quantityBaby} readOnly />
+                  </Form.Item>
 
                   <Controller
                     name="babyCharge"
@@ -951,20 +780,25 @@ const UpdateRoom = () => {
                             direction="horizontal"
                             style={{ width: "100%" }}
                           >
-                            <Button
-                              size="middle"
-                              type={isFreeBaby ? "primary" : "default"}
-                              onClick={handleFreeClickBaby}
-                            >
-                              Free
-                            </Button>
-                            <Button
-                              size="middle"
-                              type={!isFreeBaby ? "primary" : "default"}
-                              onClick={handleChargeClickBaby}
-                            >
-                              Charge
-                            </Button>
+                            {isFreeBaby && (
+                              <Button
+                                size="middle"
+                                type={isFreeBaby ? "primary" : "default"}
+                                onClick={handleFreeClickBaby}
+                              >
+                                Free
+                              </Button>
+                            )}
+
+                            {!isFreeBaby && (
+                              <Button
+                                size="middle"
+                                type={!isFreeBaby ? "primary" : "default"}
+                                onClick={handleChargeClickBaby}
+                              >
+                                Charge
+                              </Button>
+                            )}
                           </Space>
                           {!isFreeBaby && (
                             <InputNumber
@@ -978,6 +812,7 @@ const UpdateRoom = () => {
                               parser={(value) => value.replace(/[^\d]/g, "")}
                               placeholder="Enter baby charge"
                               style={{ width: "100%" }}
+                              readOnly={selectedRoom?.childBaby !== 0}
                             />
                           )}
                         </Space>
@@ -985,44 +820,11 @@ const UpdateRoom = () => {
                     )}
                   />
 
-                  <Controller
-                    name="activeStatus"
-                    control={control}
-                    render={({ field, fieldState: { error } }) => (
-                      <Form.Item
-                        label="Active Status"
-                        validateStatus={error ? "error" : ""}
-                        help={error?.message}
-                      >
-                        <Select
-                          {...field}
-                          onChange={(value) => {
-                            field.onChange(value);
-                          }}
-                        >
-                          {activeStatus.map((activeStatusRoom) => {
-                            let label = activeStatusRoom;
-
-                            if (activeStatusRoom === "ACTIVE") {
-                              label = "Active";
-                            } else if (activeStatusRoom === "IN_ACTIVE") {
-                              label = "In Active";
-                            }
-
-                            return (
-                              <Option
-                                key={activeStatusRoom}
-                                value={activeStatusRoom}
-                              >
-                                {label}
-                              </Option>
-                            );
-                          })}
-                        </Select>
-                      </Form.Item>
-                    )}
-                  />
-
+                  <Form.Item label="Active Status">
+                    <Input value={selectedRoom?.activeStatus} readOnly />
+                  </Form.Item>
+                </Col>
+                <Col xs={12} sm={12} md={12} lg={12} xl={12}>
                   <Form.Item label="Images">
                     <Row
                       gutter={8}
@@ -1049,144 +851,58 @@ const UpdateRoom = () => {
                         </Col>
                       ))}
                     </Row>
-
-                    <Button
-                      style={{
-                        background: "var(--green-dark)",
-                        color: "var(--white)",
-                        border: "var(--green-dark)",
-                      }}
-                      onClick={handleShowChangeImageUpdateRoom}
-                    >
-                      Change image
-                    </Button>
                   </Form.Item>
 
-                  {isChangeImageUpdateRoom && (
-                    <Controller
-                      name="logo"
-                      control={control}
-                      render={({ field, fieldState: { error } }) => (
-                        <input
-                          id="imageInputUpdateRoom"
-                          type="file"
-                          multiple
-                          onChange={handleImageChangeUpdateRoom}
-                        />
-                      )}
+                  <Form.Item label="Default Price">
+                    <InputNumber
+                      value={selectedRoom?.defaultPrice}
+                      formatter={(value) =>
+                        new Intl.NumberFormat("vi-VN", {
+                          style: "currency",
+                          currency: "VND",
+                        }).format(value)
+                      }
+                      parser={(value) => value.replace(/[^\d]/g, "")}
+                      style={{
+                        width: "100%",
+                      }}
+                      readOnly
                     />
-                  )}
-                </Col>
-                <Col xs={12} sm={12} md={12} lg={12} xl={12}>
-                  <Controller
-                    name="defaultPrice"
-                    control={control}
-                    rules={{
-                      required: "Default price is required",
-                      validate: {
-                        min: (value) =>
-                          value >= 100000 || "Minimum price is 100,000 VND",
-                        max: (value) =>
-                          value <= 100000000 ||
-                          "Maximum price is 100,000,000 VND",
-                      },
-                    }}
-                    render={({ field, fieldState: { error } }) => (
-                      <Form.Item
-                        label="Default Price"
-                        validateStatus={error ? "error" : ""}
-                        help={error?.message}
-                      >
-                        <InputNumber
-                          {...field}
-                          formatter={(value) =>
-                            new Intl.NumberFormat("vi-VN", {
-                              style: "currency",
-                              currency: "VND",
-                            }).format(value)
-                          }
-                          parser={(value) => value.replace(/[^\d]/g, "")}
-                          style={{
-                            width: "100%",
-                          }}
-                        />
-                      </Form.Item>
-                    )}
-                  />
+                  </Form.Item>
 
-                  <Controller
-                    name="weekdayPrice"
-                    control={control}
-                    render={({ field, fieldState: { error } }) => (
-                      <Form.Item
-                        label="Weekday Price"
-                        validateStatus={error ? "error" : ""}
-                        help={error?.message}
-                      >
-                        <Row justify="space-between" style={{ width: "100%" }}>
-                          <Col span={11}>
-                            <InputNumber
-                              {...field}
-                              formatter={(value) =>
-                                new Intl.NumberFormat("vi-VN", {
-                                  style: "currency",
-                                  currency: "VND",
-                                }).format(value)
-                              }
-                              parser={(value) => value.replace(/[^\d]/g, "")}
-                              style={{ width: "100%" }}
-                            />
-                          </Col>
-                          <Col span={11}>
-                            <InputNumber
-                              value={percentageWeekdayPrice}
-                              onChange={handlePercentageChangeWeekdayPrice}
-                              formatter={(value) => `${value}%`}
-                              parser={(value) => value.replace("%", "")}
-                              style={{ width: "100%" }}
-                            />
-                          </Col>
-                        </Row>
-                      </Form.Item>
-                    )}
-                  />
+                  <Form.Item label="Weekday Price">
+                    <InputNumber
+                      value={selectedRoom?.weekdayPrice}
+                      formatter={(value) =>
+                        new Intl.NumberFormat("vi-VN", {
+                          style: "currency",
+                          currency: "VND",
+                        }).format(value)
+                      }
+                      parser={(value) => value.replace(/[^\d]/g, "")}
+                      style={{
+                        width: "100%",
+                      }}
+                      readOnly
+                    />
+                  </Form.Item>
 
-                  <Controller
-                    name="weekendPrice"
-                    control={control}
-                    render={({ field, fieldState: { error } }) => (
-                      <Form.Item
-                        label="Weekend Price"
-                        validateStatus={error ? "error" : ""}
-                        help={error?.message}
-                      >
-                        <Row justify="space-between" style={{ width: "100%" }}>
-                          <Col span={11}>
-                            <InputNumber
-                              {...field}
-                              formatter={(value) =>
-                                new Intl.NumberFormat("vi-VN", {
-                                  style: "currency",
-                                  currency: "VND",
-                                }).format(value)
-                              }
-                              parser={(value) => value.replace(/[^\d]/g, "")}
-                              style={{ width: "100%" }}
-                            />
-                          </Col>
-                          <Col span={11}>
-                            <InputNumber
-                              value={percentageWeekendPrice}
-                              onChange={handlePercentageChangeWeekendPrice}
-                              formatter={(value) => `${value}%`}
-                              parser={(value) => value.replace("%", "")}
-                              style={{ width: "100%" }}
-                            />
-                          </Col>
-                        </Row>
-                      </Form.Item>
-                    )}
-                  />
+                  <Form.Item label="Weekend Price">
+                    <InputNumber
+                      value={selectedRoom?.weekendPrice}
+                      formatter={(value) =>
+                        new Intl.NumberFormat("vi-VN", {
+                          style: "currency",
+                          currency: "VND",
+                        }).format(value)
+                      }
+                      parser={(value) => value.replace(/[^\d]/g, "")}
+                      style={{
+                        width: "100%",
+                      }}
+                      readOnly
+                    />
+                  </Form.Item>
 
                   <Form.Item label="Holidays">
                     <DatePicker
@@ -1194,6 +910,7 @@ const UpdateRoom = () => {
                       multiple
                       onChange={onChangeHolidays}
                       maxTagCount="responsive"
+                      disabled
                     />
                   </Form.Item>
 
@@ -1216,62 +933,28 @@ const UpdateRoom = () => {
                           holidaysData.find((h) => h.date === holiday)?.price ||
                           ""
                         }
+                        readOnly
                       />
                     </Form.Item>
                   ))}
 
-                  <Controller
-                    name="discount"
-                    control={control}
-                    // rules={{
-                    //   validate: {
-                    //     min: (value) =>
-                    //       value >= 100000 || "Minimum price is 100,000 VND",
-                    //     max: (value) =>
-                    //       value <= 100000000 ||
-                    //       "Maximum price is 100,000,000 VND",
-                    //   },
-                    // }}
-                    render={({ field, fieldState: { error } }) => (
-                      <Form.Item
-                        label="Discount"
-                        validateStatus={error ? "error" : ""}
-                        help={error?.message}
-                      >
-                        <InputNumber
-                          {...field}
-                          formatter={(value) =>
-                            new Intl.NumberFormat("vi-VN", {
-                              style: "currency",
-                              currency: "VND",
-                            }).format(value)
-                          }
-                          parser={(value) => value.replace(/[^\d]/g, "")}
-                          style={{
-                            width: "100%",
-                          }}
-                        />
-                      </Form.Item>
-                    )}
-                  />
-
-                  <Form.Item>
-                    <Button
-                      htmlType="submit"
+                  <Form.Item label="Discount">
+                    <InputNumber
+                      value={selectedRoom?.discount}
+                      formatter={(value) =>
+                        new Intl.NumberFormat("vi-VN", {
+                          style: "currency",
+                          currency: "VND",
+                        }).format(value)
+                      }
+                      parser={(value) => value.replace(/[^\d]/g, "")}
                       style={{
-                        background: "var(--pink)",
-                        color: "var(--white)",
-                        marginTop: "20px",
                         width: "100%",
                       }}
-                      icon={loadingButton ? <Spin /> : null}
-                      loading={loadingButton}
-                      disabled
-                    >
-                      Save
-                    </Button>
+                      readOnly
+                    />
                   </Form.Item>
-                </Col>{" "}
+                </Col>
               </Row>
             </Form>
           </Col>
@@ -1281,4 +964,4 @@ const UpdateRoom = () => {
   );
 };
 
-export default UpdateRoom;
+export default ViewARoom;

@@ -19,6 +19,7 @@ import {
   notification,
   Spin,
   Popconfirm,
+  Slider,
 } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -37,7 +38,6 @@ import "dayjs/locale/en"; // Import locale 'en' để sử dụng tiếng Anh
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { Controller, useForm } from "react-hook-form";
-import { roomTypes } from "../../utils/enums/RoomTypes";
 import {
   EditOutlined,
   EllipsisOutlined,
@@ -47,6 +47,7 @@ import {
 } from "@ant-design/icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
+  faCaretDown,
   faDoorOpen,
   faEye,
   faPen,
@@ -56,6 +57,8 @@ import { activeStatus } from "../../utils/enums/ActiveStatus";
 import { bookedStatus } from "../../utils/enums/BookedStatus";
 import axios from "axios";
 dayjs.extend(customParseFormat);
+import { roomTypes } from "../../utils/enums/RoomTypes";
+import { roomCategories } from "../../utils/enums/RoomCategories";
 
 const { RangePicker } = DatePicker;
 
@@ -619,11 +622,209 @@ const UpdateHotel = () => {
     return `${year}-${month}-${day}`;
   };
 
-  console.log("holidays: ", holidays);
-  console.log("holidaysData: ", holidaysData);
+  // Room update
+  const roomsColumns = [
+    {
+      title: (
+        <>
+          STT <FontAwesomeIcon icon={faCaretDown} />
+        </>
+      ),
+      render: (text, record, index) => index + 1,
+    },
+    {
+      title: (
+        <>
+          Type <FontAwesomeIcon icon={faCaretDown} />
+        </>
+      ),
+      dataIndex: "type",
+    },
+    {
+      title: (
+        <>
+          Caterory <FontAwesomeIcon icon={faCaretDown} />
+        </>
+      ),
+      dataIndex: "category",
+    },
+    {
+      title: (
+        <>
+          Number <FontAwesomeIcon icon={faCaretDown} />
+        </>
+      ),
+      dataIndex: "roomNumber",
+    },
+    {
+      title: (
+        <>
+          Views <FontAwesomeIcon icon={faCaretDown} />
+        </>
+      ),
+      dataIndex: "roomViews",
+      render: (roomViews) => (
+        <>
+          {roomViews.map((view) => (
+            <Col
+              key={view.id}
+              span={24}
+              style={{
+                display: "flex",
+                justifyContent: "start",
+                alignItems: "center",
+                gap: "5px",
+              }}
+            >
+              <Tag>{view.name}</Tag>
+              {view.images.split(",").map((image, idx) => (
+                <Image
+                  key={idx}
+                  src={image}
+                  style={{
+                    width: "50px",
+                    height: "50px",
+                    borderRadius: "5px",
+                  }}
+                />
+              ))}
+            </Col>
+          ))}
+        </>
+      ),
+    },
+    {
+      title: (
+        <>
+          Images <FontAwesomeIcon icon={faCaretDown} />
+        </>
+      ),
+      dataIndex: "imageUrls",
+      render: (imageUrls) => (
+        <>
+          <Col
+            style={{
+              display: "flex",
+              justifyContent: "start",
+              alignItems: "center",
+              gap: "5px",
+            }}
+          >
+            {imageUrls.map((image, idx) => (
+              <Image
+                key={idx}
+                src={image}
+                style={{
+                  width: "50px",
+                  height: "50px",
+                  borderRadius: "5px",
+                }}
+              />
+            ))}
+          </Col>
+        </>
+      ),
+    },
+    {
+      title: (
+        <>
+          Actions <FontAwesomeIcon icon={faCaretDown} />
+        </>
+      ),
+      dataIndex: "actions",
+      render: (text, record) => (
+        <>
+          <Button
+            size="small"
+            style={{
+              color: "var(--gray-light)",
+              marginRight: "5px",
+            }}
+            onClick={() => handleNavigateViewRoom(record?.id)}
+          >
+            <FontAwesomeIcon icon={faEye} />
+          </Button>
 
-  const handleNavigateAddRoom = () => {
-    navigate(`/admin/hotels/${hotelId}/room/create`);
+          <Button
+            size="small"
+            style={{
+              color: "var(--gray-light)",
+              marginRight: "5px",
+            }}
+            onClick={() => handleNavigateUpdateRoom(record?.id)}
+          >
+            <FontAwesomeIcon icon={faPen} />
+          </Button>
+        </>
+      ),
+    },
+  ];
+
+  const [typeFilter, setTypeFilter] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("");
+
+  // const onSearch = (value) => {
+  //   console.log(value);
+  // };
+
+  const onChangeType = (value) => {
+    console.log(value);
+    setTypeFilter(value);
+  };
+
+  const onChangeCategory = (value) => {
+    console.log(value);
+    setCategoryFilter(value);
+  };
+
+  const [priceRange, setPriceRange] = useState([0, 10000000]);
+  const [filteredRooms, setFilteredRooms] = useState([]);
+
+  const handlePriceRangeChange = (value) => {
+    setPriceRange(value);
+  };
+
+  const onChangeComplete = (value) => {
+    console.log("onChangeComplete: ", value);
+    // setPriceRange(value);
+  };
+
+  const filterRooms = () => {
+    if (!hotel?.rooms) return [];
+
+    return hotel?.rooms?.filter((room) => {
+      const isTypeMatch =
+        typeFilter.trim() !== "" ? room.type === typeFilter : true;
+      const isCategoryMatch =
+        categoryFilter.trim() !== "" ? room.category === categoryFilter : true;
+      const { defaultPrice, weekdayPrice, weekendPrice } = room;
+
+      const isPriceMatch =
+        (defaultPrice >= priceRange[0] && defaultPrice <= priceRange[1]) ||
+        (weekdayPrice >= priceRange[0] && weekdayPrice <= priceRange[1]) ||
+        (weekendPrice >= priceRange[0] && weekendPrice <= priceRange[1]);
+
+      return isTypeMatch && isCategoryMatch && isPriceMatch;
+    });
+  };
+
+  console.log("typeFilter: ", typeFilter);
+  console.log("categoryFilter: ", categoryFilter);
+  console.log("priceRange: ", priceRange);
+  console.log("filteredRooms: ", filteredRooms);
+
+  useEffect(() => {
+    if (hotel?.rooms) {
+      setFilteredRooms(filterRooms());
+    }
+  }, [hotel?.rooms, typeFilter, categoryFilter, priceRange]);
+
+  const marks = {
+    0: "0đ",
+    2500000: "2.500.000đ",
+    5000000: "5.000.000đ",
+    7500000: "7.500.000đ",
+    10000000: "10.000.000đ",
   };
 
   return (
@@ -861,8 +1062,8 @@ const UpdateHotel = () => {
             <Col
               xl={24}
               style={{
-                borderBottom: "1px solid var(--border)",
-                padding: "0 0 20px 0",
+                borderTop: "1px solid var(--border)",
+                padding: "20px 0 20px 0",
                 marginBottom: "10px",
                 display: "flex",
                 justifyContent: "space-between",
@@ -885,915 +1086,135 @@ const UpdateHotel = () => {
                   },
                 ]}
               />
-            </Col>
-            <Row gutter={16}>
-              {hotel?.rooms?.map((room) => (
-                <Col
-                  span={4}
-                  style={{
-                    height: "225px",
-                    marginBottom: "16px",
-                  }}
-                >
-                  <Card
-                    hoverable
-                    bordered={false}
-                    style={{
-                      height: "100%",
-                    }}
-                    actions={[
-                      <Button
-                        size="small"
-                        style={{
-                          color: "var(--gray-light)",
-                          border: "none",
-                        }}
-                        onClick={() => handleNavigateDetailRoom(room?.id)}
-                      >
-                        <FontAwesomeIcon icon={faEye} />
-                      </Button>,
-                      <Button
-                        size="small"
-                        style={{
-                          color: "var(--gray-light)",
-                          border: "none",
-                        }}
-                        onClick={() => handleNavigateUpdateRoom(room?.id)}
-                      >
-                        <FontAwesomeIcon icon={faPen} />
-                      </Button>,
-                      <Popconfirm
-                        title="Delete room"
-                        description="Are you sure you want to delete this room?"
-                        icon={
-                          <QuestionCircleOutlined
-                            style={{
-                              color: "red",
-                            }}
-                          />
-                        }
-                        onConfirm={() => confirm(room?.id)}
-                        onCancel={cancel}
-                        okText="Yes"
-                        cancelText="No"
-                      >
-                        <Button
-                          size="small"
-                          style={{
-                            color: "var(--gray-light)",
-                            border: "none",
-                          }}
-                        >
-                          <FontAwesomeIcon icon={faTrashCan} />
-                        </Button>
-                      </Popconfirm>,
-                    ]}
-                  >
-                    <Col
-                      style={{
-                        textAlign: "center",
-                      }}
-                    >
-                      <Text
-                        style={{
-                          fontSize: "16px",
-                          fontWeight: 600,
-                        }}
-                      >
-                        Room no
-                      </Text>
-                    </Col>
 
-                    <Col
-                      style={{
-                        textAlign: "center",
-                      }}
-                    >
-                      <Text
-                        style={{
-                          fontSize: "30px",
-                          fontWeight: 600,
-                          color: "var(--green-dark)",
-                        }}
-                      >
-                        {room?.roomNumber}
-                      </Text>
-                    </Col>
-                    <Col
-                      style={{
-                        textAlign: "center",
-                        marginBottom: "10px",
-                        paddingBottom: "10px",
-                      }}
-                    >
-                      <Text
-                        style={{
-                          fontWeight: 600,
-                          color: "var(--green-dark)",
-                        }}
-                      >
-                        {room?.type}
-                      </Text>
-                    </Col>
-                    <Col
-                      style={{
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                      }}
-                    >
-                      <Tag color="var(--pink)">
-                        {new Intl.NumberFormat("vi-VN", {
-                          style: "currency",
-                          currency: "VND",
-                        }).format(
-                          room?.roomHolidays?.find(
-                            (holiday) => holiday.date === getCurrentDate()
-                          )?.price - room?.discount ||
-                            (isWeekend ? room?.weekendPrice : room?.basePrice) -
-                              room?.discount
-                        )}{" "}
-                        /per hour
-                      </Tag>
-                    </Col>
-
-                    {/* <Row
-                      justify={"space-between"}
-                      style={{
-                        width: "100%",
-                        marginTop: "20px",
-                      }}
-                    >
-                      <Col>
-                        <Tag
-                          color={
-                            getTagProps(room?.bookedStatus)?.color || "default"
-                          }
-                        >
-                          {getTagProps(room?.bookedStatus)?.tagText ||
-                            "Unknown"}
-                        </Tag>
-                      </Col>
-                      <Col>
-                        <Tag
-                          color={
-                            getTagProps(room?.activeStatus)?.color || "default"
-                          }
-                        >
-                          {getTagProps(room?.activeStatus)?.tagText ||
-                            "Unknown"}
-                        </Tag>
-                      </Col>
-                    </Row> */}
-                  </Card>
-                </Col>
-              ))}
-
-              <Col
-                span={4}
+              <Button
                 style={{
-                  height: "225px",
+                  background: "var(--green-dark)",
+                  border: "var(--green-dark)",
                 }}
               >
                 <Link to={`/admin/hotels/${hotelId}/room/create`}>
-                  <Card
-                    hoverable
-                    bordered={false}
-                    style={{
-                      height: "100%",
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                    }}
+                  <CustomText
+                    size={"14px"}
+                    weight={"500"}
+                    color={"var(--white)"}
+                    isButton={true}
                   >
-                    <Col
-                      style={{
-                        textAlign: "center",
-                      }}
-                    >
-                      <Text
-                        style={{
-                          fontSize: "30px",
-                          fontWeight: 600,
-                          color: "var(--green-dark)",
-                        }}
-                      >
-                        <FontAwesomeIcon icon={faDoorOpen} />
-                      </Text>
-                    </Col>
-                    <Col
-                      style={{
-                        textAlign: "center",
-                      }}
-                    >
-                      <Text
-                        style={{
-                          fontSize: "16px",
-                          fontWeight: 600,
-                          color: "var(--green-dark)",
-                        }}
-                      >
-                        Add Room
-                      </Text>
-                    </Col>
-                  </Card>
+                    Create Room
+                  </CustomText>
                 </Link>
-              </Col>
-            </Row>
-
-            {/* Modal hiển thị form duyệt đơn đăng ký giáo viên */}
-            <Modal
-              title="Add room in hotel"
-              footer={null}
-              open={isModalAddRoom}
-              onOk={handleOkAddRoom}
-              onCancel={handleCancelAddRoom}
-              width={800}
+              </Button>
+            </Col>
+            <Col
+              span={24}
+              style={{
+                padding: "0 40px 20px 0",
+                marginBottom: "10px",
+                display: "flex",
+                justifyContent: "end",
+                alignItems: "center",
+                gap: "30px",
+              }}
             >
-              <Form
-                onFinish={handleSubmit(onSubmitAddRoom)}
-                layout="vertical"
+              {/* <Search
+                  placeholder="Search type and category"
+                  onSearch={onSearch}
+                  style={{
+                    width: 300,
+                  }}
+                /> */}
+
+              <Col
                 style={{
-                  width: "100%",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "10px",
                 }}
               >
-                <Row
-                  justify={"space-between"}
+                <Text>Types</Text>
+                <Select
+                  onChange={onChangeType}
                   style={{
-                    width: "100%",
+                    width: "150px",
                   }}
-                  gutter={20}
+                  defaultValue={""}
                 >
-                  <Col xs={12} sm={12} md={12} lg={12} xl={12}>
-                    <Controller
-                      name="roomNumber"
-                      control={control}
-                      rules={{ required: "Room number is required" }}
-                      render={({ field, fieldState: { error } }) => (
-                        <Form.Item
-                          label="Room Number"
-                          validateStatus={error ? "error" : ""}
-                          help={error?.message}
-                        >
-                          <Input {...field} placeholder="Enter room number" />
-                        </Form.Item>
-                      )}
-                    />
-
-                    <Controller
-                      name="type"
-                      control={control}
-                      rules={{ required: "Room type is required" }}
-                      render={({ field, fieldState: { error } }) => (
-                        <Form.Item
-                          label="Type"
-                          validateStatus={error ? "error" : ""}
-                          help={error?.message}
-                        >
-                          <Select
-                            {...field}
-                            placeholder="Choose room type"
-                            onChange={(value) => {
-                              field.onChange(value);
-                            }}
-                          >
-                            {roomTypes.map((type) => {
-                              return (
-                                <Option key={type} value={type}>
-                                  {type}
-                                </Option>
-                              );
-                            })}
-                          </Select>
-                        </Form.Item>
-                      )}
-                    />
-
-                    <Controller
-                      name="numberOfResidents"
-                      control={control}
-                      rules={{
-                        required: "Base price is required",
-                      }}
-                      render={({ field, fieldState: { error } }) => (
-                        <Form.Item
-                          label="Number Of Residents"
-                          validateStatus={error ? "error" : ""}
-                          help={error?.message}
-                        >
-                          <InputNumber
-                            {...field}
-                            defaultValue={0}
-                            style={{
-                              width: "100%",
-                            }}
-                          />
-                        </Form.Item>
-                      )}
-                    />
-
-                    <Form.Item
-                      label="Images"
-                      // validateStatus={thumbnailUrls.length === 0 ? "error" : ""}
-                      // help={
-                      //   thumbnailUrls.length === 0
-                      //     ? "Please select at least one image"
-                      //     : ""
-                      // }
-                    >
-                      <input
-                        id="imageInput"
-                        type="file"
-                        multiple
-                        onChange={handleImageChange}
-                      />
-                    </Form.Item>
-                  </Col>
-                  <Col xs={12} sm={12} md={12} lg={12} xl={12}>
-                    <Controller
-                      name="basePrice"
-                      control={control}
-                      rules={{
-                        required: "Base price is required",
-                        validate: {
-                          min: (value) =>
-                            value >= 100000 || "Minimum price is 100,000 VND",
-                          max: (value) =>
-                            value <= 100000000 ||
-                            "Maximum price is 100,000,000 VND",
-                        },
-                      }}
-                      render={({ field, fieldState: { error } }) => (
-                        <Form.Item
-                          label="Base price / per hour"
-                          validateStatus={error ? "error" : ""}
-                          help={error?.message}
-                        >
-                          <InputNumber
-                            {...field}
-                            formatter={(value) =>
-                              new Intl.NumberFormat("vi-VN", {
-                                style: "currency",
-                                currency: "VND",
-                              }).format(value)
-                            }
-                            parser={(value) => value.replace(/[^\d]/g, "")}
-                            style={{
-                              width: "100%",
-                            }}
-                          />
-                        </Form.Item>
-                      )}
-                    />
-
-                    <Controller
-                      name="weekendPrice"
-                      control={control}
-                      rules={{
-                        required: "Weekend price is required",
-                        validate: {
-                          min: (value) =>
-                            value >= 100000 || "Minimum price is 100,000 VND",
-                          max: (value) =>
-                            value <= 100000000 ||
-                            "Maximum price is 100,000,000 VND",
-                        },
-                      }}
-                      render={({ field, fieldState: { error } }) => (
-                        <Form.Item
-                          label="Weekend price / per hour"
-                          validateStatus={error ? "error" : ""}
-                          help={error?.message}
-                        >
-                          <InputNumber
-                            {...field}
-                            formatter={(value) =>
-                              new Intl.NumberFormat("vi-VN", {
-                                style: "currency",
-                                currency: "VND",
-                              }).format(value)
-                            }
-                            parser={(value) => value.replace(/[^\d]/g, "")}
-                            style={{
-                              width: "100%",
-                            }}
-                          />
-                        </Form.Item>
-                      )}
-                    />
-
-                    <Form.Item label="Holidays">
-                      <DatePicker
-                        multiple
-                        onChange={onChangeHolidays}
-                        maxTagCount="responsive"
-                      />
-                    </Form.Item>
-
-                    {holidays?.map((holiday, index) => (
-                      <Form.Item key={index} label={`Price for ${holiday}`}>
-                        <InputNumber
-                          formatter={(value) =>
-                            new Intl.NumberFormat("vi-VN", {
-                              style: "currency",
-                              currency: "VND",
-                            }).format(value)
-                          }
-                          parser={(value) => value.replace(/[^\d]/g, "")}
-                          placeholder={`Enter price for ${holiday}`}
-                          style={{
-                            width: "100%",
-                          }}
-                          onChange={(value) =>
-                            handlePriceChange(holiday, value)
-                          }
-                          value={
-                            holidaysData.find((h) => h.date === holiday)
-                              ?.price || ""
-                          }
-                        />
-                      </Form.Item>
-                    ))}
-
-                    <Controller
-                      name="discount"
-                      control={control}
-                      // rules={{
-                      //   validate: {
-                      //     min: (value) =>
-                      //       value >= 100000 || "Minimum price is 100,000 VND",
-                      //     max: (value) =>
-                      //       value <= 100000000 ||
-                      //       "Maximum price is 100,000,000 VND",
-                      //   },
-                      // }}
-                      render={({ field, fieldState: { error } }) => (
-                        <Form.Item
-                          label="Discount"
-                          validateStatus={error ? "error" : ""}
-                          help={error?.message}
-                        >
-                          <InputNumber
-                            {...field}
-                            formatter={(value) =>
-                              new Intl.NumberFormat("vi-VN", {
-                                style: "currency",
-                                currency: "VND",
-                              }).format(value)
-                            }
-                            parser={(value) => value.replace(/[^\d]/g, "")}
-                            style={{
-                              width: "100%",
-                            }}
-                          />
-                        </Form.Item>
-                      )}
-                    />
-
-                    <Form.Item>
-                      <Button
-                        htmlType="submit"
-                        style={{
-                          background: "var(--pink)",
-                          color: "var(--white)",
-                          marginTop: "20px",
-                          width: "100%",
-                        }}
-                        icon={loadingButton ? <Spin /> : null}
-                        loading={loadingButton}
-                      >
-                        Save
-                      </Button>
-                    </Form.Item>
-                  </Col>{" "}
-                </Row>
-              </Form>
-            </Modal>
-
-            {/* Modal hiển thị chi tiết room */}
-            <Modal
-              title="Detail room in hotel"
-              footer={null}
-              open={isModalDetailRoom}
-              onOk={handleOkDetailRoom}
-              onCancel={handleCancelDetailRoom}
-              width={700}
-            >
-              <Col xs={22} sm={20} md={16} lg={24} xl={24}>
-                <Form layout="vertical">
-                  <Row
-                    gutter={16}
-                    style={{
-                      width: "100%",
-                    }}
-                  >
-                    <Col span={12}>
-                      <Form.Item label="Room Number">
-                        <Input value={selectedRoom?.roomNumber} readOnly />
-                      </Form.Item>
-
-                      <Form.Item label="Price / per hour">
-                        <InputNumber
-                          value={selectedRoom?.price}
-                          formatter={(value) =>
-                            new Intl.NumberFormat("vi-VN", {
-                              style: "currency",
-                              currency: "VND",
-                            }).format(value)
-                          }
-                          parser={(value) => value.replace(/[^\d]/g, "")}
-                          style={{
-                            width: "100%",
-                          }}
-                          readOnly
-                        />
-                      </Form.Item>
-
-                      <Form.Item label="Discount">
-                        <InputNumber
-                          value={selectedRoom?.discount}
-                          formatter={(value) =>
-                            new Intl.NumberFormat("vi-VN", {
-                              style: "currency",
-                              currency: "VND",
-                            }).format(value)
-                          }
-                          parser={(value) => value.replace(/[^\d]/g, "")}
-                          style={{
-                            width: "100%",
-                          }}
-                          readOnly
-                        />
-                      </Form.Item>
-
-                      <Form.Item label="Type">
-                        <Input value={selectedRoom?.type} readOnly />
-                      </Form.Item>
-
-                      <Form.Item label="Booked Status">
-                        <Tag
-                          color={
-                            getTagProps(selectedRoom?.bookedStatus)?.color ||
-                            "default"
-                          }
-                        >
-                          {getTagProps(selectedRoom?.bookedStatus)?.tagText ||
-                            "Unknown"}
-                        </Tag>
-                      </Form.Item>
-
-                      <Form.Item label="Active Status">
-                        <Tag
-                          color={
-                            getTagProps(selectedRoom?.activeStatus)?.color ||
-                            "default"
-                          }
-                        >
-                          {getTagProps(selectedRoom?.activeStatus)?.tagText ||
-                            "Unknown"}
-                        </Tag>
-                      </Form.Item>
-                    </Col>
-                    <Col span={12}>
-                      <Form.Item label="Images">
-                        <Row
-                          gutter={8}
-                          style={{
-                            width: "100%",
-                          }}
-                        >
-                          {selectedRoom?.imageUrls.map((url, index) => (
-                            <Col
-                              span={12}
-                              key={index}
-                              style={{ marginBottom: "10px" }}
-                            >
-                              <Image
-                                src={url}
-                                width={"100%"}
-                                height={"150px"}
-                                style={{
-                                  border: "1px solid var(--border)",
-                                  borderRadius: "6px",
-                                  objectFit: "cover",
-                                }}
-                              />
-                            </Col>
-                          ))}
-                        </Row>
-                      </Form.Item>
-                    </Col>
-                  </Row>
-                </Form>
+                  <Option value={""}>All</Option>
+                  {roomTypes?.map((type, index) => {
+                    return (
+                      <Option key={index} value={type}>
+                        {type}
+                      </Option>
+                    );
+                  })}
+                </Select>
               </Col>
-            </Modal>
 
-            {/* Modal hiển thị form duyệt đơn đăng ký giáo viên */}
-            <Modal
-              title="Update room in hotel"
-              footer={null}
-              open={isModalUpdateRoom}
-              onOk={handleOkUpdateRoom}
-              onCancel={handleCancelUpdateRoom}
-              width={700}
-            >
-              <Form
-                onFinish={handleSubmit(onSubmitUpdateRoom)}
-                layout="vertical"
+              <Col
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "10px",
+                }}
               >
-                <Row
-                  gutter={16}
+                <Text>Categories</Text>
+                <Select
+                  onChange={onChangeCategory}
                   style={{
-                    width: "100%",
+                    width: "150px",
                   }}
+                  defaultValue={""}
                 >
-                  <Col span={12}>
-                    <Controller
-                      name="roomNumberRoom"
-                      control={control}
-                      rules={{ required: "Room number is required" }}
-                      render={({ field, fieldState: { error } }) => (
-                        <Form.Item
-                          label="Room Number"
-                          validateStatus={error ? "error" : ""}
-                          help={error?.message}
-                        >
-                          <Input {...field} placeholder="Enter room number" />
-                        </Form.Item>
-                      )}
-                    />
+                  <Option value={""}>All</Option>
+                  {roomCategories?.map((cate, index) => {
+                    return (
+                      <Option key={index} value={cate}>
+                        {cate}
+                      </Option>
+                    );
+                  })}
+                </Select>
+              </Col>
 
-                    <Controller
-                      name="priceRoom"
-                      control={control}
-                      rules={{
-                        required: "Price is required",
-                        validate: {
-                          min: (value) =>
-                            value >= 100000 || "Minimum price is 100,000 VND",
-                          max: (value) =>
-                            value <= 100000000 ||
-                            "Maximum price is 100,000,000 VND",
-                        },
-                      }}
-                      render={({ field, fieldState: { error } }) => (
-                        <Form.Item
-                          label="Price / per hour"
-                          validateStatus={error ? "error" : ""}
-                          help={error?.message}
-                        >
-                          <InputNumber
-                            {...field}
-                            formatter={(value) =>
-                              new Intl.NumberFormat("vi-VN", {
-                                style: "currency",
-                                currency: "VND",
-                              }).format(value)
-                            }
-                            parser={(value) => value.replace(/[^\d]/g, "")}
-                            style={{
-                              width: "100%",
-                            }}
-                          />
-                        </Form.Item>
-                      )}
-                    />
-
-                    <Controller
-                      name="discountRoom"
-                      control={control}
-                      // rules={{
-                      //   required: "Price is required",
-                      //   validate: {
-                      //     min: (value) =>
-                      //       value >= 100000 || "Minimum price is 100,000 VND",
-                      //     max: (value) =>
-                      //       value <= 100000000 ||
-                      //       "Maximum price is 100,000,000 VND",
-                      //   },
-                      // }}
-                      render={({ field, fieldState: { error } }) => (
-                        <Form.Item
-                          label="Discount"
-                          validateStatus={error ? "error" : ""}
-                          help={error?.message}
-                        >
-                          <InputNumber
-                            {...field}
-                            formatter={(value) =>
-                              new Intl.NumberFormat("vi-VN", {
-                                style: "currency",
-                                currency: "VND",
-                              }).format(value)
-                            }
-                            parser={(value) => value.replace(/[^\d]/g, "")}
-                            style={{
-                              width: "100%",
-                            }}
-                          />
-                        </Form.Item>
-                      )}
-                    />
-
-                    <Controller
-                      name="typeRoom"
-                      control={control}
-                      rules={{ required: "Room type is required" }}
-                      render={({ field, fieldState: { error } }) => (
-                        <Form.Item
-                          label="Type"
-                          validateStatus={error ? "error" : ""}
-                          help={error?.message}
-                        >
-                          <Select
-                            {...field}
-                            placeholder="Choose room type"
-                            onChange={(value) => {
-                              field.onChange(value);
-                            }}
-                          >
-                            {roomTypes.map((type) => {
-                              return (
-                                <Option key={type} value={type}>
-                                  {type}
-                                </Option>
-                              );
-                            })}
-                          </Select>
-                        </Form.Item>
-                      )}
-                    />
-
-                    <Controller
-                      name="bookedStatusRoom"
-                      control={control}
-                      render={({ field, fieldState: { error } }) => (
-                        <Form.Item
-                          label="Booked Status"
-                          validateStatus={error ? "error" : ""}
-                          help={error?.message}
-                        >
-                          <Select
-                            {...field}
-                            onChange={(value) => {
-                              field.onChange(value);
-                            }}
-                          >
-                            {bookedStatus.map((bookedStatusRoom) => {
-                              let label = bookedStatusRoom;
-
-                              if (bookedStatusRoom === "NOT_BOOKED") {
-                                label = "Not Booked";
-                              } else if (bookedStatusRoom === "BOOKED") {
-                                label = "Booked";
-                              } else if (bookedStatusRoom === "CANCELLED") {
-                                label = "Cancelled";
-                              }
-
-                              return (
-                                <Option
-                                  key={bookedStatusRoom}
-                                  value={bookedStatusRoom}
-                                >
-                                  {label}
-                                </Option>
-                              );
-                            })}
-                          </Select>
-                        </Form.Item>
-                      )}
-                    />
-
-                    <Controller
-                      name="activeStatusRoom"
-                      control={control}
-                      render={({ field, fieldState: { error } }) => (
-                        <Form.Item
-                          label="Active Status"
-                          validateStatus={error ? "error" : ""}
-                          help={error?.message}
-                        >
-                          <Select
-                            {...field}
-                            onChange={(value) => {
-                              field.onChange(value);
-                            }}
-                          >
-                            {activeStatus.map((activeStatusRoom) => {
-                              let label = activeStatusRoom;
-
-                              if (activeStatusRoom === "ACTIVE") {
-                                label = "Active";
-                              } else if (activeStatusRoom === "IN_ACTIVE") {
-                                label = "In Active";
-                              }
-
-                              return (
-                                <Option
-                                  key={activeStatusRoom}
-                                  value={activeStatusRoom}
-                                >
-                                  {label}
-                                </Option>
-                              );
-                            })}
-                          </Select>
-                        </Form.Item>
-                      )}
-                    />
-                  </Col>
-
-                  <Col span={12}>
-                    <Form.Item label="Images">
-                      <Row
-                        gutter={8}
-                        style={{
-                          width: "100%",
-                        }}
-                      >
-                        {selectedRoom?.imageUrls.map((url, index) => (
-                          <Col
-                            span={12}
-                            key={index}
-                            style={{ marginBottom: "10px" }}
-                          >
-                            <Image
-                              src={url}
-                              width={"100%"}
-                              height={"150px"}
-                              style={{
-                                border: "1px solid var(--border)",
-                                borderRadius: "6px",
-                                objectFit: "cover",
-                              }}
-                            />
-                          </Col>
-                        ))}
-                      </Row>
-
-                      <Button
-                        style={{
-                          background: "var(--green-dark)",
-                          color: "var(--white)",
-                          border: "var(--green-dark)",
-                        }}
-                        onClick={handleShowChangeImageUpdateRoom}
-                      >
-                        Change image
-                      </Button>
-                    </Form.Item>
-
-                    {isChangeImageUpdateRoom && (
-                      <Controller
-                        name="logo"
-                        control={control}
-                        render={({ field, fieldState: { error } }) => (
-                          <input
-                            id="imageInputUpdateRoom"
-                            type="file"
-                            multiple
-                            onChange={handleImageChangeUpdateRoom}
-                          />
-                        )}
-                      />
-                    )}
-
-                    {/* <Form.Item
-                      label="Images"
-                      // validateStatus={thumbnailUrls.length === 0 ? "error" : ""}
-                      // help={
-                      //   thumbnailUrls.length === 0
-                      //     ? "Please select at least one image"
-                      //     : ""
-                      // }
-                    >
-                      <input
-                        id="imageInputUpdateRoom"
-                        type="file"
-                        multiple
-                        onChange={handleImageChangeUpdateRoom}
-                      />
-                    </Form.Item> */}
-
-                    <Form.Item>
-                      <Button
-                        htmlType="submit"
-                        style={{
-                          background: "var(--pink)",
-                          color: "var(--white)",
-                          marginTop: "20px",
-                          width: "100%",
-                        }}
-                        icon={loadingButtonUpdateRoom ? <Spin /> : null}
-                        loading={loadingButtonUpdateRoom}
-                      >
-                        Save
-                      </Button>
-                    </Form.Item>
-                  </Col>
-                </Row>
-              </Form>
-            </Modal>
+              <Col
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                }}
+              >
+                <Text>Price</Text>
+                <Slider
+                  range
+                  min={0}
+                  max={10000000}
+                  step={100}
+                  value={priceRange}
+                  onChange={handlePriceRangeChange}
+                  onChangeComplete={onChangeComplete}
+                  marks={marks}
+                  style={{
+                    width: "400px",
+                  }}
+                />
+              </Col>
+            </Col>
+            <Row gutter={16}>
+              <Col span={24}>
+                <Table
+                  columns={roomsColumns}
+                  dataSource={filteredRooms}
+                  rowKey="id"
+                  pagination={false}
+                  // pagination={{
+                  //   pageSize: pagination.limit,
+                  //   total:
+                  //     Math.ceil(totalPages / pagination.limit) * pagination.limit,
+                  //   current: currentPage,
+                  // }}
+                  // onChange={handleTableChange}
+                />
+              </Col>
+            </Row>
           </Col>
         </Row>
       )}

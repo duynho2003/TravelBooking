@@ -19,6 +19,8 @@ import {
   notification,
   Spin,
   Popconfirm,
+  Space,
+  List,
 } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -38,9 +40,11 @@ import customParseFormat from "dayjs/plugin/customParseFormat";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { Controller, useForm } from "react-hook-form";
 import { roomTypes } from "../../utils/enums/RoomTypes";
+import { roomCategories } from "../../utils/enums/RoomCategories";
 import {
   EditOutlined,
   EllipsisOutlined,
+  PlusOutlined,
   QuestionCircleOutlined,
   SettingOutlined,
   UserOutlined,
@@ -50,7 +54,9 @@ import {
   faDoorOpen,
   faEye,
   faPen,
+  faPlus,
   faTrashCan,
+  faX,
 } from "@fortawesome/free-solid-svg-icons";
 import { activeStatus } from "../../utils/enums/ActiveStatus";
 import { bookedStatus } from "../../utils/enums/BookedStatus";
@@ -94,7 +100,8 @@ const CreateRoom = () => {
   const [isWeekend, setIsWeekend] = useState(null);
 
   // React Hook Form
-  const { control, handleSubmit, reset } = useForm();
+  const { control, handleSubmit, reset, watch, setValue } = useForm();
+  const roomType = watch("roomType");
 
   // useEffect for loading data
   useEffect(() => {
@@ -357,23 +364,37 @@ const CreateRoom = () => {
 
   // Submit add room
   const onSubmitAddRoom = async (data) => {
-    console.log("data: ", data);
+    const convertViewImagesToString = (views) => {
+      return views.map((view) => ({
+        ...view,
+        viewImages: view.viewImages.join(","),
+      }));
+    };
 
     try {
       setLoadingButton(true);
+
+      const viewsWithImageStrings = convertViewImagesToString(views);
 
       const urls = await uploadImages();
 
       const newData = {
         hotelId: parseInt(hotelId),
         roomNumber: data.roomNumber,
-        basePrice: data.basePrice,
+        defaultPrice: data.defaultPrice,
+        weekdayPrice: data.weekdayPrice,
         weekendPrice: data.weekendPrice,
         discount: data.discount || 0.0,
-        type: data.type,
-        numberOfResidents: data.numberOfResidents,
+        type: data.roomType,
+        category: data.roomCategory,
+        quantityAdult: data.quantityAdult,
+        quantityChild: data.quantityChild,
+        childCharge: data.childCharge,
+        quantityBaby: data.quantityBaby,
+        babyCharge: data.babyCharge,
         roomHolidays: holidaysData,
         imageUrls: urls,
+        roomViews: viewsWithImageStrings,
       };
 
       console.log("newData: ", newData);
@@ -390,8 +411,6 @@ const CreateRoom = () => {
 
           setHolidays(null);
           setHolidaysData(null);
-
-          // navigate(`/admin/hotels/update/${hotelId}`);
 
           window.location.reload();
 
@@ -617,6 +636,134 @@ const CreateRoom = () => {
     setHolidaysData(updatedHolidaysData);
   };
 
+  // Views
+  const [isOpenViews, setIsOpenViews] = useState(true);
+  const [views, setViews] = useState([]);
+  const [view, setView] = useState(null);
+  const [viewImage, setViewImage] = useState(null);
+  const [selectedImagesViews, setSelectedImagesViews] = useState([]);
+  const [isLoadingAddView, setIsLoadingAddView] = useState(false);
+
+  const handleOpenViews = () => {
+    setIsOpenViews(!isOpenViews);
+  };
+
+  const handleChangeView = (value) => {
+    setView(value);
+  };
+
+  const handleImageChangeViews = (e) => {
+    const files = Array.from(e.target.files);
+    setSelectedImagesViews(files);
+  };
+
+  const uploadImagesViews = async () => {
+    try {
+      const uploadPromises = selectedImagesViews.map(async (image) => {
+        const formData = new FormData();
+        formData.append("thumbnail", image);
+
+        const response = await axios.post(
+          `http://localhost:5050/api/v1/auth/upload`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+
+        return response?.data?.data?.thumbnail;
+      });
+
+      const urls = await Promise.all(uploadPromises);
+
+      return urls;
+    } catch (error) {
+      console.error("Error uploading images:", error);
+      throw new Error("Failed to upload images");
+    }
+  };
+
+  const handleAddView = async () => {
+    setIsLoadingAddView(true);
+
+    try {
+      const uploadedImageUrls = await uploadImagesViews();
+
+      setViews((prev) => [...prev, { view, viewImages: uploadedImageUrls }]);
+
+      setView(null);
+      setViewImage(null);
+      setSelectedImages([]);
+      setIsOpenViews(false);
+    } catch (error) {
+      console.error("Error adding view:", error);
+    } finally {
+      setIsLoadingAddView(false);
+    }
+  };
+
+  const handleDeleteView = (indexToRemove) => {
+    setViews((prevViews) =>
+      prevViews.filter((_, index) => index !== indexToRemove)
+    );
+  };
+
+  console.log("views: ", views);
+
+  const [percentageWeekdayPrice, setPercentageWeekdayPrice] = useState(0);
+  const [percentageWeekendPrice, setPercentageWeekendPrice] = useState(0);
+
+  const defaultPriceValue = watch("defaultPrice");
+
+  // Update weekday price based on default price and percentage
+  useEffect(() => {
+    if (defaultPriceValue) {
+      const calculatedPrice =
+        defaultPriceValue * (1 + percentageWeekdayPrice / 100);
+      setValue("weekdayPrice", calculatedPrice);
+    }
+  }, [defaultPriceValue, percentageWeekdayPrice, setValue]);
+
+  const handlePercentageChangeWeekdayPrice = (value) => {
+    setPercentageWeekdayPrice(value);
+  };
+
+  useEffect(() => {
+    if (defaultPriceValue) {
+      const calculatedPrice =
+        defaultPriceValue * (1 + percentageWeekendPrice / 100);
+      setValue("weekendPrice", calculatedPrice);
+    }
+  }, [defaultPriceValue, percentageWeekendPrice, setValue]);
+
+  const handlePercentageChangeWeekendPrice = (value) => {
+    setPercentageWeekendPrice(value);
+  };
+
+  const [isFreeChild, setIsFreeChild] = useState(true);
+
+  const handleFreeClickChild = () => {
+    setIsFreeChild(true);
+    setValue("childCharge", 0);
+  };
+
+  const handleChargeClickChild = () => {
+    setIsFreeChild(false);
+  };
+
+  const [isFreeBaby, setIsFreeBaby] = useState(true);
+
+  const handleFreeClickBaby = () => {
+    setIsFreeBaby(true);
+    setValue("babyCharge", 0);
+  };
+
+  const handleChargeClickBaby = () => {
+    setIsFreeBaby(false);
+  };
+
   return (
     <>
       {/* Show loading */}
@@ -679,22 +826,7 @@ const CreateRoom = () => {
               >
                 <Col xs={12} sm={12} md={12} lg={12} xl={12}>
                   <Controller
-                    name="roomNumber"
-                    control={control}
-                    rules={{ required: "Room number is required" }}
-                    render={({ field, fieldState: { error } }) => (
-                      <Form.Item
-                        label="Room Number"
-                        validateStatus={error ? "error" : ""}
-                        help={error?.message}
-                      >
-                        <Input {...field} placeholder="Enter room number" />
-                      </Form.Item>
-                    )}
-                  />
-
-                  <Controller
-                    name="type"
+                    name="roomType"
                     control={control}
                     rules={{ required: "Room type is required" }}
                     render={({ field, fieldState: { error } }) => (
@@ -723,14 +855,260 @@ const CreateRoom = () => {
                   />
 
                   <Controller
-                    name="numberOfResidents"
+                    name="roomCategory"
                     control={control}
-                    rules={{
-                      required: "Base price is required",
-                    }}
+                    rules={{ required: "Room categories is required" }}
                     render={({ field, fieldState: { error } }) => (
                       <Form.Item
-                        label="Number Of Residents"
+                        label="Categories"
+                        validateStatus={error ? "error" : ""}
+                        help={error?.message}
+                      >
+                        <div>
+                          {roomCategories.map((type) => (
+                            <Button
+                              key={type}
+                              type={
+                                field.value === type ? "primary" : "default"
+                              }
+                              onClick={() => field.onChange(type)}
+                              disabled={!roomType}
+                              style={{
+                                margin: "0 8px 8px 0",
+                                backgroundColor:
+                                  field.value === type
+                                    ? "var(--green-dark)"
+                                    : "#fff",
+                                color: field.value === type ? "#fff" : "#000",
+                              }}
+                            >
+                              {type}
+                            </Button>
+                          ))}
+                        </div>
+                      </Form.Item>
+                    )}
+                  />
+
+                  <Controller
+                    name="roomNumber"
+                    control={control}
+                    rules={{ required: "Room number is required" }}
+                    render={({ field, fieldState: { error } }) => (
+                      <Form.Item
+                        label="Number"
+                        validateStatus={error ? "error" : ""}
+                        help={error?.message}
+                      >
+                        <Input {...field} placeholder="Enter room number" />
+                      </Form.Item>
+                    )}
+                  />
+
+                  <Form.Item
+                    label={
+                      <>
+                        Views{" "}
+                        <FontAwesomeIcon
+                          icon={faPlus}
+                          style={{
+                            cursor: "pointer",
+                            marginLeft: "8px",
+                            color: "var(--white)",
+                            display: "inline-block",
+                            width: "12px",
+                            height: "12px",
+                            border: "1px solid green",
+                            padding: "2px",
+                            borderRadius: "50%",
+                            background: "var(--green-dark)",
+                          }}
+                          onClick={handleOpenViews}
+                        />
+                      </>
+                    }
+                  >
+                    {isOpenViews && (
+                      <>
+                        <Space.Compact
+                          size="middle"
+                          style={{
+                            marginBottom: "15px",
+                            width: "100%",
+                          }}
+                        >
+                          <Input
+                            onChange={(e) => handleChangeView(e.target.value)}
+                            placeholder="Enter view"
+                          />
+                          <input
+                            id="imageInput"
+                            type="file"
+                            multiple
+                            onChange={handleImageChangeViews}
+                            style={{
+                              width: "100%",
+                              border: "1px solid #d9d9d9",
+                              paddingTop: "4px",
+                              paddingLeft: "8px",
+                            }}
+                          />
+                          <Button
+                            onClick={handleAddView}
+                            loading={isLoadingAddView}
+                          >
+                            <PlusOutlined />
+                          </Button>
+                        </Space.Compact>
+                      </>
+                    )}
+
+                    <List
+                      header={<div>List Views</div>}
+                      bordered
+                      dataSource={views}
+                      renderItem={(item, index) => (
+                        <List.Item
+                          style={{
+                            display: "flex",
+                            justifyContent: "start",
+                            alignItems: "center",
+                            gap: "10px",
+                          }}
+                        >
+                          <Tag>{item?.view}</Tag>
+                          {item?.viewImages.map((image, idx) => (
+                            <img
+                              key={idx}
+                              src={image}
+                              alt={`View ${index + 1} Image ${idx + 1}`}
+                              style={{
+                                width: "50px",
+                                height: "50px",
+                                borderRadius: "5px",
+                              }}
+                            />
+                          ))}
+                          <FontAwesomeIcon
+                            icon={faX}
+                            style={{
+                              cursor: "pointer",
+                              marginLeft: "8px",
+                              color: "var(--white)",
+                              display: "inline-block",
+                              width: "12px",
+                              height: "12px",
+                              border: "1px solid var(--pink)",
+                              padding: "2px",
+                              borderRadius: "50%",
+                              background: "var(--pink)",
+                            }}
+                            onClick={() => handleDeleteView(index)}
+                          />
+                        </List.Item>
+                      )}
+                    />
+                  </Form.Item>
+
+                  <Controller
+                    name="quantityAdult"
+                    rules={{ required: "Quantity adult is required" }}
+                    control={control}
+                    render={({ field, fieldState: { error } }) => (
+                      <Form.Item
+                        label="Quantity Adult"
+                        validateStatus={error ? "error" : ""}
+                        help={error?.message}
+                      >
+                        <InputNumber
+                          {...field}
+                          // defaultValue={1}
+                          style={{
+                            width: "100%",
+                          }}
+                          placeholder="1"
+                        />
+                      </Form.Item>
+                    )}
+                  />
+
+                  <Controller
+                    name="quantityChild"
+                    rules={{ required: "Quantity child is required" }}
+                    control={control}
+                    render={({ field, fieldState: { error } }) => (
+                      <Form.Item
+                        label="Quantity Child"
+                        validateStatus={error ? "error" : ""}
+                        help={error?.message}
+                      >
+                        <InputNumber
+                          {...field}
+                          // defaultValue={0}
+                          style={{
+                            width: "100%",
+                          }}
+                          placeholder="0"
+                        />
+                      </Form.Item>
+                    )}
+                  />
+
+                  <Controller
+                    name="childCharge"
+                    control={control}
+                    defaultValue={0}
+                    render={({ field, fieldState: { error } }) => (
+                      <Form.Item
+                        label="Child Charge / Person"
+                        validateStatus={error ? "error" : ""}
+                        help={error?.message}
+                      >
+                        <Space direction="vertical" style={{ width: "100%" }}>
+                          <Space
+                            direction="horizontal"
+                            style={{ width: "100%" }}
+                          >
+                            <Button
+                              size="middle"
+                              type={isFreeChild ? "primary" : "default"}
+                              onClick={handleFreeClickChild}
+                            >
+                              Free
+                            </Button>
+                            <Button
+                              size="middle"
+                              type={!isFreeChild ? "primary" : "default"}
+                              onClick={handleChargeClickChild}
+                            >
+                              Charge
+                            </Button>
+                          </Space>
+                          {!isFreeChild && (
+                            <InputNumber
+                              {...field}
+                              formatter={(value) =>
+                                new Intl.NumberFormat("vi-VN", {
+                                  style: "currency",
+                                  currency: "VND",
+                                }).format(value)
+                              }
+                              parser={(value) => value.replace(/[^\d]/g, "")}
+                              placeholder="Enter child charge"
+                              style={{ width: "100%" }}
+                            />
+                          )}
+                        </Space>
+                      </Form.Item>
+                    )}
+                  />
+
+                  <Controller
+                    name="quantityBaby"
+                    control={control}
+                    render={({ field, fieldState: { error } }) => (
+                      <Form.Item
+                        label="Quantity Baby"
                         validateStatus={error ? "error" : ""}
                         help={error?.message}
                       >
@@ -741,6 +1119,55 @@ const CreateRoom = () => {
                             width: "100%",
                           }}
                         />
+                      </Form.Item>
+                    )}
+                  />
+
+                  <Controller
+                    name="babyCharge"
+                    control={control}
+                    defaultValue={0}
+                    render={({ field, fieldState: { error } }) => (
+                      <Form.Item
+                        label="Baby Charge / Person"
+                        validateStatus={error ? "error" : ""}
+                        help={error?.message}
+                      >
+                        <Space direction="vertical" style={{ width: "100%" }}>
+                          <Space
+                            direction="horizontal"
+                            style={{ width: "100%" }}
+                          >
+                            <Button
+                              size="middle"
+                              type={isFreeBaby ? "primary" : "default"}
+                              onClick={handleFreeClickBaby}
+                            >
+                              Free
+                            </Button>
+                            <Button
+                              size="middle"
+                              type={!isFreeBaby ? "primary" : "default"}
+                              onClick={handleChargeClickBaby}
+                            >
+                              Charge
+                            </Button>
+                          </Space>
+                          {!isFreeBaby && (
+                            <InputNumber
+                              {...field}
+                              formatter={(value) =>
+                                new Intl.NumberFormat("vi-VN", {
+                                  style: "currency",
+                                  currency: "VND",
+                                }).format(value)
+                              }
+                              parser={(value) => value.replace(/[^\d]/g, "")}
+                              placeholder="Enter baby charge"
+                              style={{ width: "100%" }}
+                            />
+                          )}
+                        </Space>
                       </Form.Item>
                     )}
                   />
@@ -764,10 +1191,10 @@ const CreateRoom = () => {
                 </Col>
                 <Col xs={12} sm={12} md={12} lg={12} xl={12}>
                   <Controller
-                    name="basePrice"
+                    name="defaultPrice"
                     control={control}
                     rules={{
-                      required: "Base price is required",
+                      required: "Default price is required",
                       validate: {
                         min: (value) =>
                           value >= 100000 || "Minimum price is 100,000 VND",
@@ -778,7 +1205,7 @@ const CreateRoom = () => {
                     }}
                     render={({ field, fieldState: { error } }) => (
                       <Form.Item
-                        label="Base price / per hour"
+                        label="Default Price"
                         validateStatus={error ? "error" : ""}
                         help={error?.message}
                       >
@@ -800,37 +1227,75 @@ const CreateRoom = () => {
                   />
 
                   <Controller
-                    name="weekendPrice"
+                    name="weekdayPrice"
                     control={control}
-                    rules={{
-                      required: "Weekend price is required",
-                      validate: {
-                        min: (value) =>
-                          value >= 100000 || "Minimum price is 100,000 VND",
-                        max: (value) =>
-                          value <= 100000000 ||
-                          "Maximum price is 100,000,000 VND",
-                      },
-                    }}
                     render={({ field, fieldState: { error } }) => (
                       <Form.Item
-                        label="Weekend price / per hour"
+                        label="Weekday Price"
                         validateStatus={error ? "error" : ""}
                         help={error?.message}
                       >
-                        <InputNumber
-                          {...field}
-                          formatter={(value) =>
-                            new Intl.NumberFormat("vi-VN", {
-                              style: "currency",
-                              currency: "VND",
-                            }).format(value)
-                          }
-                          parser={(value) => value.replace(/[^\d]/g, "")}
-                          style={{
-                            width: "100%",
-                          }}
-                        />
+                        <Row justify="space-between" style={{ width: "100%" }}>
+                          <Col span={11}>
+                            <InputNumber
+                              {...field}
+                              formatter={(value) =>
+                                new Intl.NumberFormat("vi-VN", {
+                                  style: "currency",
+                                  currency: "VND",
+                                }).format(value)
+                              }
+                              parser={(value) => value.replace(/[^\d]/g, "")}
+                              style={{ width: "100%" }}
+                            />
+                          </Col>
+                          <Col span={11}>
+                            <InputNumber
+                              value={percentageWeekdayPrice}
+                              onChange={handlePercentageChangeWeekdayPrice}
+                              formatter={(value) => `${value}%`}
+                              parser={(value) => value.replace("%", "")}
+                              style={{ width: "100%" }}
+                            />
+                          </Col>
+                        </Row>
+                      </Form.Item>
+                    )}
+                  />
+
+                  <Controller
+                    name="weekendPrice"
+                    control={control}
+                    render={({ field, fieldState: { error } }) => (
+                      <Form.Item
+                        label="Weekend Price"
+                        validateStatus={error ? "error" : ""}
+                        help={error?.message}
+                      >
+                        <Row justify="space-between" style={{ width: "100%" }}>
+                          <Col span={11}>
+                            <InputNumber
+                              {...field}
+                              formatter={(value) =>
+                                new Intl.NumberFormat("vi-VN", {
+                                  style: "currency",
+                                  currency: "VND",
+                                }).format(value)
+                              }
+                              parser={(value) => value.replace(/[^\d]/g, "")}
+                              style={{ width: "100%" }}
+                            />
+                          </Col>
+                          <Col span={11}>
+                            <InputNumber
+                              value={percentageWeekendPrice}
+                              onChange={handlePercentageChangeWeekendPrice}
+                              formatter={(value) => `${value}%`}
+                              parser={(value) => value.replace("%", "")}
+                              style={{ width: "100%" }}
+                            />
+                          </Col>
+                        </Row>
                       </Form.Item>
                     )}
                   />
@@ -869,15 +1334,6 @@ const CreateRoom = () => {
                   <Controller
                     name="discount"
                     control={control}
-                    // rules={{
-                    //   validate: {
-                    //     min: (value) =>
-                    //       value >= 100000 || "Minimum price is 100,000 VND",
-                    //     max: (value) =>
-                    //       value <= 100000000 ||
-                    //       "Maximum price is 100,000,000 VND",
-                    //   },
-                    // }}
                     render={({ field, fieldState: { error } }) => (
                       <Form.Item
                         label="Discount"

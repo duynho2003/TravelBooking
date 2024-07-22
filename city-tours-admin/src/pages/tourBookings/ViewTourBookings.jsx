@@ -106,7 +106,7 @@ const ViewTourBookings = () => {
     }
   }, [tourBookings]);
 
-  console.log("uniqueTourNames: ", uniqueTourNames);
+  console.log("tourBookings: ", tourBookings);
 
   // Event Handlers
   const handleTableChange = (pagination) => {
@@ -131,7 +131,7 @@ const ViewTourBookings = () => {
   };
 
   // Sort by desc
-  const sortedTourBookings = tourBookings?.slice().sort((a, b) => {
+  const sortedTourBookings = tourBookings?.slice()?.sort((a, b) => {
     return b.id - a.id;
   });
 

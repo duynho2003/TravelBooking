@@ -37,11 +37,11 @@ const { Option } = Select;
 const { Text } = Typography;
 const { Search } = Input;
 
-const ViewTours = () => {
+const ViewToursCompleted = () => {
   // Constants
   const INIT_PAGE = 1;
   const INIT_LIMIT = 5;
-  const INIT_COMPLETED = "";
+  const INIT_COMPLETED = "true";
 
   // Redux State
   const dispatch = useDispatch();
@@ -204,7 +204,7 @@ const ViewTours = () => {
     {
       title: (
         <>
-          Tour Start Time <FontAwesomeIcon icon={faCaretDown} />
+          Tour End Time <FontAwesomeIcon icon={faCaretDown} />
         </>
       ),
       dataIndex: "tourTimes",
@@ -221,7 +221,7 @@ const ViewTours = () => {
           const startDate = new Date(
             tourTime.startDate.split(" - ")[1].split("/").reverse().join("-")
           );
-          return startDate > currentDate;
+          return startDate < currentDate;
         });
 
         if (futureTourTimes.length === 0) {
@@ -355,7 +355,7 @@ const ViewTours = () => {
             <FontAwesomeIcon icon={faEye} />
           </Button>
 
-          <Button
+          {/* <Button
             size="small"
             style={{
               color: "var(--gray-light)",
@@ -389,7 +389,7 @@ const ViewTours = () => {
             >
               <FontAwesomeIcon icon={faTrashCan} />
             </Button>
-          </Popconfirm>
+          </Popconfirm> */}
         </>
       ),
     },
@@ -580,4 +580,4 @@ const ViewTours = () => {
   );
 };
 
-export default ViewTours;
+export default ViewToursCompleted;

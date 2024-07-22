@@ -16,9 +16,16 @@ import {
   Modal,
   InputNumber,
   Select,
+  Popconfirm,
+  notification,
+  Slider,
 } from "antd";
 import { useDispatch, useSelector } from "react-redux";
-import { getHotelById, getRoomById } from "../../features/hotel/HotelSlice";
+import {
+  deleteRoom,
+  getHotelById,
+  getRoomById,
+} from "../../features/hotel/HotelSlice";
 import "../../App.css";
 import CustomText from "../../components/common/CustomText";
 import Loading from "../../components/common/Loading";
@@ -27,10 +34,19 @@ import "dayjs/locale/en"; // Import locale 'en' để sử dụng tiếng Anh
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { Controller, useForm } from "react-hook-form";
-import { UserOutlined } from "@ant-design/icons";
+import { QuestionCircleOutlined, UserOutlined } from "@ant-design/icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faDoorOpen } from "@fortawesome/free-solid-svg-icons";
+import {
+  faCaretDown,
+  faDoorOpen,
+  faEye,
+  faPen,
+  faTrashCan,
+} from "@fortawesome/free-solid-svg-icons";
+import Search from "antd/es/input/Search";
 dayjs.extend(customParseFormat);
+import { roomTypes } from "../../utils/enums/RoomTypes";
+import { roomCategories } from "../../utils/enums/RoomCategories";
 
 const { RangePicker } = DatePicker;
 
@@ -111,7 +127,7 @@ const ViewAHotel = () => {
     setIsModalDetailRoom(false);
   };
 
-  const handleNavigateDetailRoom = (roomId) => {
+  const handleNavigateViewRoom = (roomId) => {
     navigate(`/admin/hotels/${hotelId}/room/${roomId}/view`);
   };
 
@@ -139,6 +155,215 @@ const ViewAHotel = () => {
     console.log(`${year}-${month}-${day}`);
 
     return `${year}-${month}-${day}`;
+  };
+
+  const handleNavigateUpdateRoom = (roomId) => {
+    navigate(`/admin/hotels/${hotelId}/room/${roomId}/update`);
+  };
+
+  // Room update
+  const roomsColumns = [
+    {
+      title: (
+        <>
+          STT <FontAwesomeIcon icon={faCaretDown} />
+        </>
+      ),
+      render: (text, record, index) => index + 1,
+    },
+    {
+      title: (
+        <>
+          Type <FontAwesomeIcon icon={faCaretDown} />
+        </>
+      ),
+      dataIndex: "type",
+    },
+    {
+      title: (
+        <>
+          Caterory <FontAwesomeIcon icon={faCaretDown} />
+        </>
+      ),
+      dataIndex: "category",
+    },
+    {
+      title: (
+        <>
+          Number <FontAwesomeIcon icon={faCaretDown} />
+        </>
+      ),
+      dataIndex: "roomNumber",
+    },
+    {
+      title: (
+        <>
+          Views <FontAwesomeIcon icon={faCaretDown} />
+        </>
+      ),
+      dataIndex: "roomViews",
+      render: (roomViews) => (
+        <>
+          {roomViews.map((view) => (
+            <Col
+              key={view.id}
+              span={24}
+              style={{
+                display: "flex",
+                justifyContent: "start",
+                alignItems: "center",
+                gap: "5px",
+              }}
+            >
+              <Tag>{view.name}</Tag>
+              {view.images.split(",").map((image, idx) => (
+                <Image
+                  key={idx}
+                  src={image}
+                  style={{
+                    width: "50px",
+                    height: "50px",
+                    borderRadius: "5px",
+                  }}
+                />
+              ))}
+            </Col>
+          ))}
+        </>
+      ),
+    },
+    {
+      title: (
+        <>
+          Images <FontAwesomeIcon icon={faCaretDown} />
+        </>
+      ),
+      dataIndex: "imageUrls",
+      render: (imageUrls) => (
+        <>
+          <Col
+            style={{
+              display: "flex",
+              justifyContent: "start",
+              alignItems: "center",
+              gap: "5px",
+            }}
+          >
+            {imageUrls.map((image, idx) => (
+              <Image
+                key={idx}
+                src={image}
+                style={{
+                  width: "50px",
+                  height: "50px",
+                  borderRadius: "5px",
+                }}
+              />
+            ))}
+          </Col>
+        </>
+      ),
+    },
+    {
+      title: (
+        <>
+          Actions <FontAwesomeIcon icon={faCaretDown} />
+        </>
+      ),
+      dataIndex: "actions",
+      render: (text, record) => (
+        <>
+          <Button
+            size="small"
+            style={{
+              color: "var(--gray-light)",
+              marginRight: "5px",
+            }}
+            onClick={() => handleNavigateViewRoom(record?.id)}
+          >
+            <FontAwesomeIcon icon={faEye} />
+          </Button>
+
+          <Button
+            size="small"
+            style={{
+              color: "var(--gray-light)",
+              marginRight: "5px",
+            }}
+            onClick={() => handleNavigateUpdateRoom(record?.id)}
+          >
+            <FontAwesomeIcon icon={faPen} />
+          </Button>
+        </>
+      ),
+    },
+  ];
+
+  const [typeFilter, setTypeFilter] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("");
+
+  // const onSearch = (value) => {
+  //   console.log(value);
+  // };
+
+  const onChangeType = (value) => {
+    console.log(value);
+    setTypeFilter(value);
+  };
+
+  const onChangeCategory = (value) => {
+    console.log(value);
+    setCategoryFilter(value);
+  };
+
+  const [priceRange, setPriceRange] = useState([0, 10000000]);
+  const [filteredRooms, setFilteredRooms] = useState([]);
+
+  const handlePriceRangeChange = (value) => {
+    setPriceRange(value);
+  };
+
+  const onChangeComplete = (value) => {
+    console.log("onChangeComplete: ", value);
+    setPriceRange(value);
+  };
+
+  const filterRooms = () => {
+    if (!hotel?.rooms) return [];
+
+    return hotel?.rooms?.filter((room) => {
+      const isTypeMatch =
+        typeFilter.trim() !== "" ? room.type === typeFilter : true;
+      const isCategoryMatch =
+        categoryFilter.trim() !== "" ? room.category === categoryFilter : true;
+      const { defaultPrice, weekdayPrice, weekendPrice } = room;
+
+      const isPriceMatch =
+        (defaultPrice >= priceRange[0] && defaultPrice <= priceRange[1]) ||
+        (weekdayPrice >= priceRange[0] && weekdayPrice <= priceRange[1]) ||
+        (weekendPrice >= priceRange[0] && weekendPrice <= priceRange[1]);
+
+      return isTypeMatch && isCategoryMatch && isPriceMatch;
+    });
+  };
+
+  console.log("typeFilter: ", typeFilter);
+  console.log("categoryFilter: ", categoryFilter);
+  console.log("priceRange: ", priceRange);
+  console.log("filteredRooms: ", filteredRooms);
+
+  useEffect(() => {
+    if (hotel?.rooms) {
+      setFilteredRooms(filterRooms());
+    }
+  }, [hotel?.rooms, typeFilter, categoryFilter, priceRange]);
+
+  const marks = {
+    0: "0đ",
+    2500000: "2.500.000đ",
+    5000000: "5.000.000đ",
+    7500000: "7.500.000đ",
+    10000000: "10.000.000đ",
   };
 
   return (
@@ -205,6 +430,7 @@ const ViewAHotel = () => {
                 </Link>
               </Button>
             </Col>
+
             <Col xl={24}>
               <Form layout="vertical">
                 <Row
@@ -284,8 +510,8 @@ const ViewAHotel = () => {
               <Col
                 xl={24}
                 style={{
-                  borderBottom: "1px solid var(--border)",
-                  padding: "0 0 20px 0",
+                  borderTop: "1px solid var(--border)",
+                  padding: "20px 0 20px 0",
                   marginBottom: "10px",
                   display: "flex",
                   justifyContent: "space-between",
@@ -308,255 +534,137 @@ const ViewAHotel = () => {
                     },
                   ]}
                 />
+
+                <Button
+                  style={{
+                    background: "var(--green-dark)",
+                    border: "var(--green-dark)",
+                  }}
+                >
+                  <Link to={`/admin/hotels/${hotelId}/room/create`}>
+                    <CustomText
+                      size={"14px"}
+                      weight={"500"}
+                      color={"var(--white)"}
+                      isButton={true}
+                    >
+                      Create Room
+                    </CustomText>
+                  </Link>
+                </Button>
+              </Col>
+              <Col
+                span={24}
+                style={{
+                  padding: "0 40px 20px 0",
+                  marginBottom: "10px",
+                  display: "flex",
+                  justifyContent: "end",
+                  alignItems: "center",
+                  gap: "30px",
+                }}
+              >
+                {/* <Search
+                  placeholder="Search type and category"
+                  onSearch={onSearch}
+                  style={{
+                    width: 300,
+                  }}
+                /> */}
+
+                <Col
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "10px",
+                  }}
+                >
+                  <Text>Types</Text>
+                  <Select
+                    onChange={onChangeType}
+                    style={{
+                      width: "150px",
+                    }}
+                    defaultValue={""}
+                  >
+                    <Option value={""}>All</Option>
+                    {roomTypes?.map((type, index) => {
+                      return (
+                        <Option key={index} value={type}>
+                          {type}
+                        </Option>
+                      );
+                    })}
+                  </Select>
+                </Col>
+
+                <Col
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "10px",
+                  }}
+                >
+                  <Text>Categories</Text>
+                  <Select
+                    onChange={onChangeCategory}
+                    style={{
+                      width: "150px",
+                    }}
+                    defaultValue={""}
+                  >
+                    <Option value={""}>All</Option>
+                    {roomCategories?.map((cate, index) => {
+                      return (
+                        <Option key={index} value={cate}>
+                          {cate}
+                        </Option>
+                      );
+                    })}
+                  </Select>
+                </Col>
+
+                <Col
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                  }}
+                >
+                  <Text>Price</Text>
+                  <Slider
+                    range
+                    min={0}
+                    max={10000000}
+                    step={100}
+                    value={priceRange}
+                    onChange={handlePriceRangeChange}
+                    onChangeComplete={onChangeComplete}
+                    marks={marks}
+                    style={{
+                      width: "400px",
+                    }}
+                  />
+                </Col>
               </Col>
               <Row gutter={16}>
-                {hotel?.rooms?.map((room) => (
-                  <Col span={4}>
-                    <Card
-                      hoverable
-                      bordered={false}
-                      style={{
-                        border: "1px solid var(--bg-admin)",
-                      }}
-                    >
-                      <Col
-                        style={{
-                          textAlign: "center",
-                        }}
-                      >
-                        <Text
-                          style={{
-                            fontSize: "16px",
-                            fontWeight: 600,
-                          }}
-                        >
-                          Room no
-                        </Text>
-                      </Col>
-
-                      <Col
-                        style={{
-                          textAlign: "center",
-                        }}
-                      >
-                        <Text
-                          style={{
-                            fontSize: "30px",
-                            fontWeight: 600,
-                            color: "var(--green-dark)",
-                          }}
-                        >
-                          {room?.roomNumber}
-                        </Text>
-                      </Col>
-                      <Col
-                        style={{
-                          textAlign: "center",
-                          marginBottom: "10px",
-                          paddingBottom: "10px",
-                          borderBottom: "1px solid var(--border)",
-                        }}
-                      >
-                        <Text
-                          style={{
-                            fontWeight: 600,
-                            color: "var(--green-dark)",
-                          }}
-                        >
-                          {room?.type}
-                        </Text>
-                      </Col>
-                      <Col
-                        style={{
-                          display: "flex",
-                          justifyContent: "center",
-                          alignItems: "center",
-                        }}
-                      >
-                        <Tag color="var(--pink)">
-                          {new Intl.NumberFormat("vi-VN", {
-                            style: "currency",
-                            currency: "VND",
-                          }).format(
-                            room?.roomHolidays?.find(
-                              (holiday) => holiday.date === getCurrentDate()
-                            )?.price - room?.discount ||
-                              (isWeekend
-                                ? room?.weekendPrice
-                                : room?.basePrice) - room?.discount
-                          )}{" "}
-                          /per hour
-                        </Tag>
-                      </Col>
-
-                      {/* <Row
-                      justify={"space-between"}
-                      style={{
-                        width: "100%",
-                        marginTop: "20px",
-                      }}
-                    >
-                      <Col>
-                        <Tag
-                          color={
-                            getTagProps(room?.bookedStatus)?.color || "default"
-                          }
-                        >
-                          {getTagProps(room?.bookedStatus)?.tagText ||
-                            "Unknown"}
-                        </Tag>
-                      </Col>
-                      <Col>
-                        <Tag
-                          color={
-                            getTagProps(room?.activeStatus)?.color || "default"
-                          }
-                        >
-                          {getTagProps(room?.activeStatus)?.tagText ||
-                            "Unknown"}
-                        </Tag>
-                      </Col>
-                    </Row> */}
-
-                      <Row
-                        justify={"center"}
-                        style={{
-                          width: "100%",
-                          marginTop: "20px",
-                        }}
-                      >
-                        {/* <Col>
-                        <Link to={`/courses/${1}`}>
-                          <Button>Update</Button>
-                        </Link>
-                      </Col> */}
-
-                        <Col>
-                          <Button
-                            style={{
-                              background: "var(--green-dark)",
-                              color: "var(--white)",
-                            }}
-                            onClick={() => handleNavigateDetailRoom(room?.id)}
-                          >
-                            Detail
-                          </Button>
-                        </Col>
-                      </Row>
-                    </Card>
-                  </Col>
-                ))}
-                {hotel?.rooms?.length === 0 && (
-                  <Col span={24}>
-                    <Text style={{ fontSize: "14px", fontWeight: 400 }}>
-                      This hotel has no rooms available
-                    </Text>
-                  </Col>
-                )}
+                <Col span={24}>
+                  <Table
+                    columns={roomsColumns}
+                    dataSource={filteredRooms}
+                    rowKey="id"
+                    pagination={false}
+                    // pagination={{
+                    //   pageSize: pagination.limit,
+                    //   total:
+                    //     Math.ceil(totalPages / pagination.limit) * pagination.limit,
+                    //   current: currentPage,
+                    // }}
+                    // onChange={handleTableChange}
+                  />
+                </Col>
               </Row>
             </Col>
           </Row>
-
-          {/* Modal hiển thị chi tiết room */}
-          <Modal
-            title="Detail room in hotel"
-            footer={null}
-            open={isModalDetailRoom}
-            onOk={handleOkDetailRoom}
-            onCancel={handleCancelDetailRoom}
-            width={700}
-          >
-            <Col xs={22} sm={20} md={16} lg={24} xl={24}>
-              <Form layout="vertical">
-                <Row
-                  gutter={16}
-                  style={{
-                    width: "100%",
-                  }}
-                >
-                  <Col span={12}>
-                    <Form.Item label="Room Number">
-                      <Input value={selectedRoom?.roomNumber} readOnly />
-                    </Form.Item>
-
-                    <Form.Item label="Price / per night">
-                      <InputNumber
-                        value={selectedRoom?.price}
-                        formatter={(value) =>
-                          new Intl.NumberFormat("vi-VN", {
-                            style: "currency",
-                            currency: "VND",
-                          }).format(value)
-                        }
-                        parser={(value) => value.replace(/[^\d]/g, "")}
-                        style={{
-                          width: "100%",
-                        }}
-                        readOnly
-                      />
-                    </Form.Item>
-
-                    <Form.Item label="Type">
-                      <Input value={selectedRoom?.type} readOnly />
-                    </Form.Item>
-
-                    <Form.Item label="Booked Status">
-                      <Tag
-                        color={
-                          getTagProps(selectedRoom?.bookedStatus)?.color ||
-                          "default"
-                        }
-                      >
-                        {getTagProps(selectedRoom?.bookedStatus)?.tagText ||
-                          "Unknown"}
-                      </Tag>
-                    </Form.Item>
-
-                    <Form.Item label="Active Status">
-                      <Tag
-                        color={
-                          getTagProps(selectedRoom?.activeStatus)?.color ||
-                          "default"
-                        }
-                      >
-                        {getTagProps(selectedRoom?.activeStatus)?.tagText ||
-                          "Unknown"}
-                      </Tag>
-                    </Form.Item>
-                  </Col>
-                  <Col span={12}>
-                    <Form.Item label="Images">
-                      <Row
-                        gutter={8}
-                        style={{
-                          width: "100%",
-                        }}
-                      >
-                        {selectedRoom?.imageUrls.map((url, index) => (
-                          <Col
-                            span={12}
-                            key={index}
-                            style={{ marginBottom: "10px" }}
-                          >
-                            <Image
-                              src={url}
-                              width={"100%"}
-                              height={"150px"}
-                              style={{
-                                border: "1px solid var(--border)",
-                                borderRadius: "6px",
-                                objectFit: "cover",
-                              }}
-                            />
-                          </Col>
-                        ))}
-                      </Row>
-                    </Form.Item>
-                  </Col>
-                </Row>
-              </Form>
-            </Col>
-          </Modal>
         </>
       )}
     </>

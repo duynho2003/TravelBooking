@@ -131,7 +131,9 @@ const UpdateTour = () => {
         detail: tour?.detail,
         depart: tour?.depart,
         startTime: tour?.startTime,
-        price: tour?.price,
+        priceAdult: tour?.priceAdult,
+        priceChild: tour?.priceChild,
+        priceBaby: tour?.priceBaby,
         discount: tour?.discount,
         bookedStatus: tour?.bookedStatus,
         activeStatus: tour?.activeStatus,
@@ -211,7 +213,9 @@ const UpdateTour = () => {
       description: data.description,
       detail: data.detail,
       depart: data.depart,
-      price: parseInt(data.price),
+      priceAdult: parseInt(data.priceAdult),
+      priceChild: parseInt(data.priceChild),
+      priceBaby: parseInt(data.priceBaby) || 0.0,
       discount: parseInt(data.discount) || 0.0,
       adults: data.adults,
       children: data.children,
@@ -1066,12 +1070,83 @@ const UpdateTour = () => {
                   />
 
                   <Controller
-                    name="price"
+                    name="priceAdult"
                     control={control}
-                    rules={{ required: "Price is required" }}
+                    rules={{
+                      required: "Price adult is required",
+                      validate: {
+                        min: (value) =>
+                          value >= 100000 || "Minimum price is 100,000 VND",
+                        max: (value) =>
+                          value <= 100000000 ||
+                          "Maximum price is 100,000,000 VND",
+                      },
+                    }}
                     render={({ field, fieldState: { error } }) => (
                       <Form.Item
-                        label="Price"
+                        label="Price Adult / person"
+                        validateStatus={error ? "error" : ""}
+                        help={error?.message}
+                      >
+                        <InputNumber
+                          {...field}
+                          formatter={(value) =>
+                            new Intl.NumberFormat("vi-VN", {
+                              style: "currency",
+                              currency: "VND",
+                            }).format(value)
+                          }
+                          parser={(value) => value.replace(/[^\d]/g, "")}
+                          style={{
+                            width: "100%",
+                          }}
+                        />
+                      </Form.Item>
+                    )}
+                  />
+
+                  <Controller
+                    name="priceChild"
+                    control={control}
+                    rules={{
+                      required: "Price children is required",
+                      validate: {
+                        min: (value) =>
+                          value >= 100000 || "Minimum price is 100,000 VND",
+                        max: (value) =>
+                          value <= 100000000 ||
+                          "Maximum price is 100,000,000 VND",
+                      },
+                    }}
+                    render={({ field, fieldState: { error } }) => (
+                      <Form.Item
+                        label="Price Children / person"
+                        validateStatus={error ? "error" : ""}
+                        help={error?.message}
+                      >
+                        <InputNumber
+                          {...field}
+                          formatter={(value) =>
+                            new Intl.NumberFormat("vi-VN", {
+                              style: "currency",
+                              currency: "VND",
+                            }).format(value)
+                          }
+                          parser={(value) => value.replace(/[^\d]/g, "")}
+                          style={{
+                            width: "100%",
+                          }}
+                        />
+                      </Form.Item>
+                    )}
+                  />
+
+                  <Controller
+                    name="priceBaby"
+                    control={control}
+                    render={({ field, fieldState: { error } }) => (
+                      <Form.Item
+                        label="Price Baby / person"
                         validateStatus={error ? "error" : ""}
                         help={error?.message}
                       >

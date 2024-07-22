@@ -9,6 +9,7 @@ import {
   useParams,
 } from "react-router-dom";
 import {
+  faBlog,
   faChartLine,
   faCreditCard,
   faEarthAmericas,
@@ -38,6 +39,7 @@ export default function AdminLayout() {
   const hotelId = useSelector((state) => state.hotels?.selectedHotel?.id);
   const roomId = useSelector((state) => state.hotels?.selectedRoom?.id);
   const regionId = useSelector((state) => state.regions?.selectedRegion?.id);
+  const blogId = useSelector((state) => state.blogs?.selectedBlog?.id);
 
   const [collapsed, setCollapsed] = useState(false);
 
@@ -177,6 +179,13 @@ export default function AdminLayout() {
           path: "/admin/tours/view",
         },
         {
+          key: "/admin/tours/completed/view",
+          label: (
+            <Link to="/admin/tours/completed/view">View tours completed</Link>
+          ),
+          path: "/admin/tours/completed/view",
+        },
+        {
           key: `/admin/tours/view/${tourId}`,
           label: "View a tour",
           path: `/admin/tours/view/${tourId}`,
@@ -234,6 +243,34 @@ export default function AdminLayout() {
           key: "/admin/statisticals/view",
           label: <Link to="/admin/statisticals/view">View statisticals</Link>,
           path: "/admin/statisticals/view",
+        },
+      ],
+    },
+
+    {
+      key: "/admin/blogs",
+      icon: <FontAwesomeIcon icon={faBlog} />,
+      label: "Blogs",
+      children: [
+        {
+          key: "/admin/blogs/view",
+          label: <Link to="/admin/blogs/view">View blogs</Link>,
+          path: "/admin/blogs/view",
+        },
+        {
+          key: `/admin/blogs/view/${blogId}`,
+          label: "View a blog",
+          path: `/admin/blogs/view/${blogId}`,
+        },
+        {
+          key: "/admin/blogs/create",
+          label: <Link to="/admin/blogs/create">Create new blog</Link>,
+          path: "/admin/blogs/create",
+        },
+        {
+          key: `/admin/blogs/update/${blogId}`,
+          label: "Update blog",
+          path: `/admin/blogs/update/${blogId}`,
         },
       ],
     },

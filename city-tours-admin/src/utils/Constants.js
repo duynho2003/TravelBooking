@@ -70,6 +70,13 @@ export const API_ROUTE = {
 
   // Transactions
   GET_ALL_TRANSACTIONS: "v1/transactions",
+
+  // Blogs
+  GET_ALL_BLOGS: "v1/blogs",
+
+  GET_BLOG_BY_ID: "v1/blogs/",
+
+  DELETE_BLOG: "v1/blogs/",
 };
 
 export const GOONG_MAP_KEY = "RPTXmcQEy2r3meEHOZFZ3B5L7u68a8YO5XF9pAuM";

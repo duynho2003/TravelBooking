@@ -31,8 +31,13 @@ import ViewTourBookings from "./pages/tourBookings/ViewTourBookings";
 import ViewRoomBookings from "./pages/tourBookings/ViewRoomBookings";
 import CreateRoom from "./pages/hotels/CreateRoom";
 import UpdateRoom from "./pages/hotels/UpdateRoom";
-import ViewRoom from "./pages/hotels/ViewRoom";
+import ViewARoom from "./pages/hotels/ViewARoom";
 import ViewStatisticals from "./pages/statistical/ViewStatisticals";
+import CreateBlog from "./pages/blog/CreateBlog";
+import UpdateBlog from "./pages/blog/UpdateBlog";
+import ViewBlogs from "./pages/blog/ViewBlogs";
+import ViewABlog from "./pages/blog/ViewABlog";
+import ViewToursCompleted from "./pages/tours/ViewToursCompleted";
 
 function App() {
   // Redux State
@@ -78,7 +83,7 @@ function App() {
             {/* Rooms management */}
             <Route
               path="hotels/:hotelId/room/:roomId/view"
-              element={<ViewRoom />}
+              element={<ViewARoom />}
             />
             <Route
               path="hotels/:hotelId/room/create"
@@ -91,6 +96,10 @@ function App() {
 
             {/* Tours management */}
             <Route path="tours/view" element={<ViewTours />} />
+            <Route
+              path="tours/completed/view"
+              element={<ViewToursCompleted />}
+            />
             <Route path="tours/view/:tourId" element={<ViewATour />} />
             <Route path="tours/create" element={<CreateTour />} />
             <Route path="tours/update/:tourId" element={<UpdateTour />} />
@@ -106,6 +115,12 @@ function App() {
 
             {/* Statistical management */}
             <Route path="statisticals/view" element={<ViewStatisticals />} />
+
+            {/* Blogs management */}
+            <Route path="blogs/view" element={<ViewBlogs />} />
+            <Route path="blogs/view/:blogId" element={<ViewABlog />} />
+            <Route path="blogs/create" element={<CreateBlog />} />
+            <Route path="blogs/update/:blogId" element={<UpdateBlog />} />
 
             {/* Not found */}
             <Route path="admin/*" element={<NotFound />} />
