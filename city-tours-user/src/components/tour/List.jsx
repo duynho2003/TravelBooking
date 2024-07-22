@@ -498,7 +498,7 @@ export default function List({
                         weight={"700"}
                         color={"var(--white)"}
                       >
-                        {((tour.discount / tour.price) * 100).toFixed(0)} %
+                        {((tour.discount / tour.priceAdult) * 100).toFixed(0)} %
                       </CustomText>
                     </Col>
                   </Col>
@@ -598,7 +598,8 @@ export default function List({
                         weight={"400"}
                         color={"var(--gray-text)"}
                       >
-                        Depart at {tour.depart} at {tour.startTime}
+                        Depart at {tour.depart} at{" "}
+                        {tour.tourTimes?.[0]?.startDate}
                       </CustomText>
                     </Col>
 
@@ -726,7 +727,7 @@ export default function List({
                       {new Intl.NumberFormat("vi-VN", {
                         style: "currency",
                         currency: "VND",
-                      }).format(tour.price - tour.discount)}
+                      }).format(tour.priceAdult - tour.discount)}
                     </CustomText>
 
                     <CustomText
@@ -739,7 +740,7 @@ export default function List({
                       {new Intl.NumberFormat("vi-VN", {
                         style: "currency",
                         currency: "VND",
-                      }).format(tour.price)}
+                      }).format(tour.priceAdult)}
                     </CustomText>
 
                     <CustomText

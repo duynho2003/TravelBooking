@@ -12,6 +12,10 @@ import ResultTransaction from "./pages/transactions/ResultTransaction";
 import ViewTransactions from "./pages/transactions/ViewTransactions";
 import ViewTourBookings from "./pages/tourBookings/ViewTourBookings";
 import ViewRoomBookings from "./pages/tourBookings/ViewRoomBookings";
+import CreateBlog from "./pages/blog/CreateBlog";
+import UpdateBlog from "./pages/blog/UpdateBlog";
+import ViewBlogs from "./pages/blog/ViewBlogs";
+import ViewABlog from "./pages/blog/ViewABlog";
 
 function App() {
   // Redux State
@@ -40,6 +44,12 @@ function App() {
             <Route path="transactions/view" element={<ViewTransactions />} />
             <Route path="transactions/create" element={<CreateTransaction />} />
             <Route path="transactions/result" element={<ResultTransaction />} />
+
+            {/* Blogs management */}
+            <Route path="blogs/view" element={<ViewBlogs />} />
+            <Route path="blogs/view/:blogId" element={<ViewABlog />} />
+            <Route path="blogs/create" element={<CreateBlog />} />
+            <Route path="blogs/update/:blogId" element={<UpdateBlog />} />
 
             {/* Not found */}
             <Route path="staff/*" element={<NotFound />} />

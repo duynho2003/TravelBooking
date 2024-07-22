@@ -8,7 +8,11 @@ import {
   useNavigate,
   useParams,
 } from "react-router-dom";
-import { faCreditCard, faMoneyBill1 } from "@fortawesome/free-solid-svg-icons";
+import {
+  faBlog,
+  faCreditCard,
+  faMoneyBill1,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Cookies from "js-cookie";
 import CustomText from "../components/common/CustomText";
@@ -24,6 +28,7 @@ export default function MainLayout() {
   const navigate = useNavigate();
 
   const sub = useSelector((state) => state.auth?.info?.sub);
+  const blogId = useSelector((state) => state.blogs?.selectedBlog?.id);
   const [collapsed, setCollapsed] = useState(false);
 
   const handleLogout = async () => {
@@ -72,6 +77,34 @@ export default function MainLayout() {
           key: "/staff/transactions/view",
           label: <Link to="/staff/transactions/view">View transactions</Link>,
           path: "/staff/transactions/view",
+        },
+      ],
+    },
+
+    {
+      key: "/staff/blogs",
+      icon: <FontAwesomeIcon icon={faBlog} />,
+      label: "Blogs",
+      children: [
+        {
+          key: "/staff/blogs/view",
+          label: <Link to="/staff/blogs/view">View blogs</Link>,
+          path: "/staff/blogs/view",
+        },
+        {
+          key: `/staff/blogs/view/${blogId}`,
+          label: "View a blog",
+          path: `/staff/blogs/view/${blogId}`,
+        },
+        {
+          key: "/staff/blogs/create",
+          label: <Link to="/staff/blogs/create">Create new blog</Link>,
+          path: "/staff/blogs/create",
+        },
+        {
+          key: `/staff/blogs/update/${blogId}`,
+          label: "Update blog",
+          path: `/staff/blogs/update/${blogId}`,
         },
       ],
     },

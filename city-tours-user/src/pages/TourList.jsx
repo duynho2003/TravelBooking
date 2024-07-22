@@ -35,6 +35,7 @@ export default function TourList() {
   const initialRating = urlSearchParams.get("rating");
   const initialDepart = urlSearchParams.get("depart");
   const initialStartDate = urlSearchParams.get("startDate");
+  const initialCompleted = urlSearchParams.get("completed");
 
   // Local State
   const [pageSize, setPageSize] = useState(INIT_LIMIT);
@@ -47,6 +48,7 @@ export default function TourList() {
     rating: initialRating,
     depart: initialDepart,
     startDate: initialStartDate,
+    completed: initialCompleted,
   });
   const [showContent, setShowContent] = useState(false);
 
@@ -59,6 +61,7 @@ export default function TourList() {
       rating: initialRating,
       depart: initialDepart,
       startDate: initialStartDate,
+      completed: initialCompleted,
     }));
   }, [
     initialMinPrice,
@@ -67,6 +70,7 @@ export default function TourList() {
     initialRating,
     initialDepart,
     initialStartDate,
+    initialCompleted,
   ]);
 
   // useEffect for loading data

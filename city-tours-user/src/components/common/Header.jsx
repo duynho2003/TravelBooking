@@ -92,7 +92,7 @@ export default function Header({ websiteInfo }) {
                 size={"13px"}
                 weight={"400"}
                 color={"var(--black-text)"}
-                link={`/tours/list?minPrice=0&maxPrice=5000000&review=`}
+                link={`/tours/list?minPrice=0&maxPrice=5000000&review=&rating=&depart=&startDate=&completed=`}
               >
                 All Tours List
               </CustomText>
