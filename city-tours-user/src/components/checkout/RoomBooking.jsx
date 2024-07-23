@@ -67,6 +67,7 @@ const { useBreakpoint } = Grid;
 export default function RoomBooking({ tour }) {
   const roomBookingData = useSelector((state) => state.hotels?.roomBooking);
   const userId = useSelector((state) => state.auth?.info?.id);
+  const isCustomer = useSelector((state) => state.customer?.info?.customer);
   const customerName = useSelector(
     (state) => state.customer?.info?.customer?.name
   );
@@ -113,7 +114,6 @@ export default function RoomBooking({ tour }) {
 
   // Handle event
   const handleAddCustomer = async () => {
-    if (customerName === "" && phone === "" && address === "") {
       const token = Cookies.get("token");
 
       const urlAddCustomer = "http://localhost:5050/api/v1/customers";
@@ -125,7 +125,6 @@ export default function RoomBooking({ tour }) {
         console.error("Error adding customer:", error);
         throw error; // Re-throw để bắt lỗi ở handleCheckout
       }
-    }
   };
 
   const handleAddRoomBooking = async () => {
@@ -173,7 +172,7 @@ export default function RoomBooking({ tour }) {
 
   const handleCheckout = async () => {
     try {
-      if (customerName === "" && phone === "" && address === "") {
+      if (isCustomer === null) {
         await handleAddCustomer();
       }
       await handleAddRoomBooking();
