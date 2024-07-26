@@ -9,11 +9,9 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-public class StatisticalResponseDto {
+public class MonthlyIncomeResponseDto {
 
-    private int quantityCustomers;
-    private Double incomeHotels;
-    private Double incomeTours;
-    private int quantityTransactions;
+    private String month;
+    private Double totalIncome;
 
 }

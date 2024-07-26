@@ -18,6 +18,7 @@ public class CreateBlogRequestDto {
     private Long userId;
     private String title;
     private String thumbnail;
+    private String description;
     private String content;
     private String activeStatus;
 

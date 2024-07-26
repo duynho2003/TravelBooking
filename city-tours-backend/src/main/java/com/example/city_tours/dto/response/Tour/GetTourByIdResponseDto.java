@@ -37,6 +37,7 @@ public class GetTourByIdResponseDto {
     private String activeStatus;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private int quantityCustomerBooking;
     private List<GetATourTimeResponseDto> tourTimes;
     private List<GetATourLocationResponseDto> tourLocations;
 

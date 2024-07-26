@@ -383,9 +383,8 @@ public class RoomServiceImpl implements RoomService{
         for (RoomBooking roomBooking : roomBookings) {
             GetRoomBookingResponseDto roomBookingDto = new GetRoomBookingResponseDto();
             roomBookingDto.setId(roomBooking.getId());
-            roomBookingDto.setDate(roomBooking.getDate());
-            roomBookingDto.setStartHour(roomBooking.getStartHour());
-            roomBookingDto.setEndHour(roomBooking.getEndHour());
+            roomBookingDto.setStartDate(roomBooking.getStartDate());
+            roomBookingDto.setEndDate(roomBooking.getEndDate());
             roomBookingDto.setPrice(roomBooking.getPrice());
             roomBookingDto.setCreatedAt(roomBooking.getCreatedAt());
             roomBookingDto.setUpdatedAt(roomBooking.getUpdatedAt());

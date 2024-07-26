@@ -3,20 +3,27 @@ package com.example.city_tours.controller;
 import com.example.city_tours.common.ApiErrorResponse;
 import com.example.city_tours.common.ApiSuccessResponse;
 import com.example.city_tours.common.ErrorCode;
-import com.example.city_tours.dto.request.Auth.LoginRequestDto;
-import com.example.city_tours.dto.request.Auth.RegisterRequestDto;
-import com.example.city_tours.dto.request.Auth.UploadRequestDto;
+import com.example.city_tours.dto.request.Auth.*;
 import com.example.city_tours.dto.response.Auth.LoginResponseDto;
 import com.example.city_tours.dto.response.Auth.RegisterResponseDto;
 import com.example.city_tours.dto.response.Auth.UploadResponseDto;
+import com.example.city_tours.entity.ConfirmationToken;
+import com.example.city_tours.entity.ConfirmationTokenRepository;
+import com.example.city_tours.entity.PasswordResetToken;
+import com.example.city_tours.entity.User;
+import com.example.city_tours.enums.UserStatus;
 import com.example.city_tours.exception.*;
+import com.example.city_tours.repository.UserRepository;
 import com.example.city_tours.service.AuthService;
 import com.example.city_tours.service.CloudinaryService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.web.csrf.InvalidCsrfTokenException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.time.LocalDateTime;
 
 @AllArgsConstructor
 @RestController
@@ -26,6 +33,8 @@ public class AuthController {
     private AuthService authService;
 
     private CloudinaryService cloudinaryService;
+    private final ConfirmationTokenRepository confirmationTokenRepository;
+    private final UserRepository userRepository;
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequestDto registerRequestDto) {
@@ -68,6 +77,47 @@ public class AuthController {
         }
     }
 
+    @GetMapping("/confirm-account")
+    public ResponseEntity<?> confirmAccount(@RequestParam("token") String token) {
+        try {
+            String message = authService.confirmAccount(token);
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(new ApiSuccessResponse<>(
+                            HttpStatus.OK.value(),
+                            message,
+                            null
+                    ));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(new ApiErrorResponse(
+                            HttpStatus.BAD_REQUEST.value(),
+                            e.getMessage(),
+                            ErrorCode.INVALID_TOKEN,
+                            "http://localhost:5050/docs/errors/1003"
+                    ));
+        } catch (TokenExpiredException e) {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(new ApiErrorResponse(
+                            HttpStatus.BAD_REQUEST.value(),
+                            e.getMessage(),
+                            ErrorCode.TOKEN_EXPIRED,
+                            "http://localhost:5050/docs/errors/1004"
+                    ));
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiErrorResponse(
+                            HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                            "Internal server error",
+                            ErrorCode.INTERNAL_SERVER_ERROR,
+                            "http://localhost:5050/docs/errors/1012"
+                    ));
+        }
+    }
+
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequestDto loginRequestDto) {
         try {
@@ -79,7 +129,7 @@ public class AuthController {
                             "User logged in successfully",
                             responseDto
                     ));
-        } catch (InvalidUsernameOrPasswordException e) {
+        } catch (InvalidUsernameOrPasswordException | JwtAuthenticationException e) {
             return ResponseEntity
                     .status(HttpStatus.UNAUTHORIZED)
                     .body(new ApiErrorResponse(
@@ -135,5 +185,46 @@ public class AuthController {
                     ));
         }
     }
+
+    @PostMapping("/request-password-reset")
+    public ResponseEntity<?> requestPasswordReset(@RequestBody ResetPasswordRequestDto requestDto) {
+        try {
+            authService.sendPasswordResetEmail(requestDto.getEmail());
+            return ResponseEntity.ok(new ApiSuccessResponse<>(
+                    HttpStatus.OK.value(),
+                    "Password reset email sent successfully.",
+                    null
+            ));
+        } catch (UserNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ApiErrorResponse(
+                            HttpStatus.NOT_FOUND.value(),
+                            e.getMessage(),
+                            ErrorCode.NOT_FOUND,
+                            "http://localhost:5050/docs/errors/2001"
+                    ));
+        }
+    }
+
+    @PostMapping("/update-password")
+    public ResponseEntity<?> updatePassword(@RequestBody UpdatePasswordRequestDto requestDto) {
+        try {
+            authService.updatePassword(requestDto);
+            return ResponseEntity.ok(new ApiSuccessResponse<>(
+                    HttpStatus.OK.value(),
+                    "Password updated successfully.",
+                    null
+            ));
+        } catch (TokenExpiredException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ApiErrorResponse(
+                            HttpStatus.BAD_REQUEST.value(),
+                            e.getMessage(),
+                            ErrorCode.INVALID_TOKEN,
+                            "http://localhost:5050/docs/errors/2003"
+                    ));
+        }
+    }
+
 
 }

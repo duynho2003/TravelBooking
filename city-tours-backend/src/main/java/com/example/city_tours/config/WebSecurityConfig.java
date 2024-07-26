@@ -74,6 +74,8 @@ public class WebSecurityConfig {
                             authorize.requestMatchers(HttpMethod.GET, "/api/v1/hotelReviews").permitAll();
                             authorize.requestMatchers(HttpMethod.GET, "/api/v1/hotelReviews/{hotelId}").permitAll();
                             authorize.requestMatchers(HttpMethod.GET, "/api/v1/provinces").permitAll();
+                            authorize.requestMatchers(HttpMethod.GET, "/api/v1/blogs").permitAll();
+                            authorize.requestMatchers(HttpMethod.GET, "/api/v1/blogs/{blogId}").permitAll();
                             authorize.anyRequest().authenticated();
                         }).httpBasic(Customizer.withDefaults());
 

@@ -203,12 +203,12 @@ public class UserServiceImpl implements UserService{
                 GetRoomBookingResponseDto bookingResponseDto = new GetRoomBookingResponseDto();
 
                 bookingResponseDto.setId(roomBooking.getId());
-                bookingResponseDto.setDate(roomBooking.getDate());
-                bookingResponseDto.setStartHour(roomBooking.getStartHour());
-                bookingResponseDto.setEndHour(roomBooking.getEndHour());
+                bookingResponseDto.setStartDate(roomBooking.getStartDate());
+                bookingResponseDto.setEndDate(roomBooking.getEndDate());
                 bookingResponseDto.setPrice(roomBooking.getPrice());
                 bookingResponseDto.setReviewStatus(roomBooking.getReviewStatus().toString());
                 bookingResponseDto.setRoomType(roomBooking.getRoomType());
+                bookingResponseDto.setRoomNumber(roomBooking.getRoomNumber());
                 bookingResponseDto.setCustomerId(roomBooking.getCustomer().getId());
                 bookingResponseDto.setRoomId(roomBooking.getRoom().getId());
                 bookingResponseDto.setCreatedAt(roomBooking.getCreatedAt());

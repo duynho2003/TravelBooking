@@ -16,4 +16,6 @@ public class ErrorCode {
     public static final int UNAUTHORIZED = 1013;
     public static final int FORBIDDEN = 1014;
     public static final int NOT_FOUND = 1015;
+    public static final int INVALID_TOKEN = 1016;
+    public static final int TOKEN_EXPIRED = 1017;
 }

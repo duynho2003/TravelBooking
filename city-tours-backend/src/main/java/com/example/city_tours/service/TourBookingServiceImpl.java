@@ -63,6 +63,7 @@ public class TourBookingServiceImpl implements TourBookingService{
         tour.setAdults(tour.getAdults() - requestDto.getAdults());
         tour.setChildren(tour.getChildren() - requestDto.getChildren());
         tour.setBaby(tour.getBaby() - requestDto.getBaby());
+        tour.setQuantityCustomerBooking(tour.getQuantityCustomerBooking() + requestDto.getAdults() + requestDto.getChildren() + requestDto.getBaby());
 
         tourRepository.save(tour);
 

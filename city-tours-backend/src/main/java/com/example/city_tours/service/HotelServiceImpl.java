@@ -48,8 +48,7 @@ public class HotelServiceImpl implements HotelService{
         hotel.setName(requestDto.getName());
         hotel.setDescription(requestDto.getDescription());
         hotel.setAddress(requestDto.getAddress());
-        hotel.setRating(0.0);
-        hotel.setNumberOfRating(0);
+        hotel.setRating(requestDto.getRating());
         hotel.setActiveStatus(ActiveStatus.ACTIVE);
         hotel.setCreatedAt(LocalDateTime.now());
         hotel.setUpdatedAt(LocalDateTime.now());
@@ -89,7 +88,6 @@ public class HotelServiceImpl implements HotelService{
         responseDto.setDescription(hotel.getDescription());
         responseDto.setAddress(hotel.getAddress());
         responseDto.setRating(hotel.getRating());
-        responseDto.setNumberOfRating(hotel.getNumberOfRating());
         responseDto.setActiveStatus(hotel.getActiveStatus().toString());
         responseDto.setCreatedAt(hotel.getCreatedAt());
 
@@ -121,6 +119,7 @@ public class HotelServiceImpl implements HotelService{
         hotel.setAddress(requestDto.getAddress());
         hotel.setActiveStatus(ActiveStatus.valueOf(requestDto.getActiveStatus()));
         hotel.setUpdatedAt(LocalDateTime.now());
+        hotel.setRating(requestDto.getRating());
 
         deleteHotelImagesByHotelId(hotelId);
 
@@ -146,7 +145,6 @@ public class HotelServiceImpl implements HotelService{
         responseDto.setDescription(hotel.getDescription());
         responseDto.setAddress(hotel.getAddress());
         responseDto.setRating(hotel.getRating());
-        responseDto.setNumberOfRating(hotel.getNumberOfRating());
         responseDto.setActiveStatus(hotel.getActiveStatus().toString());
         responseDto.setCreatedAt(hotel.getCreatedAt());
         responseDto.setUpdatedAt(hotel.getUpdatedAt());
@@ -229,7 +227,6 @@ public class HotelServiceImpl implements HotelService{
             responseDto.setDescription(hotel.getDescription());
             responseDto.setAddress(hotel.getAddress());
             responseDto.setRating(hotel.getRating());
-            responseDto.setNumberOfRating(hotel.getNumberOfRating());
             responseDto.setActiveStatus(hotel.getActiveStatus().toString());
             responseDto.setCreatedAt(hotel.getCreatedAt());
             responseDto.setUpdatedAt(hotel.getUpdatedAt());
@@ -349,7 +346,6 @@ public class HotelServiceImpl implements HotelService{
         responseDto.setDescription(hotel.getDescription());
         responseDto.setAddress(hotel.getAddress());
         responseDto.setRating(hotel.getRating());
-        responseDto.setNumberOfRating(hotel.getNumberOfRating());
         responseDto.setActiveStatus(hotel.getActiveStatus().toString());
         responseDto.setCreatedAt(hotel.getCreatedAt());
         responseDto.setUpdatedAt(hotel.getUpdatedAt());

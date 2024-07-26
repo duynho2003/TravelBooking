@@ -68,18 +68,7 @@ public class HotelReviewServiceImpl implements HotelReviewService{
 
         HotelReview savedHotelReview = hotelReviewRepository.save(hotelReview);
 
-        Hotel hotel = savedHotelReview.getHotel();
 
-        hotel.getRating();
-
-        int currentNumberOfRatings = hotel.getNumberOfRating();
-        hotel.setNumberOfRating(currentNumberOfRatings + 1);
-
-        double currentRating = hotel.getRating();
-        double newRating = calculateNewRating(currentRating, savedHotelReview.getRating(), hotel.getNumberOfRating());
-        hotel.setRating(newRating);
-
-        hotelRepository.save(hotel);
 
         Optional<RoomBooking> optionalRoomBooking = roomBookingRepository.findById(requestDto.getRoomBookingId());
 

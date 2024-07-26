@@ -44,6 +44,10 @@ public class Transaction {
 
     private TransactionStatus transactionStatus;
 
+    private LocalDateTime createdAt;
+
+    private LocalDateTime updatedAt;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;

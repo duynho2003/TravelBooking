@@ -13,12 +13,10 @@ public class CreateRoomBookingRequestDto {
 
     private Long userId;
     private Long roomId;
-    private String date;
-    private String startHour;
-    private String endHour;
+    private String startDate;
+    private String endDate;
     private Double price;
     private String roomType;
-//    private String roomCategory;
-//    private String roomNumber;
+    private String roomNumber;
 
 }

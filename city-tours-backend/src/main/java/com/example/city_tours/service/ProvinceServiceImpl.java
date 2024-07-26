@@ -61,7 +61,6 @@ public class ProvinceServiceImpl implements ProvinceService{
                     hotelDto.setDescription(hotel.getDescription());
                     hotelDto.setAddress(hotel.getAddress());
                     hotelDto.setRating(hotel.getRating());
-                    hotelDto.setNumberOfRating(hotel.getNumberOfRating());
                     hotelDto.setActiveStatus(hotel.getActiveStatus().toString());
                     hotelDto.setCreatedAt(hotel.getCreatedAt());
                     hotelDto.setUpdatedAt(hotel.getUpdatedAt());
@@ -147,7 +146,6 @@ public List<GetAllProvincesResponseDto> getAllProvinces(int page, int limit) {
                             hotelDto.setDescription(hotel.getDescription());
                             hotelDto.setAddress(hotel.getAddress());
                             hotelDto.setRating(hotel.getRating());
-                            hotelDto.setNumberOfRating(hotel.getNumberOfRating());
                             hotelDto.setActiveStatus(hotel.getActiveStatus().toString());
                             hotelDto.setCreatedAt(hotel.getCreatedAt());
                             hotelDto.setUpdatedAt(hotel.getUpdatedAt());

@@ -92,7 +92,7 @@ public class BlogController {
         }
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_STAFF', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @DeleteMapping("/{blogId}")
     public ResponseEntity<?> deleteBlog(@PathVariable Long blogId) {
         try {
@@ -135,7 +135,6 @@ public class BlogController {
         }
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_CUSTOMER', 'ROLE_STAFF', 'ROLE_ADMIN')")
     @GetMapping("")
     public ResponseEntity<?> getAllBlogs(
             @RequestParam(defaultValue = "1") int page,
@@ -172,7 +171,6 @@ public class BlogController {
         }
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_CUSTOMER', 'ROLE_STAFF', 'ROLE_ADMIN')")
     @GetMapping("/{blogId}")
     public ResponseEntity<?> getBlogById(@PathVariable Long blogId) {
         try {

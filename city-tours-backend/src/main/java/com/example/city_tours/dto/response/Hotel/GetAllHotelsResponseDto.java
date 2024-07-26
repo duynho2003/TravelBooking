@@ -19,8 +19,7 @@ public class GetAllHotelsResponseDto {
     private String name;
     private String description;
     private String address;
-    private Double rating;
-    private int numberOfRating;
+    private int rating;
     private String activeStatus;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

@@ -310,7 +310,7 @@ public class TourServiceImpl implements TourService{
 
             // Add condition to filter by startTime if startTime parameter is provided
             if (startDate != null && !startDate.isEmpty()) {
-                predicate = cb.and(predicate, cb.equal(root.join("tourTimes").get("startDate"), startDate));
+                predicate = cb.and(predicate, cb.like(root.join("tourTimes").get("startDate"), "%" + startDate + "%"));
             }
 
             if (completed != null) {
@@ -406,6 +406,7 @@ public class TourServiceImpl implements TourService{
             responseDto.setActiveStatus(tour.getActiveStatus().toString());
             responseDto.setCreatedAt(tour.getCreatedAt());
             responseDto.setUpdateAt(tour.getUpdatedAt());
+            responseDto.setQuantityCustomerBooking(tour.getQuantityCustomerBooking());
 
             List<GetATourTimeResponseDto> tourTimeResponseDtos = new ArrayList<>();
 
@@ -485,6 +486,7 @@ public class TourServiceImpl implements TourService{
         responseDto.setActiveStatus(tour.getActiveStatus().toString());
         responseDto.setCreatedAt(tour.getCreatedAt());
         responseDto.setUpdatedAt(tour.getUpdatedAt());
+        responseDto.setQuantityCustomerBooking(tour.getQuantityCustomerBooking());
 
         List<GetATourTimeResponseDto> tourTimeResponseDtos = new ArrayList<>();
 

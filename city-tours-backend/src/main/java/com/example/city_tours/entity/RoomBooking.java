@@ -21,17 +21,17 @@ public class RoomBooking {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String date;
+    private String startDate;
 
-    private String startHour;
-
-    private String endHour;
+    private String endDate;
 
     private Double price;
 
     private ReviewStatus reviewStatus;
 
     private String roomType;
+
+    private String roomNumber;
 
     private LocalDateTime createdAt;
 

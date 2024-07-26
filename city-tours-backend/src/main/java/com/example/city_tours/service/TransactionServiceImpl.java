@@ -18,9 +18,7 @@ import com.example.city_tours.enums.UserStatus;
 import com.example.city_tours.exception.EmailAlreadyExistsException;
 import com.example.city_tours.exception.ResourceNotFoundException;
 import com.example.city_tours.exception.UsernameAlreadyExistsException;
-import com.example.city_tours.repository.RoleRepository;
-import com.example.city_tours.repository.TransactionRepository;
-import com.example.city_tours.repository.UserRepository;
+import com.example.city_tours.repository.*;
 import jakarta.persistence.criteria.Predicate;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -44,6 +42,8 @@ public class TransactionServiceImpl implements TransactionService{
     private final UserRepository userRepository;
 
     private final TransactionRepository transactionRepository;
+    private final RoomBookingRepository roomBookingRepository;
+    private final TourBookingRepository tourBookingRepository;
 
     @Override
     public CreateTransactionResponseDto createTransaction(CreateTransactionRequestDto requestDto) {
@@ -68,9 +68,31 @@ public class TransactionServiceImpl implements TransactionService{
         transaction.setPayDate(requestDto.getPayDate());
         transaction.setPaymentStatus(PaymentStatus.valueOf(requestDto.getPaymentStatus()));
         transaction.setTransactionStatus(TransactionStatus.valueOf(requestDto.getTransactionStatus()));
+        transaction.setCreatedAt(LocalDateTime.now());
         transaction.setUser(user);
 
         transactionRepository.save(transaction);
+
+        if (transaction.getTransactionStatus() == TransactionStatus.COMPLETED) {
+            String content = transaction.getContent();
+            String[] parts = content.split(" ");
+            String type = parts[0] + " " + parts[1]; // BOOKING ROOM hoặc BOOKING TOUR
+            Long id = Long.parseLong(parts[parts.length - 1]); // ID ở cuối cùng
+
+            Object booking = null;
+
+            if ("BOOKING ROOM".equals(type)) {
+                // Tìm kiếm trong bảng roomBookings
+                booking = roomBookingRepository.findById(id).orElse(null);
+            } else if ("BOOKING TOUR".equals(type)) {
+                // Tìm kiếm trong bảng tourBookings
+                booking = tourBookingRepository.findById(id).orElse(null);
+            }
+
+            if (booking != null) {
+                EmailService.sendBookingDetailsEmail(user.getEmail(), booking);
+            }
+        }
 
         CreateTransactionResponseDto responseDto = new CreateTransactionResponseDto();
 
@@ -89,102 +111,6 @@ public class TransactionServiceImpl implements TransactionService{
         return responseDto;
     }
 
-//    @Override
-//    public UpdateAccountResponseDto updateAccount(Long userId, UpdateAccountRequestDto updateAccountRequestDto) {
-//
-//        Optional<User> userOptional = userRepository.findById(userId);
-//
-//        if (!userOptional.isPresent()) {
-//            throw new ResourceNotFoundException("User not found");
-//        }
-//
-//        User user = userOptional.get();
-//
-//        user.setUsername(updateAccountRequestDto.getUsername());
-//        user.setEmail(updateAccountRequestDto.getEmail());
-//
-//        if (updateAccountRequestDto.getStatus() != null) {
-//            user.setStatus(UserStatus.valueOf(updateAccountRequestDto.getStatus().toUpperCase()));
-//        } else {
-//            throw new IllegalArgumentException("No enum");
-//        }
-//
-//        user.setUpdatedAt(LocalDateTime.now());
-//
-//        Set<Role> roles = new HashSet<>();
-//
-//        for (String roleName : updateAccountRequestDto.getRoles()) {
-//            Role role = roleRepository.findByName(roleName);
-//
-//            if (role == null) {
-//                role = new Role();
-//                role.setName(roleName);
-//                roleRepository.save(role);
-//            }
-//
-//            roles.add(role);
-//        }
-//
-//        user.setRoles(roles);
-//
-//        userRepository.save(user);
-//
-//        UpdateAccountResponseDto responseDto = new UpdateAccountResponseDto();
-//
-//        responseDto.setId(user.getId());
-//        responseDto.setUsername(user.getUsername());
-//        responseDto.setEmail(user.getEmail());
-//        responseDto.setRoles(user.getRoles().stream().map(Role::getName).collect(Collectors.toSet()));
-//        responseDto.setStatus(user.getStatus().toString());
-//        responseDto.setUpdatedAt(user.getUpdatedAt());
-//
-//        return responseDto;
-//    }
-//
-//    @Override
-//    public void deleteAccount(Long userId) {
-//
-//        Optional<User> userOptional = userRepository.findById(userId);
-//
-//        if (!userOptional.isPresent()) {
-//            throw new ResourceNotFoundException("Account not found");
-//        }
-//
-//        User user = userOptional.get();
-//
-//        user.setRoles(new HashSet<>());
-//
-//        userRepository.save(user);
-//
-//        userRepository.deleteById(userId);
-//
-//    }
-//
-//    @Override
-//    public GetAccountByIdResponseDto getAccountById(Long userId) {
-//
-//        Optional<User> userOptional = userRepository.findById(userId);
-//
-//        if (!userOptional.isPresent()) {
-//            throw new ResourceNotFoundException("User not found");
-//        }
-//
-//        User user = userOptional.get();
-//
-//        GetAccountByIdResponseDto responseDto = new GetAccountByIdResponseDto();
-//
-//        responseDto.setId(user.getId());
-//        responseDto.setUsername(user.getUsername());
-//        responseDto.setPassword(user.getPassword());
-//        responseDto.setEmail(user.getEmail());
-//        responseDto.setRoles(user.getRoles().stream().map(Role::getName).collect(Collectors.toSet()));
-//        responseDto.setStatus(user.getStatus().toString());
-//        responseDto.setCreateAt(user.getCreatedAt());
-//        responseDto.setUpdatedAt(user.getUpdatedAt());
-//
-//        return responseDto;
-//    }
-//
     @Override
     public List<GetAllTransactionsResponseDto> getAllTransactions(int page, int limit, String search, String paymentStatus) {
         // Calculate the offset based on page and limit

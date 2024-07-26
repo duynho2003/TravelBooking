@@ -14,9 +14,8 @@ import java.time.LocalDateTime;
 public class GetRoomBookingsByUserIdResponseDto {
 
     private Long id;
-    private String date;
-    private String startHour;
-    private String endHour;
+    private String startDate;
+    private String endDate;
     private Double price;
     private String reviewStatus;
     private String roomType;

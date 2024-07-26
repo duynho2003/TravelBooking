@@ -38,6 +38,7 @@ public class Tour {
     private int adults;
     private int children;
     private int baby;
+    private int quantityCustomerBooking;
     private String thumbnail;
     private BookedStatus bookedStatus;
     private ActiveStatus activeStatus;

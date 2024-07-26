@@ -18,5 +18,6 @@ public class CreateHotelRequestDto {
     private String address;
     private Set<String> thumbnailUrls;
     private Long provinceId;
+    private int rating;
 
 }

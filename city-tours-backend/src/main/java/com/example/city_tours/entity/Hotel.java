@@ -30,9 +30,7 @@ public class Hotel {
 
     private String address;
 
-    private Double rating;
-
-    private int numberOfRating;
+    private int rating;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "hotel_id")

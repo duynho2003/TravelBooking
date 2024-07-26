@@ -18,5 +18,6 @@ public class UpdateHotelRequestDto {
     private String address;
     private String activeStatus;
     private Set<String> thumbnailUrls;
+    private int rating;
 
 }

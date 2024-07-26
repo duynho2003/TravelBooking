@@ -59,6 +59,7 @@ public class CustomerServiceImpl implements CustomerService{
         customer.setName(requestDto.getName());
         customer.setPhone(requestDto.getPhone());
         customer.setAddress(requestDto.getAddress());
+        customer.setCreatedAt(LocalDateTime.now());
         customer.setUser(user);
 
         Customer savedCustomer = customerRepository.save(customer);
@@ -96,6 +97,7 @@ public class CustomerServiceImpl implements CustomerService{
         customer.setName(requestDto.getName());
         customer.setPhone(requestDto.getPhone());
         customer.setAddress(requestDto.getAddress());
+        customer.setUpdatedAt(LocalDateTime.now());
         customer.setUser(user);
 
         Customer savedCustomer = customerRepository.save(customer);

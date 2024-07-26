@@ -24,6 +24,8 @@ public class Blog {
     private String author;
     private String thumbnail;
     @Column(columnDefinition = "LONGTEXT")
+    private String description;
+    @Column(columnDefinition = "LONGTEXT")
     private String content;
     private ActiveStatus activeStatus;
     private LocalDateTime createdAt;

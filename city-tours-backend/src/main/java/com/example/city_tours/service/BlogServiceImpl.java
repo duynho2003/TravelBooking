@@ -60,6 +60,7 @@ public class BlogServiceImpl implements BlogService{
         blog.setTitle(requestDto.getTitle());
         blog.setAuthor(user.getUsername());
         blog.setThumbnail(requestDto.getThumbnail());
+        blog.setDescription(requestDto.getDescription());
         blog.setContent(requestDto.getContent());
         blog.setActiveStatus(ActiveStatus.valueOf(requestDto.getActiveStatus()));
         blog.setCreatedAt(LocalDateTime.now());
@@ -75,6 +76,7 @@ public class BlogServiceImpl implements BlogService{
         responseDto.setTitle(savedBlog.getTitle());
         responseDto.setAuthor(savedBlog.getAuthor());
         responseDto.setThumbnail(savedBlog.getThumbnail());
+        responseDto.setDescription(savedBlog.getDescription());
         responseDto.setContent(savedBlog.getContent());
         responseDto.setActiveStatus(savedBlog.getActiveStatus().toString());
         responseDto.setCreatedAt(savedBlog.getCreatedAt());
@@ -96,6 +98,7 @@ public class BlogServiceImpl implements BlogService{
 
         blog.setTitle(requestDto.getTitle());
         blog.setThumbnail(requestDto.getThumbnail());
+        blog.setDescription(requestDto.getDescription());
         blog.setContent(requestDto.getContent());
         blog.setActiveStatus(ActiveStatus.valueOf(requestDto.getActiveStatus()));
 
@@ -107,6 +110,7 @@ public class BlogServiceImpl implements BlogService{
         responseDto.setTitle(updatedBlog.getTitle());
         responseDto.setAuthor(updatedBlog.getAuthor());
         responseDto.setThumbnail(updatedBlog.getThumbnail());
+        responseDto.setDescription(updatedBlog.getDescription());
         responseDto.setContent(updatedBlog.getContent());
         responseDto.setActiveStatus(updatedBlog.getActiveStatus().toString());
         responseDto.setCreatedAt(updatedBlog.getCreatedAt());
@@ -155,6 +159,7 @@ public class BlogServiceImpl implements BlogService{
             responseDto.setTitle(blog.getTitle());
             responseDto.setAuthor(blog.getAuthor());
             responseDto.setThumbnail(blog.getThumbnail());
+            responseDto.setDescription(blog.getDescription());
             responseDto.setContent(blog.getContent());
             responseDto.setActiveStatus(blog.getActiveStatus().toString());
             responseDto.setCreatedAt(blog.getCreatedAt());
@@ -191,6 +196,7 @@ public class BlogServiceImpl implements BlogService{
         responseDto.setTitle(blog.getTitle());
         responseDto.setAuthor(blog.getAuthor());
         responseDto.setThumbnail(blog.getThumbnail());
+        responseDto.setDescription(blog.getDescription());
         responseDto.setContent(blog.getContent());
         responseDto.setActiveStatus(blog.getActiveStatus().toString());
         responseDto.setCreatedAt(blog.getCreatedAt());

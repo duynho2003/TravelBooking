@@ -17,6 +17,7 @@ public class GetBlogByIdResponseDto {
     private String title;
     private String author;
     private String thumbnail;
+    private String description;
     private String content;
     private String activeStatus;
     private LocalDateTime createdAt;

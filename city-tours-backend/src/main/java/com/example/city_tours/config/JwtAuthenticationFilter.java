@@ -72,10 +72,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 throw new JwtAuthenticationException("JWT token is blacklisted");
             }
 
-            if (!user.getStatus().equals(UserStatus.ACTIVE)) {
-                System.out.println("User is inactive");
-                throw new JwtAuthenticationException("User is inactive");
-            }
+//            if (!user.getStatus().equals(UserStatus.ACTIVE)) {
+//                System.out.println("User is inactive");
+//                throw new JwtAuthenticationException("User is inactive");
+//            }
 
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
