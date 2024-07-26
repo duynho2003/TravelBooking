@@ -1,72 +1,119 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import {
   Breadcrumb,
   Button,
   Col,
-  Form,
-  Input,
-  Modal,
-  Popconfirm,
+  DatePicker,
   Progress,
   Row,
   Select,
-  Spin,
-  Table,
-  Tag,
-  message,
-  notification,
 } from "antd";
-import { useDispatch, useSelector } from "react-redux";
-import { getAllTransactions } from "../../features/transaction/TransactionSlice";
-import "../../App.css";
-import {
-  faCaretDown,
-  faCreditCard,
-  faEye,
-  faMoneyBill,
-  faMoneyBill1,
-  faPen,
-  faPenToSquare,
-  faTrash,
-  faTrashCan,
-  faUser,
-} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Typography from "antd/es/typography/Typography";
 import Loading from "../../components/common/Loading";
 import CustomText from "../../components/common/CustomText";
-import { Link, useNavigate } from "react-router-dom";
-import { QuestionCircleOutlined } from "@ant-design/icons";
-import { paymentStatus } from "../../utils/enums/PaymentStatus";
-import { transactionStatus } from "../../utils/enums/TransactionStatus";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faCreditCard,
+  faMoneyBill,
+  faMoneyBill1,
+  faUser,
+  faUsers,
+} from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 import Cookies from "js-cookie";
+import { Line } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
+import dayjs from "dayjs";
 
-const { Search } = Input;
-const { Option } = Select;
 const { Text } = Typography;
 
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+);
+
 const ViewStatisticals = () => {
-  // Local State
   const [showContent, setShowContent] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [statisticalData, setStatisticalData] = useState(null);
+  const [dateStr, setDateStr] = useState("");
+  const [weekStr, setWeekStr] = useState("");
+  const [monthStr, setMonthStr] = useState("");
+  const [yearStr, setYearStr] = useState("");
 
-  // useEffect for loading data
+  const [chartDataHotels, setChartDataHotels] = useState({
+    labels: [],
+    datasets: [
+      {
+        label: "Monthly Income Hotels",
+        data: [],
+        fill: false,
+        borderColor: "rgb(75, 192, 192)",
+        tension: 0.1,
+      },
+    ],
+  });
+
+  const [chartDataTours, setChartDataTours] = useState({
+    labels: [],
+    datasets: [
+      {
+        label: "Monthly Income Tours",
+        data: [],
+        fill: false,
+        borderColor: "rgb(75, 192, 192)",
+        tension: 0.1,
+      },
+    ],
+  });
+
+  useEffect(() => {
+    const currentDate = dayjs().format("YYYY-MM-DD");
+    setDateStr(currentDate);
+  }, []);
+
   useEffect(() => {
     const fetchData = async () => {
       const token = Cookies.get("token");
       try {
+        const params = {};
+
+        if (dateStr) {
+          params.dateStr = dateStr;
+        }
+        if (weekStr) {
+          params.weekStr = weekStr;
+        }
+        if (monthStr) {
+          params.monthStr = monthStr;
+        }
+        if (yearStr) {
+          params.yearStr = yearStr;
+        }
+
         const response = await axios.get(
-          "http://localhost:5050/api/v1/statisticals",
+          `http://localhost:5050/api/v1/statisticals`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
             },
+            params,
           }
         );
-
-        console.log("response: ", response);
 
         setStatisticalData(response.data.data);
       } catch (error) {
@@ -85,23 +132,173 @@ const ViewStatisticals = () => {
     }, 1000);
 
     return () => clearTimeout(timer);
+  }, [isLoading, dateStr, weekStr, monthStr, yearStr]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const token = Cookies.get("token");
+      try {
+        const response = await axios.get(
+          `http://localhost:5050/api/v1/statisticals/monthly-income-hotels/2024`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        console.log("response: ", response);
+
+        const dataFromApi = response.data;
+
+        const chartLabels = Object.keys(dataFromApi);
+        const chartDataValues = Object.values(dataFromApi);
+
+        setChartDataHotels({
+          ...chartDataHotels,
+          labels: chartLabels,
+          datasets: [
+            {
+              ...chartDataHotels.datasets[0],
+              data: chartDataValues,
+            },
+          ],
+        });
+      } catch (error) {
+        console.error("Failed to fetch data", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+
+    const timer = setTimeout(() => {
+      if (!isLoading) {
+        setShowContent(true);
+      }
+    }, 1000);
+
+    return () => clearTimeout(timer);
   }, [isLoading]);
 
-  // Event Handlers
+  useEffect(() => {
+    const fetchData = async () => {
+      const token = Cookies.get("token");
+      try {
+        const response = await axios.get(
+          `http://localhost:5050/api/v1/statisticals/monthly-income-tours/2024`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        console.log("response: ", response);
+
+        const dataFromApi = response.data;
+
+        const chartLabels = Object.keys(dataFromApi);
+        const chartDataValues = Object.values(dataFromApi);
+
+        setChartDataTours({
+          ...chartDataTours,
+          labels: chartLabels,
+          datasets: [
+            {
+              ...chartDataTours.datasets[0],
+              data: chartDataValues,
+            },
+          ],
+        });
+      } catch (error) {
+        console.error("Failed to fetch data", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+
+    const timer = setTimeout(() => {
+      if (!isLoading) {
+        setShowContent(true);
+      }
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [isLoading]);
+
+  const disabledDate = (current) => {
+    return current && current > dayjs().endOf("day");
+  };
+
+  const onChangeDate = (date, dateString) => {
+    console.log(date, dateString);
+    setDateStr(dateString);
+  };
+
+  const onChangeWeek = (date, dateString) => {
+    console.log(date, dateString);
+    setWeekStr(dateString);
+  };
+
+  const onChangeMonth = (date, dateString) => {
+    console.log(date, dateString);
+    setMonthStr(dateString);
+  };
+
+  const onChangeYear = (date, dateString) => {
+    console.log(date, dateString);
+    setYearStr(dateString);
+  };
+
+  // Chart
+  const data = {
+    labels: ["January", "February", "March", "April", "May", "June", "July"],
+    datasets: [
+      {
+        label: "Dataset 1",
+        data: [65, 59, 80, 81, 56, 55, 40],
+        fill: false,
+        borderColor: "rgb(75, 192, 192)",
+        tension: 0.1,
+      },
+    ],
+  };
+
+  const options = {
+    responsive: true,
+    scales: {
+      x: {
+        display: true,
+        title: {
+          display: true,
+          text: "Month",
+        },
+      },
+      y: {
+        display: true,
+        title: {
+          display: true,
+          text: "Money",
+        },
+      },
+    },
+  };
 
   return (
     <>
-      {/* Show loading */}
       {!showContent && <Loading />}
 
-      {/* Show content */}
       {showContent && (
         <>
           <Row
             style={{
               padding: "20px",
-              // background: "var( --white)",
               borderRadius: "8px",
+              background: "var(--white)",
             }}
           >
             <Col
@@ -131,16 +328,123 @@ const ViewStatisticals = () => {
               />
             </Col>
 
+            <Col
+              xl={24}
+              style={{
+                padding: "0 0 20px 0",
+                display: "flex",
+                justifyContent: "end",
+                alignItems: "center",
+                gap: "10px",
+              }}
+            >
+              <Col
+                style={{
+                  padding: "0 0 20px 0",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "10px",
+                }}
+              >
+                <CustomText
+                  size={"14px"}
+                  weight={"400"}
+                  color={"var(--black-text)"}
+                  isButton={true}
+                >
+                  Date
+                </CustomText>
+                <DatePicker
+                  disabledDate={disabledDate}
+                  onChange={onChangeDate}
+                  defaultValue={dayjs(dateStr)}
+                />
+              </Col>
+
+              <Col
+                style={{
+                  padding: "0 0 20px 0",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "10px",
+                }}
+              >
+                <CustomText
+                  size={"14px"}
+                  weight={"400"}
+                  color={"var(--black-text)"}
+                  isButton={true}
+                >
+                  Week
+                </CustomText>
+                <DatePicker
+                  disabledDate={disabledDate}
+                  onChange={onChangeWeek}
+                  picker="week"
+                />
+              </Col>
+
+              <Col
+                style={{
+                  padding: "0 0 20px 0",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "10px",
+                }}
+              >
+                <CustomText
+                  size={"14px"}
+                  weight={"400"}
+                  color={"var(--black-text)"}
+                  isButton={true}
+                >
+                  Month
+                </CustomText>
+                <DatePicker
+                  disabledDate={disabledDate}
+                  onChange={onChangeMonth}
+                  picker="month"
+                />
+              </Col>
+
+              <Col
+                style={{
+                  padding: "0 0 20px 0",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "10px",
+                }}
+              >
+                <CustomText
+                  size={"14px"}
+                  weight={"400"}
+                  color={"var(--black-text)"}
+                  isButton={true}
+                >
+                  Year
+                </CustomText>
+                <DatePicker
+                  disabledDate={disabledDate}
+                  onChange={onChangeYear}
+                  picker="year"
+                />
+              </Col>
+            </Col>
+
             <Row
               style={{
                 width: "100%",
               }}
               justify={"space-between"}
             >
+              {/* Customers */}
               <Col
                 span={5}
                 style={{
                   background: "var(--white)",
+                  borderTop: "1px solid var(--border)",
+                  borderLeft: "1px solid var(--border)",
+                  borderRight: "1px solid var(--border)",
                   borderBottom: "6px solid var(--green-dark)",
                   height: "auto",
                   borderRadius: "5px",
@@ -148,6 +452,7 @@ const ViewStatisticals = () => {
                   display: "flex",
                   justifyContent: "space-between",
                   alignItems: "center",
+                  boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
                 }}
               >
                 <Col
@@ -155,6 +460,7 @@ const ViewStatisticals = () => {
                     display: "flex",
                     flexDirection: "column",
                     justifyContent: "center",
+                    alignItems: "start",
                     gap: "10px",
                   }}
                 >
@@ -165,7 +471,7 @@ const ViewStatisticals = () => {
                       color: "var(--gray-light)",
                     }}
                   >
-                    USERS
+                    CUSTOMERS
                   </Text>
                   <Text
                     style={{
@@ -178,14 +484,14 @@ const ViewStatisticals = () => {
                     }}
                   >
                     <FontAwesomeIcon
-                      icon={faUser}
+                      icon={faUsers}
                       style={{
                         fontSize: "22px",
                         color: "var(--green-dark)",
                         marginRight: "10px",
                       }}
                     />
-                    {statisticalData?.quantityUsers}
+                    {statisticalData?.quantityCustomers}
                   </Text>
                 </Col>
                 <Col>
@@ -201,10 +507,14 @@ const ViewStatisticals = () => {
                 </Col>
               </Col>
 
+              {/* Income hotels */}
               <Col
                 span={5}
                 style={{
-                  background: "var( --white)",
+                  background: "var(--white)",
+                  borderTop: "1px solid var(--border)",
+                  borderLeft: "1px solid var(--border)",
+                  borderRight: "1px solid var(--border)",
                   borderBottom: "6px solid var(--green-dark)",
                   height: "auto",
                   borderRadius: "5px",
@@ -212,7 +522,7 @@ const ViewStatisticals = () => {
                   display: "flex",
                   justifyContent: "space-between",
                   alignItems: "center",
-                  gap: "10px",
+                  boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
                 }}
               >
                 <Col
@@ -220,6 +530,7 @@ const ViewStatisticals = () => {
                     display: "flex",
                     flexDirection: "column",
                     justifyContent: "center",
+                    alignItems: "start",
                     gap: "10px",
                   }}
                 >
@@ -230,7 +541,7 @@ const ViewStatisticals = () => {
                       color: "var(--gray-light)",
                     }}
                   >
-                    TOTAL INCOME
+                    INCOME HOTELS
                   </Text>
                   <Text
                     style={{
@@ -253,7 +564,7 @@ const ViewStatisticals = () => {
                     {new Intl.NumberFormat("vi-VN", {
                       style: "currency",
                       currency: "VND",
-                    }).format(statisticalData?.income)}
+                    }).format(statisticalData?.incomeHotels)}
                   </Text>
                 </Col>
                 <Col>
@@ -269,10 +580,14 @@ const ViewStatisticals = () => {
                 </Col>
               </Col>
 
+              {/* Income tours */}
               <Col
                 span={5}
                 style={{
-                  background: "var( --white)",
+                  background: "var(--white)",
+                  borderTop: "1px solid var(--border)",
+                  borderLeft: "1px solid var(--border)",
+                  borderRight: "1px solid var(--border)",
                   borderBottom: "6px solid var(--green-dark)",
                   height: "auto",
                   borderRadius: "5px",
@@ -280,7 +595,7 @@ const ViewStatisticals = () => {
                   display: "flex",
                   justifyContent: "space-between",
                   alignItems: "center",
-                  gap: "10px",
+                  boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
                 }}
               >
                 <Col
@@ -288,6 +603,7 @@ const ViewStatisticals = () => {
                     display: "flex",
                     flexDirection: "column",
                     justifyContent: "center",
+                    alignItems: "start",
                     gap: "10px",
                   }}
                 >
@@ -298,7 +614,7 @@ const ViewStatisticals = () => {
                       color: "var(--gray-light)",
                     }}
                   >
-                    BOOKINGS
+                    INCOME TOURS
                   </Text>
                   <Text
                     style={{
@@ -311,14 +627,17 @@ const ViewStatisticals = () => {
                     }}
                   >
                     <FontAwesomeIcon
-                      icon={faCreditCard}
+                      icon={faMoneyBill}
                       style={{
                         fontSize: "22px",
                         color: "var(--green-dark)",
                         marginRight: "10px",
                       }}
                     />
-                    {statisticalData?.quantityBookings}
+                    {new Intl.NumberFormat("vi-VN", {
+                      style: "currency",
+                      currency: "VND",
+                    }).format(statisticalData?.incomeTours)}
                   </Text>
                 </Col>
                 <Col>
@@ -334,10 +653,14 @@ const ViewStatisticals = () => {
                 </Col>
               </Col>
 
+              {/* Transactions */}
               <Col
                 span={5}
                 style={{
-                  background: "var( --white)",
+                  background: "var(--white)",
+                  borderTop: "1px solid var(--border)",
+                  borderLeft: "1px solid var(--border)",
+                  borderRight: "1px solid var(--border)",
                   borderBottom: "6px solid var(--green-dark)",
                   height: "auto",
                   borderRadius: "5px",
@@ -345,7 +668,7 @@ const ViewStatisticals = () => {
                   display: "flex",
                   justifyContent: "space-between",
                   alignItems: "center",
-                  gap: "10px",
+                  boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
                 }}
               >
                 <Col
@@ -353,6 +676,7 @@ const ViewStatisticals = () => {
                     display: "flex",
                     flexDirection: "column",
                     justifyContent: "center",
+                    alignItems: "start",
                     gap: "10px",
                   }}
                 >
@@ -376,7 +700,7 @@ const ViewStatisticals = () => {
                     }}
                   >
                     <FontAwesomeIcon
-                      icon={faMoneyBill1}
+                      icon={faCreditCard}
                       style={{
                         fontSize: "22px",
                         color: "var(--green-dark)",
@@ -397,6 +721,36 @@ const ViewStatisticals = () => {
                     }}
                   />
                 </Col>
+              </Col>
+            </Row>
+
+            <Row
+              style={{ width: "100%", marginTop: "40px" }}
+              justify="space-between"
+            >
+              <Col
+                span={11}
+                style={{
+                  background: "var(--white)",
+                  borderRadius: "5px",
+                  padding: "10px",
+                  border: "1px solid var(--border)",
+                  boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
+                }}
+              >
+                <Line data={chartDataHotels} options={options} />
+              </Col>
+              <Col
+                span={11}
+                style={{
+                  background: "var(--white)",
+                  borderRadius: "5px",
+                  padding: "10px",
+                  border: "1px solid var(--border)",
+                  boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
+                }}
+              >
+                <Line data={chartDataTours} options={options} />
               </Col>
             </Row>
           </Row>

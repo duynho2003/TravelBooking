@@ -39,6 +39,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { PlusOutlined, SearchOutlined } from "@ant-design/icons";
 import goongApi from "../../services/goongJs/goongApi";
+import { Link } from "react-router-dom";
 
 const { RangePicker } = DatePicker;
 const { Text } = Typography;
@@ -650,6 +651,9 @@ const CreateTour = () => {
               borderBottom: "1px solid var(--border)",
               padding: "0 0 20px 0",
               marginBottom: "10px",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
             }}
           >
             <Breadcrumb
@@ -668,6 +672,24 @@ const CreateTour = () => {
                 },
               ]}
             />
+
+            <Button
+              style={{
+                background: "var(--green-dark)",
+                border: "var(--green-dark)",
+              }}
+            >
+              <Link to="/admin/tours/view">
+                <CustomText
+                  size={"14px"}
+                  weight={"500"}
+                  color={"var(--white)"}
+                  isButton={true}
+                >
+                  Back
+                </CustomText>
+              </Link>
+            </Button>
           </Col>
           <Col xl={24}>
             <Form onFinish={handleSubmit(onSubmit)} layout="vertical">

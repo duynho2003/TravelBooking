@@ -164,6 +164,7 @@ const ViewTourBookings = () => {
         </>
       ),
       dataIndex: "tourName",
+      render: (text) => <div className="truncated-text">{text}</div>,
     },
     {
       title: (

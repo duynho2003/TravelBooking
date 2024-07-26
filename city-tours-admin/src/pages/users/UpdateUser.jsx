@@ -21,7 +21,7 @@ import Loading from "../../components/common/Loading";
 import { userRoles } from "../../utils/enums/UserRoles";
 import { userStatus } from "../../utils/enums/UserStatus";
 import { useDispatch, useSelector } from "react-redux";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 
 const { Option } = Select;
 
@@ -140,9 +140,10 @@ const UpdateUser = () => {
           <Col
             xl={24}
             style={{
-              borderBottom: "1px solid var(--border)",
               padding: "0 0 20px 0",
-              marginBottom: "10px",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
             }}
           >
             <Breadcrumb
@@ -161,6 +162,24 @@ const UpdateUser = () => {
                 },
               ]}
             />
+
+            <Button
+              style={{
+                background: "var(--green-dark)",
+                border: "var(--green-dark)",
+              }}
+            >
+              <Link to="/admin/users/view">
+                <CustomText
+                  size={"14px"}
+                  weight={"500"}
+                  color={"var(--white)"}
+                  isButton={true}
+                >
+                  Back
+                </CustomText>
+              </Link>
+            </Button>
           </Col>
           <Col
             xl={24}

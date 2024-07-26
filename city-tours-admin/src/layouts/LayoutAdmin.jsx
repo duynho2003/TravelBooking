@@ -93,12 +93,12 @@ export default function AdminLayout() {
           label: <Link to="/admin/users/create">Create new user</Link>,
           path: "/admin/users/create",
         },
-        {
-          key: `/admin/users/update/${userId}`,
-          label: "Update user",
-          path: `/admin/users/update/${userId}`,
-          // disabled: true,
-        },
+        // {
+        //   key: `/admin/users/update/${userId}`,
+        //   label: "Update user",
+        //   path: `/admin/users/update/${userId}`,
+        //   // disabled: true,
+        // },
       ],
     },
 
@@ -117,11 +117,11 @@ export default function AdminLayout() {
           label: <Link to="/admin/regions/create">Create new region</Link>,
           path: "/admin/regions/create",
         },
-        {
-          key: `/admin/regions/update/${regionId}`,
-          label: "Update region",
-          path: `/admin/regions/update/${regionId}`,
-        },
+        // {
+        //   key: `/admin/regions/update/${regionId}`,
+        //   label: "Update region",
+        //   path: `/admin/regions/update/${regionId}`,
+        // },
       ],
     },
 
@@ -135,36 +135,36 @@ export default function AdminLayout() {
           label: <Link to="/admin/hotels/view">View hotels</Link>,
           path: "/admin/hotels/view",
         },
-        {
-          key: `/admin/hotels/view/${hotelId}`,
-          label: "View a hotel",
-          path: `/admin/hotels/view/${hotelId}`,
-        },
+        // {
+        //   key: `/admin/hotels/view/${hotelId}`,
+        //   label: "View a hotel",
+        //   path: `/admin/hotels/view/${hotelId}`,
+        // },
         {
           key: "/admin/hotels/create",
           label: <Link to="/admin/hotels/create">Create new hotel</Link>,
           path: "/admin/hotels/create",
         },
-        {
-          key: `/admin/hotels/update/${hotelId}`,
-          label: "Update hotel",
-          key: `/admin/hotels/update/${hotelId}`,
-        },
-        {
-          key: `/admin/hotels/${hotelId}/room/${roomId}/view`,
-          label: "View room in hotel",
-          path: `/admin/hotels/${hotelId}/room/${roomId}/view`,
-        },
-        {
-          key: `/admin/hotels/${hotelId}/room/create`,
-          label: "Create new room in hotel",
-          path: `/admin/hotels/${hotelId}/room/create`,
-        },
-        {
-          key: `/admin/hotels/${hotelId}/room/${roomId}/update`,
-          label: "Update room in hotel",
-          path: `/admin/hotels/${hotelId}/room/${roomId}/update`,
-        },
+        // {
+        //   key: `/admin/hotels/update/${hotelId}`,
+        //   label: "Update hotel",
+        //   key: `/admin/hotels/update/${hotelId}`,
+        // },
+        // {
+        //   key: `/admin/hotels/${hotelId}/room/${roomId}/view`,
+        //   label: "View room in hotel",
+        //   path: `/admin/hotels/${hotelId}/room/${roomId}/view`,
+        // },
+        // {
+        //   key: `/admin/hotels/${hotelId}/room/create`,
+        //   label: "Create new room in hotel",
+        //   path: `/admin/hotels/${hotelId}/room/create`,
+        // },
+        // {
+        //   key: `/admin/hotels/${hotelId}/room/${roomId}/update`,
+        //   label: "Update room in hotel",
+        //   path: `/admin/hotels/${hotelId}/room/${roomId}/update`,
+        // },
       ],
     },
 
@@ -185,21 +185,21 @@ export default function AdminLayout() {
           ),
           path: "/admin/tours/completed/view",
         },
-        {
-          key: `/admin/tours/view/${tourId}`,
-          label: "View a tour",
-          path: `/admin/tours/view/${tourId}`,
-        },
+        // {
+        //   key: `/admin/tours/view/${tourId}`,
+        //   label: "View a tour",
+        //   path: `/admin/tours/view/${tourId}`,
+        // },
         {
           key: "/admin/tours/create",
           label: <Link to="/admin/tours/create">Create new tour</Link>,
           path: "/admin/tours/create",
         },
-        {
-          key: `/admin/tours/update/${tourId}`,
-          label: "Update tour",
-          path: `/admin/tours/update/${tourId}`,
-        },
+        // {
+        //   key: `/admin/tours/update/${tourId}`,
+        //   label: "Update tour",
+        //   path: `/admin/tours/update/${tourId}`,
+        // },
       ],
     },
 
@@ -257,21 +257,21 @@ export default function AdminLayout() {
           label: <Link to="/admin/blogs/view">View blogs</Link>,
           path: "/admin/blogs/view",
         },
-        {
-          key: `/admin/blogs/view/${blogId}`,
-          label: "View a blog",
-          path: `/admin/blogs/view/${blogId}`,
-        },
+        // {
+        //   key: `/admin/blogs/view/${blogId}`,
+        //   label: "View a blog",
+        //   path: `/admin/blogs/view/${blogId}`,
+        // },
         {
           key: "/admin/blogs/create",
           label: <Link to="/admin/blogs/create">Create new blog</Link>,
           path: "/admin/blogs/create",
         },
-        {
-          key: `/admin/blogs/update/${blogId}`,
-          label: "Update blog",
-          path: `/admin/blogs/update/${blogId}`,
-        },
+        // {
+        //   key: `/admin/blogs/update/${blogId}`,
+        //   label: "Update blog",
+        //   path: `/admin/blogs/update/${blogId}`,
+        // },
       ],
     },
   ];

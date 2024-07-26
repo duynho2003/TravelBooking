@@ -14,6 +14,7 @@ import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import { login } from "../../features/auth/AuthSlice";
+import { decodeToken } from "react-jwt";
 
 const { Title } = Typography;
 
@@ -40,20 +41,36 @@ function Login() {
         if (action?.payload?.data) {
           const token = action?.payload?.data?.token;
           Cookies.set("token", token);
-          notification.success({
-            message: "Login successful",
-            description: "Logged into the system successfully.",
-          });
-          navigate("/admin/website/view");
+
+          const decode = decodeToken(token);
+
+          console.log("decodeToken: ", decode);
+
+          const role = decode?.authorities.includes("ROLE_ADMIN");
+
+          console.log("role: ", role);
+
+          if (role) {
+            notification.success({
+              message: "Login successful",
+              description: "Logged into the system successfully.",
+            });
+            navigate("/admin/website/view");
+          } else {
+            notification.warning({
+              message: "Access Denied",
+              description: "You do not have access to this page.",
+            });
+          }
         } else {
-          const error = action?.payload?.error.message || "Lỗi không xác định.";
+          const error = action?.payload?.error.message || "Unknown error";
           notification.error({
             message: "Login error",
             description: error,
           });
         }
       } else if (login.rejected.match(action)) {
-        const error = action?.payload?.error.message || "Lỗi không xác định.";
+        const error = action?.payload?.error.message || "Unknown error";
         notification.error({
           message: "Login error",
           description: error,

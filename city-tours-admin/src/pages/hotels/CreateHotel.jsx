@@ -27,6 +27,7 @@ import { getAllRegions } from "../../features/region/RegionSlice";
 import dayjs from "dayjs";
 import "dayjs/locale/en"; // Import locale 'en' để sử dụng tiếng Anh
 import customParseFormat from "dayjs/plugin/customParseFormat";
+import { Link } from "react-router-dom";
 dayjs.extend(customParseFormat);
 
 const { RangePicker } = DatePicker;
@@ -129,6 +130,7 @@ const CreateHotel = () => {
         address: data.address,
         thumbnailUrls: urls,
         provinceId: selectedProvince,
+        rating: data.rating,
       };
 
       console.log("thumbnailUrls: ", thumbnailUrls);
@@ -200,6 +202,9 @@ const CreateHotel = () => {
               borderBottom: "1px solid var(--border)",
               padding: "0 0 20px 0",
               marginBottom: "10px",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
             }}
           >
             <Breadcrumb
@@ -218,6 +223,24 @@ const CreateHotel = () => {
                 },
               ]}
             />
+
+            <Button
+              style={{
+                background: "var(--green-dark)",
+                border: "var(--green-dark)",
+              }}
+            >
+              <Link to="/admin/hotels/view">
+                <CustomText
+                  size={"14px"}
+                  weight={"500"}
+                  color={"var(--white)"}
+                  isButton={true}
+                >
+                  Back
+                </CustomText>
+              </Link>
+            </Button>
           </Col>
           <Col xl={24}>
             <Form onFinish={handleSubmit(onSubmit)} layout="vertical">
@@ -328,6 +351,29 @@ const CreateHotel = () => {
                         help={error?.message}
                       >
                         <Input {...field} placeholder="Enter address" />
+                      </Form.Item>
+                    )}
+                  />
+
+                  <Controller
+                    name="rating"
+                    control={control}
+                    rules={{ required: "Rating is required" }}
+                    render={({ field, fieldState: { error } }) => (
+                      <Form.Item
+                        label="Rating"
+                        validateStatus={error ? "error" : ""}
+                        help={error?.message}
+                      >
+                        <InputNumber
+                          {...field}
+                          placeholder="Enter rating"
+                          style={{
+                            width: "100%",
+                          }}
+                          min={3}
+                          max={5}
+                        />
                       </Form.Item>
                     )}
                   />

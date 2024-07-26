@@ -278,39 +278,6 @@ const ViewTours = () => {
         }).format(price),
     },
 
-    // {
-    //   title: (
-    //     <>
-    //       Booked Status <FontAwesomeIcon icon={faCaretDown} />
-    //     </>
-    //   ),
-    //   dataIndex: "bookedStatus",
-    //   render: (bookedStatus) => {
-    //     let color, tagText;
-
-    //     switch (bookedStatus) {
-    //       case "CANCELLED":
-    //         color = "red";
-    //         tagText = "Cancelled";
-    //         break;
-    //       case "NOT_BOOKED":
-    //         color = "blue";
-    //         tagText = "Not Booked";
-    //         break;
-    //       case "BOOKED":
-    //         color = "green";
-    //         tagText = "Booked";
-    //         break;
-    //       default:
-    //         color = "default";
-    //         tagText = "Unknown";
-    //         break;
-    //     }
-
-    //     return <Tag color={color}>{tagText}</Tag>;
-    //   },
-    // },
-
     {
       title: (
         <>
@@ -342,56 +309,74 @@ const ViewTours = () => {
         </>
       ),
       dataIndex: "actions",
-      render: (text, record) => (
-        <>
-          <Button
-            size="small"
-            style={{
-              color: "var(--gray-light)",
-              marginRight: "5px",
-            }}
-            onClick={() => handleNavigateViewTour(record?.id)}
-          >
-            <FontAwesomeIcon icon={faEye} />
-          </Button>
+      render: (text, record) => {
+        // Get the current date
+        const currentDate = new Date();
 
-          <Button
-            size="small"
-            style={{
-              color: "var(--gray-light)",
-              marginRight: "5px",
-            }}
-            onClick={() => handleNavigateUpdateTour(record?.id)}
-          >
-            <FontAwesomeIcon icon={faPen} />
-          </Button>
+        // Check if any tourTimes have an endDate after the current date
+        const hasFutureEndDate = record.tourTimes.some((tourTime) => {
+          const endDate = new Date(
+            tourTime.endDate.split(" - ")[1].split("/").reverse().join("-")
+          );
+          return endDate < currentDate;
+        });
 
-          <Popconfirm
-            title="Delete tour"
-            description="Are you sure you want to delete this tour?"
-            icon={
-              <QuestionCircleOutlined
-                style={{
-                  color: "red",
-                }}
-              />
-            }
-            onConfirm={() => confirm(record?.id)}
-            onCancel={cancel}
-            okText="Yes"
-            cancelText="No"
-          >
+        return (
+          <>
             <Button
               size="small"
               style={{
                 color: "var(--gray-light)",
+                marginRight: "5px",
               }}
+              onClick={() => handleNavigateViewTour(record?.id)}
             >
-              <FontAwesomeIcon icon={faTrashCan} />
+              <FontAwesomeIcon icon={faEye} />
             </Button>
-          </Popconfirm>
-        </>
-      ),
+
+            {/* Only render the update and delete buttons if no future end dates */}
+            {!hasFutureEndDate && (
+              <>
+                <Button
+                  size="small"
+                  style={{
+                    color: "var(--gray-light)",
+                    marginRight: "5px",
+                  }}
+                  onClick={() => handleNavigateUpdateTour(record?.id)}
+                >
+                  <FontAwesomeIcon icon={faPen} />
+                </Button>
+
+                <Popconfirm
+                  title="Delete tour"
+                  description="Are you sure you want to delete this tour?"
+                  icon={
+                    <QuestionCircleOutlined
+                      style={{
+                        color: "red",
+                      }}
+                    />
+                  }
+                  onConfirm={() => confirm(record?.id)}
+                  onCancel={cancel}
+                  okText="Yes"
+                  cancelText="No"
+                >
+                  <Button
+                    size="small"
+                    style={{
+                      color: "var(--gray-light)",
+                    }}
+                  >
+                    <FontAwesomeIcon icon={faTrashCan} />
+                  </Button>
+                </Popconfirm>
+              </>
+            )}
+          </>
+        );
+      },
     },
   ];
 

@@ -36,7 +36,7 @@ import { activeStatus } from "../../utils/enums/ActiveStatus";
 import dayjs from "dayjs";
 import "dayjs/locale/en";
 import customParseFormat from "dayjs/plugin/customParseFormat";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { roomTypes } from "../../utils/enums/RoomTypes";
 import { getBlogById } from "../../features/blog/BlogSlice";
 dayjs.extend(customParseFormat);
@@ -113,6 +113,7 @@ const UpdateBlog = () => {
     if (blog) {
       reset({
         title: blog?.title,
+        description: blog?.description,
         content: blog?.content,
         activeStatus: blog?.activeStatus,
       });
@@ -158,6 +159,7 @@ const UpdateBlog = () => {
     const newData = {
       blogId: blogId,
       title: data.title,
+      description: data.description,
       content: data.content,
       activeStatus: data.activeStatus,
       thumbnail: thumbnailToUse,
@@ -254,6 +256,9 @@ const UpdateBlog = () => {
               borderBottom: "1px solid var(--border)",
               padding: "0 0 20px 0",
               marginBottom: "10px",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
             }}
           >
             <Breadcrumb
@@ -272,6 +277,24 @@ const UpdateBlog = () => {
                 },
               ]}
             />
+
+            <Button
+              style={{
+                background: "var(--green-dark)",
+                border: "var(--green-dark)",
+              }}
+            >
+              <Link to="/admin/blogs/view">
+                <CustomText
+                  size={"14px"}
+                  weight={"500"}
+                  color={"var(--white)"}
+                  isButton={true}
+                >
+                  Back
+                </CustomText>
+              </Link>
+            </Button>
           </Col>
           <Col xl={24}>
             <Form onFinish={handleSubmit(onSubmit)} layout="vertical">
@@ -293,6 +316,24 @@ const UpdateBlog = () => {
                         help={error?.message}
                       >
                         <Input {...field} placeholder="Enter title" />
+                      </Form.Item>
+                    )}
+                  />
+
+                  <Controller
+                    name="description"
+                    control={control}
+                    rules={{ required: "Description is required" }}
+                    render={({ field, fieldState: { error } }) => (
+                      <Form.Item
+                        label="Description"
+                        validateStatus={error ? "error" : ""}
+                        help={error?.message}
+                      >
+                        <Input.TextArea
+                          {...field}
+                          placeholder="Enter description"
+                        />
                       </Form.Item>
                     )}
                   />

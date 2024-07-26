@@ -192,6 +192,7 @@ const ViewHotels = () => {
         </>
       ),
       dataIndex: "name",
+      className: "truncated-text",
     },
     {
       title: (
@@ -200,6 +201,7 @@ const ViewHotels = () => {
         </>
       ),
       dataIndex: "address",
+      className: "truncated-text",
     },
     {
       title: (

@@ -278,62 +278,13 @@ const ViewToursCompleted = () => {
         }).format(price),
     },
 
-    // {
-    //   title: (
-    //     <>
-    //       Booked Status <FontAwesomeIcon icon={faCaretDown} />
-    //     </>
-    //   ),
-    //   dataIndex: "bookedStatus",
-    //   render: (bookedStatus) => {
-    //     let color, tagText;
-
-    //     switch (bookedStatus) {
-    //       case "CANCELLED":
-    //         color = "red";
-    //         tagText = "Cancelled";
-    //         break;
-    //       case "NOT_BOOKED":
-    //         color = "blue";
-    //         tagText = "Not Booked";
-    //         break;
-    //       case "BOOKED":
-    //         color = "green";
-    //         tagText = "Booked";
-    //         break;
-    //       default:
-    //         color = "default";
-    //         tagText = "Unknown";
-    //         break;
-    //     }
-
-    //     return <Tag color={color}>{tagText}</Tag>;
-    //   },
-    // },
-
     {
       title: (
         <>
-          Status <FontAwesomeIcon icon={faCaretDown} />
+          Customer Booking <FontAwesomeIcon icon={faCaretDown} />
         </>
       ),
-      dataIndex: "activeStatus",
-      render: (_, { activeStatus }) => {
-        let color = activeStatus === "ACTIVE" ? "cyan" : "volcano";
-
-        let tagText =
-          activeStatus === "ACTIVE"
-            ? "Active"
-            : activeStatus === "IN_ACTIVE"
-            ? "In Active"
-            : activeStatus;
-
-        return (
-          <Tag color={color} key={activeStatus}>
-            {tagText}
-          </Tag>
-        );
-      },
+      dataIndex: "quantityCustomerBooking",
     },
     {
       title: (

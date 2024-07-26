@@ -116,6 +116,7 @@ const UpdateHotel = () => {
         description: hotel?.description,
         address: hotel?.address,
         activeStatus: hotel?.activeStatus,
+        rating: hotel?.rating,
       });
     }
   }, [hotel]);
@@ -439,6 +440,7 @@ const UpdateHotel = () => {
         address: data.address,
         activeStatus: data.activeStatus,
         thumbnailUrls: thumbnailUrlsToUse,
+        rating: data.rating,
       };
 
       console.log("newDataUpdateHotel: ", newData);
@@ -872,6 +874,24 @@ const UpdateHotel = () => {
                 },
               ]}
             />
+
+            <Button
+              style={{
+                background: "var(--green-dark)",
+                border: "var(--green-dark)",
+              }}
+            >
+              <Link to="/admin/hotels/view">
+                <CustomText
+                  size={"14px"}
+                  weight={"500"}
+                  color={"var(--white)"}
+                  isButton={true}
+                >
+                  Back
+                </CustomText>
+              </Link>
+            </Button>
           </Col>
           <Col xl={24}>
             <Form
@@ -934,6 +954,28 @@ const UpdateHotel = () => {
                         help={error?.message}
                       >
                         <Input {...field} />
+                      </Form.Item>
+                    )}
+                  />
+
+                  <Controller
+                    name="rating"
+                    control={control}
+                    rules={{ required: "Rating is required" }}
+                    render={({ field, fieldState: { error } }) => (
+                      <Form.Item
+                        label="Rating"
+                        validateStatus={error ? "error" : ""}
+                        help={error?.message}
+                      >
+                        <InputNumber
+                          {...field}
+                          style={{
+                            width: "100%",
+                          }}
+                          min={3}
+                          max={5}
+                        />
                       </Form.Item>
                     )}
                   />

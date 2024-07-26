@@ -127,26 +127,18 @@ const ViewRoomBookings = () => {
     {
       title: (
         <>
-          Date <FontAwesomeIcon icon={faCaretDown} />
+          Start Date <FontAwesomeIcon icon={faCaretDown} />
         </>
       ),
-      dataIndex: "date",
+      dataIndex: "startDate",
     },
     {
       title: (
         <>
-          Start Hour <FontAwesomeIcon icon={faCaretDown} />
+          End Date <FontAwesomeIcon icon={faCaretDown} />
         </>
       ),
-      dataIndex: "startHour",
-    },
-    {
-      title: (
-        <>
-          End Hour <FontAwesomeIcon icon={faCaretDown} />
-        </>
-      ),
-      dataIndex: "endHour",
+      dataIndex: "endDate",
     },
     {
       title: (
