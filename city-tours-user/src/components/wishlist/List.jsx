@@ -353,34 +353,6 @@ export default function List({ userId, wishlists }) {
                             }}
                           />
                         </Radio>
-                        <Radio value={2}>
-                          <Rate
-                            disabled
-                            value={2}
-                            character={({ index = 0 }) =>
-                              customIcons[index + 1]
-                            }
-                            style={{
-                              fontSize: "15px",
-                              color: "var(--orange)",
-                              marginRight: "5px",
-                            }}
-                          />
-                        </Radio>
-                        <Radio value={1}>
-                          <Rate
-                            disabled
-                            value={1}
-                            character={({ index = 0 }) =>
-                              customIcons[index + 1]
-                            }
-                            style={{
-                              fontSize: "15px",
-                              color: "var(--orange)",
-                              marginRight: "5px",
-                            }}
-                          />
-                        </Radio>
                       </Space>
                     </Radio.Group>
                   </Col>
@@ -533,14 +505,6 @@ export default function List({ userId, wishlists }) {
                             }}
                           />
                         )}
-
-                        <CustomText
-                          size={"12px"}
-                          weight={"400"}
-                          color={"var(--black-text)"}
-                        >
-                          ({item?.numberOfRating})
-                        </CustomText>
                       </Col>
 
                       <Col>
@@ -569,11 +533,9 @@ export default function List({ userId, wishlists }) {
                     <Col
                       span={24}
                       style={{
-                        display: "flex",
-                        justifyContent: "start",
-                        alignItems: "center",
                         marginBottom: "10px",
                       }}
+                      className="truncated-title"
                     >
                       <CustomText
                         size={"16px"}
@@ -606,7 +568,7 @@ export default function List({ userId, wishlists }) {
 
                     {/* Icons */}
 
-                    {item?.type === "TOUR" ? (
+                    {/* {item?.type === "TOUR" ? (
                       <Col
                         span={24}
                         style={{
@@ -730,7 +692,7 @@ export default function List({ userId, wishlists }) {
                           }}
                         />
                       </Col>
-                    )}
+                    )} */}
                   </Col>
 
                   {/* Details */}
@@ -763,7 +725,7 @@ export default function List({ userId, wishlists }) {
                         weight={"400"}
                         color={"var(--pink)"}
                       >
-                        {item?.price}
+                        {item?.priceAdult}
                       </CustomText>
                     )}
 

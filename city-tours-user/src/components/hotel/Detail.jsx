@@ -67,18 +67,18 @@ import { getInfoCustomer } from "../../features/customer/CustomerSlice";
 import { useEffect, useState } from "react";
 import { roomBooking } from "../../features/hotel/HotelSlice";
 import { Controller, useForm } from "react-hook-form";
+import { createWishlist } from "../../features/wishlist/WishlistSlice";
 dayjs.extend(customParseFormat);
 
 const { useBreakpoint } = Grid;
 const { Option } = Select;
 const { RangePicker } = DatePicker;
 
-export default function Detail({ hotel, reviews }) {
+export default function Detail({ userId, hotel, reviews }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { hotelId } = useParams();
 
-  const userId = useSelector((state) => state.auth?.info?.id);
   const sub = useSelector((state) => state.auth?.info?.sub);
   const selectedRoomRedux = useSelector((state) => state.hotels?.selectedRoom);
   const selectedHotel = useSelector((state) => state.hotels?.selectedHotel);
@@ -95,6 +95,10 @@ export default function Detail({ hotel, reviews }) {
 
   const listRoomOfHotel = useSelector(
     (state) => state.hotels?.selectedHotel?.rooms
+  );
+
+  const roomDetailBookings = useSelector(
+    (state) => state.hotels?.selectedRoom?.roomBookings
   );
 
   console.log("roomBookings: ", roomBookings);
@@ -166,42 +170,46 @@ export default function Detail({ hotel, reviews }) {
     }
   };
 
+  const isDateInRange = (date, startDate, endDate) => {
+    const dateTime = date.getTime();
+    return dateTime >= startDate.getTime() && dateTime <= endDate.getTime();
+  };
+
   const disabledDate = (current) => {
-    return current && current < Date.now();
+    if (!current) return false;
+
+    const currentDate = new Date(current);
+    currentDate.setHours(0, 0, 0, 0); // Thiết lập giờ, phút, giây và mili giây về 0
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    // Disable ngày quá khứ và hiện tại
+    if (currentDate < today) {
+      console.log("Date is in the past or today, disabling:", currentDate);
+      return true;
+    }
+
+    // Disable các ngày nằm trong phạm vi của bookings, bao gồm cả startDate và endDate
+    for (const booking of roomDetailBookings) {
+      const startDate = new Date(booking.startDate);
+      startDate.setHours(0, 0, 0, 0); // Thiết lập giờ, phút, giây và mili giây về 0
+
+      const endDate = new Date(booking.endDate);
+      endDate.setHours(0, 0, 0, 0); // Thiết lập giờ, phút, giây và mili giây về 0
+
+      if (
+        currentDate.getTime() === startDate.getTime() ||
+        isDateInRange(currentDate, startDate, endDate)
+      ) {
+        return true;
+      }
+    }
+
+    return false;
   };
 
-  const disabledTime = (tourRoomBookings) => {
-    return (current) => {
-      const currentDate = current.format("YYYY-MM-DD");
-
-      // Find all bookings that match the current date
-      const bookings = tourRoomBookings?.filter((booking) =>
-        booking.date.includes(currentDate)
-      );
-
-      // Initialize an array to hold disabled hours
-      let disabledHours = [];
-
-      // Iterate through each booking to disable hours within the range
-      bookings?.forEach((booking) => {
-        const { startHour, endHour } = booking;
-
-        // Parse the start and end hours from the booking
-        const startHourInt = parseInt(startHour.slice(0, 2));
-        const endHourInt = parseInt(endHour.slice(0, 2));
-
-        // Add hours to the disabledHours array
-        for (let hour = startHourInt; hour <= endHourInt; hour++) {
-          disabledHours.push(hour);
-        }
-      });
-
-      // Return an object with disabledHours function if there are disabled hours, otherwise an empty object
-      return disabledHours.length > 0
-        ? { disabledHours: () => disabledHours }
-        : {};
-    };
-  };
+  const [durationDays, setDurationDays] = useState(null);
 
   const onChangeDatePicker = (
     dates,
@@ -209,48 +217,37 @@ export default function Detail({ hotel, reviews }) {
     roomId,
     discount,
     price,
-    roomType
+    roomType,
+    roomNumber
   ) => {
-    if (dateStrings && dateStrings.length === 2) {
-      const formatDate = (dateString) => {
-        const [date, time] = dateString.split(" ");
-        const [year, month, day] = date.split("-");
-        return `${time} - ${day}/${month}/${year}`;
-      };
+    const startDate = dateStrings?.[0];
+    const endDate = dateStrings?.[dateStrings.length - 1];
+    const durationDays = dates ? dates[1].diff(dates[0], "days") + 1 : 0;
 
-      const startHour = formatDate(dateStrings?.[0]);
-      const endHour = formatDate(dateStrings?.[1]);
+    setDurationDays(durationDays);
 
-      const startTime = dayjs(dateStrings[0]);
-      const endTime = dayjs(dateStrings[1]);
-      const durationHours = endTime.diff(startTime, "hours");
+    const totalAmount = durationDays * price;
 
-      const totalAmount = durationHours * price;
+    setTotalAmountRoom(totalAmount);
 
-      console.log("durationHours: ", durationHours);
-      console.log("totalAmount: ", totalAmount);
+    const newRoom = {
+      roomId: roomId,
+      roomType: roomType,
+      roomNumber: roomNumber,
+      startDate: startDate,
+      endDate: endDate,
+      discount: discount,
+      price: price,
+      totalAmount: totalAmount,
+    };
 
-      setTotalAmountRoom(price);
+    setDataTourRoomBooking(newRoom);
 
-      const newRoom = {
-        roomId: roomId,
-        date: dates[0].format("YYYY-MM-DD"),
-        startHour: startHour,
-        endHour: endHour,
-        discount: discount,
-        price: price,
-        totalAmount: totalAmount,
-        type: roomType,
-      };
+    setErrorCheckTime(null);
 
-      setDataTourRoomBooking(newRoom);
-
-      setErrorCheckTime(null);
-
-      console.log("dates: ", dates);
-      console.log("dateStrings: ", dateStrings);
-      console.log("roomId: ", roomId);
-    }
+    console.log("dateStrings: ", dateStrings);
+    console.log("durationDays: ", durationDays);
+    console.log("totalAmount: ", totalAmount);
   };
 
   const handleGetRoomById = (roomId) => {
@@ -356,6 +353,61 @@ export default function Detail({ hotel, reviews }) {
     return `${year}-${month}-${day}`;
   };
 
+  const handleAddWishlist = async (hotelId) => {
+    if (!userId) {
+      alert("Please login before adding to wishlists");
+      navigate("/login");
+      return;
+    }
+    const newData = {
+      name: hotel?.name,
+      rating: hotel?.rating,
+      numberOfRating: hotel?.numberOfRating,
+      price: "CONTACT",
+      description: hotel?.description,
+      thumbnail: hotel?.thumbnailUrls?.[0],
+      type: "HOTEL",
+      itemId: hotel?.id,
+      userId: userId,
+    };
+
+    console.log("newData: ", newData);
+
+    try {
+      const action = await dispatch(createWishlist(newData));
+
+      console.log("action: ", action);
+
+      if (createWishlist.fulfilled.match(action)) {
+        if (action?.payload?.status === 201) {
+          notification.success({
+            message: "Add item to wishlist successful",
+            description: "Successfully added the item to your wishlist",
+          });
+        } else {
+          const error =
+            action?.payload?.error?.data?.message || "Unknown error";
+          notification.error({
+            message: "Add item to wishlist error",
+            description: error,
+          });
+        }
+      } else if (createWishlist.rejected.match(action)) {
+        const error = action?.payload?.error.message || "Unknown error";
+        notification.error({
+          message: "Add item to wishlist error",
+          description: error,
+        });
+      }
+    } catch (error) {
+      notification.error({
+        message: "System error",
+        description:
+          "The server couldn't fulfill a valid request due to an issue with the server.",
+      });
+    }
+  };
+
   return (
     <>
       <Modal
@@ -409,7 +461,7 @@ export default function Detail({ hotel, reviews }) {
                     )
                     .map((roomBooking) => (
                       <Option key={roomBooking?.id} value={roomBooking?.id}>
-                        {roomBooking?.roomType} - {roomBooking?.category}
+                        {roomBooking?.roomType} - {roomBooking?.roomNumber}
                       </Option>
                     ))}
                 </Select>
@@ -557,6 +609,105 @@ export default function Detail({ hotel, reviews }) {
         >
           {/* Col content */}
           <Col span={16}>
+            {/* Images */}
+            <Row
+              style={{
+                width: "100%",
+                padding: "0 0 20px 0",
+              }}
+              justify={"space-between"}
+            >
+              <Col
+                span={4}
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "start",
+                  alignItems: "start",
+                  gap: "15px",
+                  padding: "10px 0",
+                }}
+              >
+                <CustomText
+                  size={"22px"}
+                  weight={"500"}
+                  color={"var(--gray-text)"}
+                >
+                  Images
+                </CustomText>
+              </Col>
+
+              <Row
+                gutter={[10, 10]}
+                style={{
+                  width: "100%",
+                }}
+              >
+                {hotel?.thumbnailUrls?.map((thumb, index) => (
+                  <Col key={index} span={12}>
+                    <Image
+                      src={thumb}
+                      style={{
+                        width: "100%",
+                        height: "300px",
+                        objectFit: "cover",
+                        borderRadius: "3px",
+                      }}
+                    />
+                  </Col>
+                ))}
+              </Row>
+            </Row>
+
+            {/* Description */}
+            <Row
+              style={{
+                width: "100%",
+                padding: "20px 0",
+              }}
+              justify={"space-between"}
+            >
+              <Col
+                span={4}
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "start",
+                  alignItems: "start",
+                  gap: "15px",
+                  padding: "10px 0",
+                }}
+              >
+                <CustomText
+                  size={"22px"}
+                  weight={"500"}
+                  color={"var(--gray-text)"}
+                >
+                  Description
+                </CustomText>
+              </Col>
+
+              <Col
+                span={18}
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "start",
+                  alignItems: "start",
+                  gap: "15px",
+                  padding: "10px 0",
+                }}
+              >
+                <CustomText
+                  size={"14px"}
+                  weight={"400"}
+                  color={"var(--gray-light)"}
+                >
+                  {hotel?.description}
+                </CustomText>
+              </Col>
+            </Row>
+
             {/* Utilities */}
             <Row
               style={{
@@ -727,105 +878,6 @@ export default function Detail({ hotel, reviews }) {
               </Col>
             </Row>
 
-            {/* Images */}
-            <Row
-              style={{
-                width: "100%",
-                padding: "20px 0",
-              }}
-              justify={"space-between"}
-            >
-              <Col
-                span={4}
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "start",
-                  alignItems: "start",
-                  gap: "15px",
-                  padding: "10px 0",
-                }}
-              >
-                <CustomText
-                  size={"22px"}
-                  weight={"500"}
-                  color={"var(--gray-text)"}
-                >
-                  Images
-                </CustomText>
-              </Col>
-
-              <Row
-                gutter={[10, 10]}
-                style={{
-                  width: "100%",
-                }}
-              >
-                {hotel?.thumbnailUrls?.map((thumb, index) => (
-                  <Col key={index} span={12}>
-                    <Image
-                      src={thumb}
-                      style={{
-                        width: "100%",
-                        height: "300px",
-                        objectFit: "cover",
-                        borderRadius: "3px",
-                      }}
-                    />
-                  </Col>
-                ))}
-              </Row>
-            </Row>
-
-            {/* Description */}
-            <Row
-              style={{
-                width: "100%",
-                padding: "20px 0",
-              }}
-              justify={"space-between"}
-            >
-              <Col
-                span={4}
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "start",
-                  alignItems: "start",
-                  gap: "15px",
-                  padding: "10px 0",
-                }}
-              >
-                <CustomText
-                  size={"22px"}
-                  weight={"500"}
-                  color={"var(--gray-text)"}
-                >
-                  Description
-                </CustomText>
-              </Col>
-
-              <Col
-                span={18}
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "start",
-                  alignItems: "start",
-                  gap: "15px",
-                  padding: "10px 0",
-                }}
-              >
-                <CustomText
-                  size={"14px"}
-                  weight={"400"}
-                  color={"var(--gray-light)"}
-                >
-                  {hotel?.description}
-                </CustomText>
-              </Col>
-            </Row>
-
             {/* Room List */}
             <Row
               style={{
@@ -883,13 +935,13 @@ export default function Detail({ hotel, reviews }) {
                       {room?.type}
                     </CustomText>
 
-                    <CustomText
+                    {/* <CustomText
                       size={"14px"}
                       weight={"400"}
                       color={"var(--gray-light)"}
                     >
                       Category: <Tag color="var(--pink)">{room?.category} </Tag>
-                    </CustomText>
+                    </CustomText> */}
 
                     <CustomText
                       size={"14px"}
@@ -924,7 +976,7 @@ export default function Detail({ hotel, reviews }) {
                       weight={"400"}
                       color={"var(--gray-light)"}
                     >
-                      Price / hour:{" "}
+                      Price:{" "}
                       {new Intl.NumberFormat("vi-VN", {
                         style: "currency",
                         currency: "VND",
@@ -950,7 +1002,7 @@ export default function Detail({ hotel, reviews }) {
                           weight={"400"}
                           color={"var(--gray-light)"}
                         >
-                          Remaining seats:
+                          Number of People:
                         </CustomText>{" "}
                         <Tag color="var(--green-dark)">
                           <CustomText
@@ -1317,14 +1369,7 @@ export default function Detail({ hotel, reviews }) {
 
                     <RangePicker
                       disabled={selectedRoomRedux === null}
-                      showTime={{
-                        defaultValue: dayjs("00:00", "HH:mm"),
-                        format: "HH",
-                      }}
                       disabledDate={disabledDate}
-                      disabledTime={disabledTime(
-                        selectedRoomRedux?.roomBookings
-                      )}
                       onChange={(dates, dateStrings) => {
                         const holidayPrice =
                           selectedRoomRedux?.roomHolidays?.find(
@@ -1344,7 +1389,8 @@ export default function Detail({ hotel, reviews }) {
                           selectedRoomRedux?.id,
                           selectedRoomRedux?.discount,
                           finalPrice,
-                          selectedRoomRedux?.type
+                          selectedRoomRedux?.type,
+                          selectedRoomRedux?.roomNumber
                         );
                       }}
                     />
@@ -1361,7 +1407,7 @@ export default function Detail({ hotel, reviews }) {
                   </Col>
                 </Row>
 
-                {/* Total price / hour */}
+                {/* Discount */}
                 <Row
                   style={{
                     width: "100%",
@@ -1382,7 +1428,94 @@ export default function Detail({ hotel, reviews }) {
                       weight={"400"}
                       color={"var(--gray-text)"}
                     >
-                      Total price / hour
+                      Discount
+                    </CustomText>
+                  </Col>
+
+                  <Col
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "5px",
+                    }}
+                  >
+                    <CustomText
+                      size={"14px"}
+                      weight={"400"}
+                      color={"var(--gray-text)"}
+                    >
+                      {new Intl.NumberFormat("vi-VN", {
+                        style: "currency",
+                        currency: "VND",
+                      }).format(selectedRoomRedux?.discount || 0)}
+                    </CustomText>
+                  </Col>
+                </Row>
+
+                {/* Days */}
+                <Row
+                  style={{
+                    width: "100%",
+                    padding: "10px 0",
+                    borderBottom: "1px solid var(--border)",
+                  }}
+                  justify={"space-between"}
+                >
+                  <Col
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "5px",
+                    }}
+                  >
+                    <CustomText
+                      size={"14px"}
+                      weight={"400"}
+                      color={"var(--gray-text)"}
+                    >
+                      Days
+                    </CustomText>
+                  </Col>
+
+                  <Col
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "5px",
+                    }}
+                  >
+                    <CustomText
+                      size={"14px"}
+                      weight={"400"}
+                      color={"var(--gray-text)"}
+                    >
+                      {durationDays || 0}
+                    </CustomText>
+                  </Col>
+                </Row>
+
+                {/* Total price */}
+                <Row
+                  style={{
+                    width: "100%",
+                    padding: "10px 0",
+                    borderBottom: "1px solid var(--border)",
+                  }}
+                  justify={"space-between"}
+                >
+                  <Col
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "5px",
+                    }}
+                  >
+                    <CustomText
+                      size={"14px"}
+                      weight={"400"}
+                      color={"var(--gray-text)"}
+                    >
+                      Total price
                     </CustomText>
                   </Col>
 

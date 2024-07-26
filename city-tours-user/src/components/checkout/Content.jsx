@@ -146,17 +146,20 @@ export default function Content({ tour }) {
     };
 
     try {
-      await axios.post(urlAddTourBooking, dataBooking, {
+      const response = await axios.post(urlAddTourBooking, dataBooking, {
         headers: { Authorization: `Bearer ${token}` },
       });
+
+      const bookingId = response.data.data.id;
+      return bookingId;
     } catch (error) {
       console.error("Error adding tour booking:", error);
-      throw error; // Re-throw để bắt lỗi ở handleCheckout
+      throw error;
     }
   };
 
-  const handleCreateOrder = async () => {
-    const orderInfo = "BOOKING TOUR";
+  const handleCreateOrder = async (bookingId) => {
+    const orderInfo = `BOOKING TOUR ${bookingId}`;
     const urlVNPay = `http://localhost:5050/api/v1/payments/createOrder?amount=${tourBookingData?.totalAmount}&orderInfo=${orderInfo}`;
 
     try {
@@ -174,8 +177,8 @@ export default function Content({ tour }) {
       if (isCustomer === null) {
         await handleAddCustomer();
       }
-      await handleAddTourBooking();
-      await handleCreateOrder();
+      const bookingId = await handleAddTourBooking();
+      await handleCreateOrder(bookingId);
     } catch (error) {
       console.error("Error during checkout process:", error);
       // Xử lý lỗi tại đây nếu cần thiết

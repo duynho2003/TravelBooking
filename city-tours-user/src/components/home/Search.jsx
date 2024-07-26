@@ -18,7 +18,7 @@ export default function Search() {
 
   const onSubmit = (data) => {
     navigate(
-      `/tours/list?minPrice=0&maxPrice=5000000&review=&rating=&depart=${data.depart}&startDate=${startDate}`
+      `/tours/list?minPrice=0&maxPrice=5000000&review=&rating=&depart=${data.depart}&startDate=${startDate}&completed=`
     );
   };
 
@@ -112,9 +112,9 @@ export default function Search() {
                   >
                     <DatePicker
                       size="large"
-                      showTime
+                      // showTime
                       onChange={onChange}
-                      format={"HH:mm:ss - DD/MM/YYYY"}
+                      format={"DD/MM/YYYY"}
                       style={{
                         width: "100%",
                       }}

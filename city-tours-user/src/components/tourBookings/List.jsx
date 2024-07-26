@@ -296,7 +296,7 @@ export default function Content({
                           </Col>
 
                           {/* Remaining Seats */}
-                          <Col
+                          {/* <Col
                             style={{
                               marginBottom: "10px",
                             }}
@@ -346,7 +346,7 @@ export default function Content({
                                 </CustomText>
                               </Tag>
                             )}
-                          </Col>
+                          </Col> */}
                         </Col>
                       </Col>
                     </Row>

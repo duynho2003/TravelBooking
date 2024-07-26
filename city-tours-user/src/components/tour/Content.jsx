@@ -13,6 +13,7 @@ import {
   Table,
   InputNumber,
   Select,
+  notification,
 } from "antd";
 import category1 from "../../assets/images/category-1.jpg";
 import category2 from "../../assets/images/category-2.jpg";
@@ -57,11 +58,12 @@ import { GOONG_MAP_KEY } from "../../utils/Constants";
 import goongjs from "@goongmaps/goong-js";
 import polyline from "@mapbox/polyline";
 import goongApi from "../../services/goongJs/goongApi";
+import { createWishlist } from "../../features/wishlist/WishlistSlice";
 
 const { useBreakpoint } = Grid;
 const { Option } = Select;
 
-export default function Content({ tour }) {
+export default function Content({ userId, tour }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -195,42 +197,6 @@ export default function Content({ tour }) {
     (tourTime) => tourTime?.startDate
   );
 
-  // const [isOpenMap, setIsOpenMap] = useState(false);
-
-  // const handleShowMap = () => {
-  //   console.log("Show map");
-
-  //   // setIsOpenMap(!isOpenMap);
-
-  //   goongjs.accessToken = GOONG_MAP_KEY;
-
-  //   let defaultCenter = [106.70105355500004, 10.776553100000058];
-
-  //   const map = new goongjs.Map({
-  //     container: "map",
-  //     style: "https://tiles.goong.io/assets/goong_map_web.json",
-  //     center: defaultCenter,
-  //     zoom: 9,
-  //   });
-
-  //   // Check markerPosition and add marker if not at default
-  //   // if (markerPosition[0] !== 0 || markerPosition[1] !== 0) {
-  //   //   const marker = new goongjs.Marker({ color: "red" })
-  //   //     .setLngLat(markerPosition)
-  //   //     .addTo(map);
-
-  //   //   map.flyTo({
-  //   //     center: markerPosition,
-  //   //     zoom: 13,
-  //   //     essential: true,
-  //   //   });
-  //   // }
-
-  //   return () => {
-  //     map.remove();
-  //   };
-  // };
-
   const [polylinePoints, setPolylinePoints] = useState(null);
 
   const handleGetGoongMapsDirections = async (origin, destination) => {
@@ -243,122 +209,6 @@ export default function Content({ tour }) {
       return null;
     }
   };
-
-  // useEffect(() => {
-  //   console.log("tour locations", tour?.tourLocations);
-
-  //   goongjs.accessToken = GOONG_MAP_KEY;
-
-  //   const defaultCenter = [106.70105355500004, 10.776553100000058];
-  //   const map = new goongjs.Map({
-  //     container: "map",
-  //     style: "https://tiles.goong.io/assets/goong_map_web.json",
-  //     center: defaultCenter,
-  //     zoom: 8,
-  //   });
-
-  //   const getUniqueCoordinates = (locations) => {
-  //     const uniqueCoordinates = new Set();
-  //     locations.forEach((location) => {
-  //       const { coordinatesStartPoint, coordinatesEndPoint } = location;
-  //       if (coordinatesStartPoint) uniqueCoordinates.add(coordinatesStartPoint);
-  //       if (coordinatesEndPoint) uniqueCoordinates.add(coordinatesEndPoint);
-  //     });
-  //     return Array.from(uniqueCoordinates).map((coord) => JSON.parse(coord));
-  //   };
-
-  //   const uniqueCoords = getUniqueCoordinates(tour?.tourLocations);
-  //   console.log("uniqueCoords: ", uniqueCoords);
-
-  //   const fetchAllDirections = async () => {
-  //     const allPolylines = [];
-  //     for (let i = 0; i < uniqueCoords.length - 1; i++) {
-  //       const origin = [uniqueCoords[i].lat, uniqueCoords[i].lng];
-  //       const destination = [uniqueCoords[i + 1].lat, uniqueCoords[i + 1].lng];
-  //       const polylinePoints = await handleGetGoongMapsDirections(
-  //         origin,
-  //         destination
-  //       );
-  //       if (polylinePoints) allPolylines.push(polylinePoints);
-  //     }
-  //     setPolylinePoints(allPolylines);
-  //   };
-
-  //   if (uniqueCoords.length > 0) {
-  //     uniqueCoords.forEach((coord, index) => {
-  //       if (coord && coord.lng !== undefined && coord.lat !== undefined) {
-  //         const color = index === 0 ? "green" : "red";
-  //         new goongjs.Marker({ color })
-  //           .setLngLat([coord.lng, coord.lat])
-  //           .addTo(map);
-  //       } else {
-  //         console.warn("Invalid coordinate:", coord);
-  //       }
-  //     });
-
-  //     map.on("load", async function () {
-  //       await fetchAllDirections();
-
-  //       const layers = map.getStyle().layers;
-  //       let firstSymbolId;
-
-  //       for (let layer of layers) {
-  //         if (layer.type === "symbol") {
-  //           firstSymbolId = layer.id;
-  //           break;
-  //         }
-  //       }
-
-  //       if (polylinePoints && polylinePoints?.length > 0) {
-  //         // Remove existing source and add new polylines
-  //         polylinePoints.forEach((points, index) => {
-  //           const geoJSON = polyline.toGeoJSON(points);
-
-  //           const sourceId = `route-${index}`; // Unique source ID for each polyline
-  //           if (map.getSource(sourceId)) {
-  //             map.removeSource(sourceId);
-  //           }
-
-  //           map.addSource(sourceId, {
-  //             type: "geojson",
-  //             data: geoJSON,
-  //           });
-
-  //           // Check if the layer already exists before adding
-  //           if (!map.getLayer(sourceId)) {
-  //             map.addLayer(
-  //               {
-  //                 id: sourceId,
-  //                 type: "line",
-  //                 source: sourceId,
-  //                 layout: {
-  //                   "line-join": "round",
-  //                   "line-cap": "round",
-  //                 },
-  //                 paint: {
-  //                   "line-color": "#1e88e5",
-  //                   "line-width": 8,
-  //                 },
-  //               },
-  //               firstSymbolId
-  //             );
-  //           }
-  //         });
-  //       }
-
-  //       const bounds = new goongjs.LngLatBounds();
-  //       uniqueCoords.forEach((coord) => {
-  //         bounds.extend([coord.lng, coord.lat]);
-  //       });
-
-  //       map.fitBounds(bounds, { padding: 100 });
-  //     });
-  //   }
-
-  //   return () => {
-  //     map.remove();
-  //   };
-  // }, [tour]);
 
   useEffect(() => {
     console.log("tour locations", tour?.tourLocations);
@@ -484,6 +334,65 @@ export default function Content({ tour }) {
     };
   }, [tour]);
 
+  const handleAddWishlist = async (tourId) => {
+    if (!userId) {
+      alert("Please login before adding to wishlists");
+      navigate("/login");
+      return;
+    }
+
+    const newData = {
+      name: tour?.name,
+      rating: tour?.rating,
+      numberOfRating: tour?.numberOfRating,
+      price:
+        tour?.priceAdult - tour?.discount != null
+          ? (tour?.priceAdult - tour?.discount).toString()
+          : "",
+      description: tour?.description,
+      thumbnail: tour?.thumbnail,
+      type: "TOUR",
+      itemId: tour?.id,
+      userId: userId,
+    };
+
+    console.log("newData: ", newData);
+
+    try {
+      const action = await dispatch(createWishlist(newData));
+
+      console.log("action: ", action);
+
+      if (createWishlist.fulfilled.match(action)) {
+        if (action?.payload?.status === 201) {
+          notification.success({
+            message: "Add item to wishlist successful",
+            description: "Successfully added the item to your wishlist",
+          });
+        } else {
+          const error =
+            action?.payload?.error?.data?.message || "Unknown error";
+          notification.error({
+            message: "Add item to wishlist error",
+            description: error,
+          });
+        }
+      } else if (createWishlist.rejected.match(action)) {
+        const error = action?.payload?.error.message || "Unknown error";
+        notification.error({
+          message: "Add item to wishlist error",
+          description: error,
+        });
+      }
+    } catch (error) {
+      notification.error({
+        message: "System error",
+        description:
+          "The server couldn't fulfill a valid request due to an issue with the server.",
+      });
+    }
+  };
+
   return (
     <>
       <Row
@@ -589,6 +498,102 @@ export default function Content({ tour }) {
 
           {/* Col content */}
           <Col span={16}>
+            {/* Description */}
+            <Row
+              style={{
+                width: "100%",
+                padding: "20px 0",
+              }}
+              justify={"space-between"}
+            >
+              <Col
+                span={4}
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "start",
+                  alignItems: "start",
+                  gap: "15px",
+                  padding: "10px 0",
+                }}
+              >
+                <CustomText
+                  size={"22px"}
+                  weight={"500"}
+                  color={"var(--gray-text)"}
+                >
+                  Description
+                </CustomText>
+              </Col>
+
+              <Col
+                span={18}
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "start",
+                  alignItems: "start",
+                  gap: "15px",
+                  padding: "10px 0",
+                }}
+              >
+                <CustomText
+                  size={"14px"}
+                  weight={"400"}
+                  color={"var(--gray-light)"}
+                >
+                  {tour?.description}
+                </CustomText>
+              </Col>
+            </Row>
+
+            {/* Detail */}
+            <Row
+              style={{
+                width: "100%",
+                padding: "20px 0",
+              }}
+              justify={"space-between"}
+            >
+              <Col
+                span={4}
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "start",
+                  alignItems: "start",
+                  gap: "15px",
+                  padding: "10px 0",
+                }}
+              >
+                <CustomText
+                  size={"22px"}
+                  weight={"500"}
+                  color={"var(--gray-text)"}
+                >
+                  Detail
+                </CustomText>
+              </Col>
+
+              <Col
+                span={18}
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "start",
+                  alignItems: "start",
+                  gap: "15px",
+                  padding: "10px 0",
+                }}
+              >
+                <div
+                  dangerouslySetInnerHTML={{
+                    __html: sanitizedHTML,
+                  }}
+                />
+              </Col>
+            </Row>
+
             {/* Utilities */}
             <Row
               style={{
@@ -756,102 +761,6 @@ export default function Content({ tour }) {
                 >
                   Audio guide
                 </CustomText>
-              </Col>
-            </Row>
-
-            {/* Description */}
-            <Row
-              style={{
-                width: "100%",
-                padding: "20px 0",
-              }}
-              justify={"space-between"}
-            >
-              <Col
-                span={4}
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "start",
-                  alignItems: "start",
-                  gap: "15px",
-                  padding: "10px 0",
-                }}
-              >
-                <CustomText
-                  size={"22px"}
-                  weight={"500"}
-                  color={"var(--gray-text)"}
-                >
-                  Description
-                </CustomText>
-              </Col>
-
-              <Col
-                span={18}
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "start",
-                  alignItems: "start",
-                  gap: "15px",
-                  padding: "10px 0",
-                }}
-              >
-                <CustomText
-                  size={"14px"}
-                  weight={"400"}
-                  color={"var(--gray-light)"}
-                >
-                  {tour?.description}
-                </CustomText>
-              </Col>
-            </Row>
-
-            {/* Detail */}
-            <Row
-              style={{
-                width: "100%",
-                padding: "20px 0",
-              }}
-              justify={"space-between"}
-            >
-              <Col
-                span={4}
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "start",
-                  alignItems: "start",
-                  gap: "15px",
-                  padding: "10px 0",
-                }}
-              >
-                <CustomText
-                  size={"22px"}
-                  weight={"500"}
-                  color={"var(--gray-text)"}
-                >
-                  Detail
-                </CustomText>
-              </Col>
-
-              <Col
-                span={18}
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "start",
-                  alignItems: "start",
-                  gap: "15px",
-                  padding: "10px 0",
-                }}
-              >
-                <div
-                  dangerouslySetInnerHTML={{
-                    __html: sanitizedHTML,
-                  }}
-                />
               </Col>
             </Row>
 

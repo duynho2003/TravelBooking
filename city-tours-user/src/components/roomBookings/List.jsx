@@ -84,6 +84,20 @@ export default function Content({
     handleTableChange(page, pagination.limit);
   };
 
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0"); // Tháng trong JavaScript bắt đầu từ 0
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
+  };
+
+  const getDayName = (dateString) => {
+    const date = new Date(dateString);
+    const options = { weekday: "long" };
+    return date.toLocaleDateString("en-US", options).toUpperCase();
+  };
+
   return (
     <>
       <Row
@@ -200,12 +214,7 @@ export default function Content({
                         color={"var(--white)"}
                       >
                         {(() => {
-                          const dateParts = roomBooking?.date.split("-");
-                          const date = new Date(
-                            dateParts[0],
-                            dateParts[1] - 1,
-                            dateParts[2]
-                          );
+                          const date = new Date();
                           const monthOptions = { month: "long" };
                           const monthName = date
                             .toLocaleDateString("en-US", monthOptions)
@@ -231,10 +240,7 @@ export default function Content({
                         weight={"400"}
                         color={"var(--pink)"}
                       >
-                        {(() => {
-                          const dateParts = roomBooking?.date.split("-");
-                          return `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;
-                        })()}
+                        {formatDate(roomBooking?.startDate)}
                       </CustomText>
 
                       <CustomText
@@ -242,20 +248,7 @@ export default function Content({
                         weight={"400"}
                         color={"var(--black-text)"}
                       >
-                        {(() => {
-                          const dateParts = roomBooking?.date.split("-");
-                          const date = new Date(
-                            dateParts[0],
-                            dateParts[1] - 1,
-                            dateParts[2]
-                          );
-                          const options = { weekday: "long" };
-                          const dayName = date
-                            .toLocaleDateString("en-US", options)
-                            .toUpperCase();
-
-                          return dayName;
-                        })()}
+                        {getDayName(roomBooking?.startDate)}
                       </CustomText>
                     </Col>
                   </Col>
@@ -410,7 +403,7 @@ export default function Content({
                             weight={"400"}
                             color={"var(--gray-text)"}
                           >
-                            {roomBooking?.startHour}
+                            {formatDate(roomBooking?.startDate)}
                           </CustomText>
                         </Col>
 
@@ -438,7 +431,7 @@ export default function Content({
                             weight={"400"}
                             color={"var(--gray-text)"}
                           >
-                            {roomBooking?.endHour}
+                            {formatDate(roomBooking?.endDate)}
                           </CustomText>
                         </Col>
                       </Col>

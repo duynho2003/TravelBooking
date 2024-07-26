@@ -280,7 +280,7 @@ export default function Content({
                       weight={"400"}
                       color={"var(--gray-text)"}
                     >
-                      Review
+                      Rating
                     </CustomText>
 
                     <Radio.Group
@@ -323,28 +323,6 @@ export default function Content({
                           <Rate
                             disabled
                             value={3}
-                            style={{
-                              fontSize: "15px",
-                              color: "var(--orange)",
-                              marginRight: "5px",
-                            }}
-                          />
-                        </Radio>
-                        <Radio value={2}>
-                          <Rate
-                            disabled
-                            value={2}
-                            style={{
-                              fontSize: "15px",
-                              color: "var(--orange)",
-                              marginRight: "5px",
-                            }}
-                          />
-                        </Radio>
-                        <Radio value={1}>
-                          <Rate
-                            disabled
-                            value={1}
                             style={{
                               fontSize: "15px",
                               color: "var(--orange)",
@@ -482,13 +460,13 @@ export default function Content({
                         }}
                       />
 
-                      <CustomText
+                      {/* <CustomText
                         size={"12px"}
                         weight={"400"}
                         color={"var(--black-text)"}
                       >
                         ({hotel?.numberOfRating})
-                      </CustomText>
+                      </CustomText> */}
                     </Col>
 
                     {/* Name */}
@@ -598,7 +576,7 @@ export default function Content({
                     </Col>
 
                     {/* Icons */}
-                    <Col
+                    {/* <Col
                       span={24}
                       style={{
                         display: "flex",
@@ -658,7 +636,7 @@ export default function Content({
                           marginRight: "10px",
                         }}
                       />
-                    </Col>
+                    </Col> */}
                   </Col>
 
                   {/* Details */}
@@ -674,18 +652,6 @@ export default function Content({
                       border: "1px solid var(--border)",
                     }}
                   >
-                    <CustomText
-                      size={"24px"}
-                      weight={"400"}
-                      color={"var(--pink)"}
-                    >
-                      {/* {new Intl.NumberFormat("vi-VN", {
-                        style: "currency",
-                        currency: "VND",
-                      }).format(tour.price - tour.discount)} */}
-                      Contact
-                    </CustomText>
-
                     {/* <CustomText
                       size={"18px"}
                       weight={"300"}

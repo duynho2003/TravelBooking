@@ -11,23 +11,28 @@ import {
   Spin,
   Grid,
 } from "antd";
-import bgLogin from "../assets/images/bg-login.jpg";
-import { useNavigate } from "react-router-dom";
+import bgRegister from "../assets/images/bg-register.webp";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { HeatMapOutlined } from "@ant-design/icons";
 import { useForm, Controller } from "react-hook-form";
 import { useState } from "react";
 import logo from "../assets/images/logo.png";
 import CustomText from "../components/common/CustomText";
-import { login } from "../features/auth/AuthSlice";
+import { register } from "../features/auth/AuthSlice";
 import { useDispatch } from "react-redux";
-import Cookies from "js-cookie";
-import { getInfoCustomer } from "../features/customer/CustomerSlice";
-import { decodeToken } from "react-jwt";
+import axios from "axios";
 
+const { Title } = Typography;
+const { Option } = Select;
 const { useBreakpoint } = Grid;
 
-export default function Login() {
+export default function ResetPassword() {
+  const { token } = useParams();
+
+  console.log("token: ", token);
+
   // Hook form
-  const { control, handleSubmit } = useForm({});
+  const { getValues, control, handleSubmit } = useForm({});
   const screens = useBreakpoint();
 
   // Redux state
@@ -39,60 +44,41 @@ export default function Login() {
 
   // Handle event
   const onSubmit = async (data) => {
-    console.log(data);
     setLoading(true);
 
     try {
-      // Gửi yêu cầu đăng nhập
-      const action = await dispatch(login(data));
-      console.log("action: ", action);
+      const response = await axios.post(
+        `http://localhost:5050/api/v1/auth/update-password`,
+        { token: token, newPassword: data.password }
+      );
 
-      // Kiểm tra kết quả của yêu cầu đăng nhập
-      if (login.fulfilled.match(action)) {
-        const token = action?.payload?.data?.token;
+      console.log("response: ", response);
 
-        // Giải mã token và lấy trạng thái người dùng
-        const decodeUserId = decodeToken(token);
-        const status = decodeUserId?.status;
-
-        // Xử lý trạng thái người dùng
-        if (status === "ACTIVE") {
-          Cookies.set("token", token);
-
-          notification.success({
-            message: "Login successful",
-            description: "Logged into the system successfully.",
-          });
-          navigate("/");
-        } else if (status === "IN_ACTIVE") {
-          notification.warning({
-            message: "Access Denied",
-            description:
-              "Your account is inactive. Please activate your account.",
-          });
-        } else {
-          notification.error({
-            message: "Login error",
-            description: "Invalid username and password.",
-          });
-        }
-      } else if (login.rejected.match(action)) {
-        const error =
-          action?.payload?.error.message || "An unknown error occurred.";
-        notification.error({
-          message: "Login error",
-          description: error,
+      if (response?.data?.status === 200) {
+        notification.success({
+          message: "Success",
+          description:
+            "A password reset email has been sent to your email address.",
         });
+
+        navigate("/login");
       }
     } catch (error) {
-      notification.error({
-        message: "System error",
+      notification.warning({
+        message: "Warning",
         description:
-          "The server couldn't fulfill the request due to an issue with the server.",
+          "There was an issue sending the password reset email. Please try again later.",
       });
     } finally {
       setLoading(false);
     }
+  };
+
+  const validateConfirmPassword = (value) => {
+    const password = getValues("password");
+    return (
+      value === password || "Confirm password does not match with password."
+    );
   };
 
   return (
@@ -107,7 +93,7 @@ export default function Login() {
         style={{
           width: "100%",
           height: "622px",
-          backgroundImage: `url(${bgLogin})`,
+          backgroundImage: `url(${bgRegister})`,
           backgroundRepeat: "no-repeat",
           backgroundSize: "cover",
           backgroundPosition: "center",
@@ -146,33 +132,42 @@ export default function Login() {
             </Form.Item>
 
             <Controller
-              name="username"
-              control={control}
-              rules={{ required: "Username is required." }}
-              render={({ field, fieldState: { error } }) => (
-                <Form.Item
-                  label="Username"
-                  validateStatus={error ? "error" : ""}
-                  help={error?.message}
-                >
-                  <Input {...field} placeholder="Username" />
-                </Form.Item>
-              )}
-            />
-
-            <Controller
               name="password"
               control={control}
               rules={{ required: "Password is required." }}
               render={({ field, fieldState: { error } }) => (
                 <Form.Item
-                  label="Password"
+                  label="New Password"
                   validateStatus={error ? "error" : ""}
                   help={error?.message}
                 >
-                  <Input.Password
+                  <Input
                     {...field}
-                    placeholder="Password"
+                    placeholder="Enter new password"
+                    onChange={(e) => {
+                      field.onChange(e.target.value.trim());
+                    }}
+                  />
+                </Form.Item>
+              )}
+            />
+
+            <Controller
+              name="confirmPassword"
+              control={control}
+              rules={{
+                required: "Confirm password is required.",
+                validate: validateConfirmPassword,
+              }}
+              render={({ field, fieldState: { error } }) => (
+                <Form.Item
+                  label="Confirm New Password"
+                  validateStatus={error ? "error" : ""}
+                  help={error?.message}
+                >
+                  <Input
+                    {...field}
+                    placeholder="Enter confirm new password"
                     onChange={(e) => {
                       field.onChange(e.target.value.trim());
                     }}
@@ -182,17 +177,6 @@ export default function Login() {
             />
 
             <Form.Item>
-              <CustomText
-                size={"14px"}
-                weight={"400"}
-                color={"var(--pink)"}
-                link={"/request-reset-password"}
-              >
-                Forgot Password?
-              </CustomText>
-            </Form.Item>
-
-            <Form.Item>
               <Button
                 htmlType="submit"
                 size="large"
@@ -200,6 +184,7 @@ export default function Login() {
                 style={{
                   background: "var(--green-dark)",
                   color: "var(--white)",
+                  marginTop: "20px",
                   width: "100%",
                   borderRadius: "3px",
                   cursor: "pointer",
@@ -213,30 +198,7 @@ export default function Login() {
                   color={"var(--white)"}
                   isButton={true}
                 >
-                  SIGN IN
-                </CustomText>
-              </Button>
-            </Form.Item>
-
-            <Form.Item>
-              <Button
-                size="large"
-                style={{
-                  background: "var(--white)",
-                  border: "2px solid var(--green-dark)",
-                  width: "100%",
-                  borderRadius: "3px",
-                  cursor: "pointer",
-                }}
-              >
-                <CustomText
-                  size={"13px"}
-                  weight={"700"}
-                  color={"var(--green-dark)"}
-                  link={"/register"}
-                  isButton={true}
-                >
-                  REGISTER
+                  RESET
                 </CustomText>
               </Button>
             </Form.Item>

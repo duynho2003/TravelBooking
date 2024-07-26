@@ -114,50 +114,54 @@ export default function RoomBooking({ tour }) {
 
   // Handle event
   const handleAddCustomer = async () => {
-      const token = Cookies.get("token");
+    const token = Cookies.get("token");
 
-      const urlAddCustomer = "http://localhost:5050/api/v1/customers";
-      try {
-        await axios.post(urlAddCustomer, yourDetails, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-      } catch (error) {
-        console.error("Error adding customer:", error);
-        throw error; // Re-throw để bắt lỗi ở handleCheckout
-      }
+    const urlAddCustomer = "http://localhost:5050/api/v1/customers";
+    try {
+      await axios.post(urlAddCustomer, yourDetails, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+    } catch (error) {
+      console.error("Error adding customer:", error);
+      throw error; // Re-throw để bắt lỗi ở handleCheckout
+    }
   };
 
   const handleAddRoomBooking = async () => {
     const token = Cookies.get("token");
 
-    const urlAddTourBooking =
+    const urlAddRoomBooking =
       "http://localhost:5050/api/v1/roomBookings/create";
 
     const dataBooking = {
       userId: userId,
       roomId: roomBookingData?.roomId,
       date: roomBookingData?.date,
-      startHour: roomBookingData?.startHour,
-      endHour: roomBookingData?.endHour,
+      startDate: roomBookingData?.startDate,
+      endDate: roomBookingData?.endDate,
       price: roomBookingData?.totalAmount,
-      roomType: roomBookingData?.type,
+      roomType: roomBookingData?.roomType,
+      roomNumber: roomBookingData?.roomNumber,
       bookingStatus: "SUCCESS",
     };
 
     try {
-      await axios.post(urlAddTourBooking, dataBooking, {
+      const response = await axios.post(urlAddRoomBooking, dataBooking, {
         headers: { Authorization: `Bearer ${token}` },
       });
+
+      const bookingId = response.data.data.id;
+      return bookingId;
     } catch (error) {
       console.error("Error adding tour booking:", error);
-      throw error; // Re-throw để bắt lỗi ở handleCheckout
+      throw error;
     }
   };
 
-  const handleCreateOrder = async () => {
+  const handleCreateOrder = async (bookingId) => {
     const amount = roomBookingData?.totalAmount;
 
-    const orderInfo = "BOOKING ROOM IN HOTEL";
+    const orderInfo = `BOOKING ROOM ${bookingId}`;
     const urlVNPay = `http://localhost:5050/api/v1/payments/createOrder?amount=${amount}&orderInfo=${orderInfo}`;
 
     try {
@@ -175,12 +179,20 @@ export default function RoomBooking({ tour }) {
       if (isCustomer === null) {
         await handleAddCustomer();
       }
-      await handleAddRoomBooking();
-      await handleCreateOrder();
+      const bookingId = await handleAddRoomBooking();
+      await handleCreateOrder(bookingId);
     } catch (error) {
       console.error("Error during checkout process:", error);
       // Xử lý lỗi tại đây nếu cần thiết
     }
+  };
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0"); // Tháng trong JavaScript bắt đầu từ 0
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
   };
 
   return (
@@ -717,7 +729,7 @@ export default function RoomBooking({ tour }) {
                       weight={"400"}
                       color={"var(--gray-text)"}
                     >
-                      {roomBookingData?.startHour}
+                      {formatDate(roomBookingData?.startDate)}
                     </CustomText>
                   </Col>
                 </Row>
@@ -760,7 +772,7 @@ export default function RoomBooking({ tour }) {
                       weight={"400"}
                       color={"var(--gray-text)"}
                     >
-                      {roomBookingData?.endHour}
+                      {formatDate(roomBookingData?.endDate)}
                     </CustomText>
                   </Col>
                 </Row>
@@ -787,7 +799,7 @@ export default function RoomBooking({ tour }) {
                       weight={"400"}
                       color={"var(--gray-text)"}
                     >
-                      Rooms
+                      Room Type
                     </CustomText>
                   </Col>
 
@@ -803,7 +815,50 @@ export default function RoomBooking({ tour }) {
                       weight={"400"}
                       color={"var(--gray-text)"}
                     >
-                      {roomBookingData?.type}
+                      {roomBookingData?.roomType}
+                    </CustomText>
+                  </Col>
+                </Row>
+
+                {/* Room Number */}
+                <Row
+                  style={{
+                    width: "100%",
+                    padding: "10px 0",
+                    borderTop: "1px solid var(--border)",
+                    borderBottom: "1px solid var(--border)",
+                  }}
+                  justify={"space-between"}
+                >
+                  <Col
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "5px",
+                    }}
+                  >
+                    <CustomText
+                      size={"14px"}
+                      weight={"400"}
+                      color={"var(--gray-text)"}
+                    >
+                      Room Number
+                    </CustomText>
+                  </Col>
+
+                  <Col
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "5px",
+                    }}
+                  >
+                    <CustomText
+                      size={"14px"}
+                      weight={"400"}
+                      color={"var(--gray-text)"}
+                    >
+                      {roomBookingData?.roomNumber}
                     </CustomText>
                   </Col>
                 </Row>

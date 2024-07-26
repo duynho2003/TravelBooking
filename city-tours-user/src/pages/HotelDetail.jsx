@@ -17,6 +17,7 @@ import { getHotelReviewsByHotelId } from "../features/review/ReviewSlice";
 export default function HotelDetail() {
   // Redux Store
   const dispatch = useDispatch();
+  const userId = useSelector((state) => state.auth?.info?.id);
   const hotel = useSelector((state) => state.hotels?.selectedHotel);
   const reviews = useSelector((state) => state.reviews?.listHotelReviews);
   const { hotelId } = useParams();
@@ -62,7 +63,7 @@ export default function HotelDetail() {
             }}
           ></Row>
           <Banner hotel={hotel} />
-          <Detail hotel={hotel} reviews={reviews} />
+          <Detail userId={userId} hotel={hotel} reviews={reviews} />
         </>
       )}
     </>

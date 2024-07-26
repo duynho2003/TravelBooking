@@ -1,31 +1,34 @@
 import { Row } from "antd";
-import CarouselSlider from "../components/home/CarouselSlider";
-import Categories from "../components/home/Categories";
-import TopTours from "../components/home/TopTours";
-import TopHotels from "../components/home/TopHotels";
-import Plan from "../components/home/Plan";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
-import { getAllTours, getTourById } from "../features/tour/TourSlice";
-import { getAllHotels } from "../features/hotel/HotelSlice";
-import Banner from "../components/tour/Banner";
-import Content from "../components/tour/Content";
+import { getAllBlogs, getBlogById } from "../features/blog/BlogSlice";
+import Content from "../components/blog/Content";
 import { useParams } from "react-router-dom";
 import Loading from "../components/common/Loading";
 
-export default function TourDetail() {
+export default function BlogDetail() {
+  // Constants
+  const INIT_PAGE = 1;
+  const INIT_LIMIT = 5;
+
   // Redux Store
   const dispatch = useDispatch();
-  const userId = useSelector((state) => state.auth?.info?.id);
-  const tour = useSelector((state) => state.tours?.selectedTour);
-  const { tourId } = useParams();
+  const blogs = useSelector((state) => state.blogs?.list);
+  const blog = useSelector((state) => state.blogs?.selectedBlog);
+  const { blogId } = useParams();
 
   //Local State
   const [showContent, setShowContent] = useState(false);
+  const [pagination, setPagination] = useState({
+    page: INIT_PAGE,
+    limit: INIT_LIMIT,
+  });
 
   // useEffect for loading data
   useEffect(() => {
-    dispatch(getTourById(tourId))
+    dispatch(getAllBlogs(pagination));
+
+    dispatch(getBlogById(blogId))
       .then(() => {
         setTimeout(() => {
           setShowContent(true);
@@ -50,8 +53,7 @@ export default function TourDetail() {
               height: "110px",
             }}
           ></Row>
-          <Banner tour={tour} />
-          <Content userId={userId} tour={tour} />
+          <Content blogs={blogs} blog={blog} />
         </>
       )}
     </>

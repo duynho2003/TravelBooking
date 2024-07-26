@@ -67,8 +67,8 @@ export default function TopTours({ userId, tours }) {
       rating: tour?.rating,
       numberOfRating: tour?.numberOfRating,
       price:
-        tour?.price - tour?.discount != null
-          ? (tour?.price - tour?.discount).toString()
+        tour?.priceAdult - tour?.discount != null
+          ? (tour?.priceAdult - tour?.discount).toString()
           : "",
       description: tour?.description,
       thumbnail: tour?.thumbnail,

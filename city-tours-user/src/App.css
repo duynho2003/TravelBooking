@@ -179,3 +179,31 @@
   text-overflow: ellipsis;
   max-width: 100%;
 }
+
+.ant-menu-light.ant-menu-horizontal > .ant-menu-submenu-selected::after,
+:where(.css-dev-only-do-not-override-zg0ahe).ant-menu-light
+  > .ant-menu.ant-menu-horizontal
+  > .ant-menu-submenu-selected::after {
+  border-bottom-width: 0px !important;
+  border-bottom-color: none !important;
+}
+
+.truncated-title {
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.truncated-content {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.content img {
+  max-width: 100%;
+  height: auto;
+}

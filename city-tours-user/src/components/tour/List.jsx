@@ -11,6 +11,7 @@ import {
   Image,
   Pagination,
   Tag,
+  Tooltip,
 } from "antd";
 import CustomText from "../common/CustomText";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -340,7 +341,7 @@ export default function List({
                             }}
                           />
                         </Radio>
-                        <Radio value={2}>
+                        {/* <Radio value={2}>
                           <Rate
                             disabled
                             value={2}
@@ -367,7 +368,7 @@ export default function List({
                               marginRight: "5px",
                             }}
                           />
-                        </Radio>
+                        </Radio> */}
                       </Space>
                     </Radio.Group>
                   </Col>
@@ -599,7 +600,15 @@ export default function List({
                         color={"var(--gray-text)"}
                       >
                         Depart at {tour.depart} at{" "}
-                        {tour.tourTimes?.[0]?.startDate}
+                        <Tag color="var(--pink)">
+                          <CustomText
+                            size={"12px"}
+                            weight={"400"}
+                            color={"var(--white)"}
+                          >
+                            {tour.tourTimes?.[0]?.startDate}
+                          </CustomText>
+                        </Tag>
                       </CustomText>
                     </Col>
 
@@ -652,20 +661,36 @@ export default function List({
                         marginBottom: "10px",
                       }}
                     >
-                      <FontAwesomeIcon
-                        icon={faClock}
-                        style={{
-                          fontSize: "22px",
-                          color: "var(--gray-light)",
-                          display: "block",
-                          padding: "5px",
-                          border: "1px solid var(--border)",
+                      <Tooltip
+                        title={
+                          tour.tourTimes
+                            ? tour.tourTimes
+                                .map((tourTime) => tourTime.startDate)
+                                .join(", ")
+                            : "No start dates available"
+                        }
+                        overlayInnerStyle={{
                           borderRadius: "3px",
-                          marginRight: "10px",
+                          fontFamily: "Montserrat",
                         }}
-                      />
+                        color="var(--pink)"
+                        placement="bottom"
+                      >
+                        <FontAwesomeIcon
+                          icon={faClock}
+                          style={{
+                            fontSize: "22px",
+                            color: "var(--gray-light)",
+                            display: "block",
+                            padding: "5px",
+                            border: "1px solid var(--border)",
+                            borderRadius: "3px",
+                            marginRight: "10px",
+                          }}
+                        />
+                      </Tooltip>
 
-                      <FontAwesomeIcon
+                      {/* <FontAwesomeIcon
                         icon={faMapLocationDot}
                         style={{
                           fontSize: "22px",
@@ -702,7 +727,7 @@ export default function List({
                           borderRadius: "3px",
                           marginRight: "10px",
                         }}
-                      />
+                      /> */}
                     </Col>
                   </Col>
 

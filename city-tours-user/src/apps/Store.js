@@ -8,6 +8,7 @@ import hotelsReducer from "../features/hotel/HotelSlice";
 import reviewReducer from "../features/review/ReviewSlice";
 import wishlistReducer from "../features/wishlist/WishlistSlice";
 import bookingReducer from "../features/booking/BookingSlice";
+import blogReducer from "../features/blog/BlogSlice";
 
 const rootReducer = {
   auth: authReducer,
@@ -19,6 +20,7 @@ const rootReducer = {
   reviews: reviewReducer,
   wishlists: wishlistReducer,
   bookings: bookingReducer,
+  blogs: blogReducer,
 };
 
 const store = configureStore({

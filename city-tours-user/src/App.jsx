@@ -20,6 +20,11 @@ import Wishlist from "./pages/Wishlist";
 import Profile from "./pages/Profile";
 import RoomBookings from "./pages/RoomBookings";
 import TourBookings from "./pages/TourBookings";
+import ConfirmAccount from "./pages/ConfirmAccount";
+import ResetPassword from "./pages/ResetPassword";
+import RequestResetPassword from "./pages/RequestResetPassword";
+import BlogList from "./pages/BlogList";
+import BlogDetail from "./pages/BlogDetail";
 
 function App() {
   // Redux State
@@ -42,6 +47,15 @@ function App() {
             {/* Auth */}
             <Route path="/register" element={<Register />} />
             <Route path="/login" element={<Login />} />
+            <Route
+              path="/confirm-account/:token"
+              element={<ConfirmAccount />}
+            />
+            <Route path="/reset-password/:token" element={<ResetPassword />} />
+            <Route
+              path="/request-reset-password"
+              element={<RequestResetPassword />}
+            />
 
             {/* Customer */}
             <Route path="/profile" element={<Profile />} />
@@ -66,6 +80,10 @@ function App() {
             {/* Bookings */}
             <Route path="/room/bookings" element={<RoomBookings />} />
             <Route path="/tour/bookings" element={<TourBookings />} />
+
+            {/* Blogs */}
+            <Route path="/blogs/list" element={<BlogList />} />
+            <Route path="/blogs/:blogId" element={<BlogDetail />} />
 
             <Route path="/*" element={<NotFound />} />
           </Route>

@@ -88,17 +88,16 @@ export default function Banner({ hotel }) {
 
                 <CustomText size={"14px"} weight={"500"} color={"var(--white)"}>
                   {hotel?.address}
-                  <Rate
-                    disabled
-                    value={hotel?.rating}
-                    style={{
-                      fontSize: "15px",
-                      color: "var(--orange)",
-                      marginRight: "5px",
-                    }}
-                  />
-                  {` (${hotel?.numberOfRating})`}
                 </CustomText>
+                <Rate
+                  disabled
+                  value={hotel?.rating}
+                  style={{
+                    fontSize: "15px",
+                    color: "var(--orange)",
+                    marginRight: "5px",
+                  }}
+                />
               </Col>
               <Col
               // style={{

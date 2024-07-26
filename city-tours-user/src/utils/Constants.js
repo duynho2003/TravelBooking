@@ -76,6 +76,11 @@ export const API_ROUTE = {
   GET_ALL_ROOM_BOOKINGS_BY_USERID: "v1/roomBookings/",
 
   GET_ALL_TOUR_BOOKINGS_BY_USERID: "v1/tourBookings/",
+
+  // Blogs
+  GET_ALL_BLOGS: "v1/blogs",
+
+  GET_BLOG_BY_ID: "v1/blogs/",
 };
 
 export const GOONG_MAP_KEY = "aYbfxXr0PAM8A6PWL0QzxozzhVW2Jh5u8cpatpVN";

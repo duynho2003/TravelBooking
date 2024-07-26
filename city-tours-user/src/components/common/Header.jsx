@@ -39,33 +39,23 @@ export default function Header({ websiteInfo }) {
   const screens = useBreakpoint();
 
   const navigations = [
-    {
-      label: (
-        <>
-          <CustomText size={"14px"} weight={"600"} color={"var(--black-text)"}>
-            Home{" "}
-            <FontAwesomeIcon
-              icon={faAngleDown}
-              style={{
-                marginLeft: "5px",
-                fontSize: "10px",
-              }}
-            />
-          </CustomText>
-        </>
-      ),
-      key: "Home",
-      // children: [
-      //   {
-      //     key: "1",
-      //     label: "Home version 1",
-      //   },
-      //   {
-      //     key: "2",
-      //     label: "Home version 2",
-      //   },
-      // ],
-    },
+    // {
+    //   label: (
+    //     <>
+    //       <CustomText size={"14px"} weight={"600"} color={"var(--black-text)"}>
+    //         Home{" "}
+    //         <FontAwesomeIcon
+    //           icon={faAngleDown}
+    //           style={{
+    //             marginLeft: "5px",
+    //             fontSize: "10px",
+    //           }}
+    //         />
+    //       </CustomText>
+    //     </>
+    //   ),
+    //   key: "Home",
+    // },
 
     {
       label: (
@@ -130,6 +120,41 @@ export default function Header({ websiteInfo }) {
                 link={"/hotels/list"}
               >
                 All Hotels List
+              </CustomText>
+            </>
+          ),
+        },
+      ],
+    },
+
+    {
+      label: (
+        <>
+          <CustomText size={"14px"} weight={"600"} color={"var(--black-text)"}>
+            Blogs{" "}
+            <FontAwesomeIcon
+              icon={faAngleDown}
+              style={{
+                marginLeft: "5px",
+                fontSize: "10px",
+              }}
+            />
+          </CustomText>
+        </>
+      ),
+      key: "Blogs",
+      children: [
+        {
+          key: "5",
+          label: (
+            <>
+              <CustomText
+                size={"13px"}
+                weight={"400"}
+                color={"var(--black-text)"}
+                link={"/blogs/list"}
+              >
+                All Blogs List
               </CustomText>
             </>
           ),
