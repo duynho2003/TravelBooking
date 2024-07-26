@@ -110,6 +110,7 @@ const UpdateBlog = () => {
     if (blog) {
       reset({
         title: blog?.title,
+        description: blog?.description,
         content: blog?.content,
         activeStatus: blog?.activeStatus,
       });
@@ -155,6 +156,7 @@ const UpdateBlog = () => {
     const newData = {
       blogId: blogId,
       title: data.title,
+      description: data.description,
       content: data.content,
       activeStatus: blog?.activeStatus,
       thumbnail: thumbnailToUse,
@@ -290,6 +292,24 @@ const UpdateBlog = () => {
                         help={error?.message}
                       >
                         <Input {...field} placeholder="Enter title" />
+                      </Form.Item>
+                    )}
+                  />
+
+                  <Controller
+                    name="description"
+                    control={control}
+                    rules={{ required: "Description is required" }}
+                    render={({ field, fieldState: { error } }) => (
+                      <Form.Item
+                        label="Description"
+                        validateStatus={error ? "error" : ""}
+                        help={error?.message}
+                      >
+                        <Input.TextArea
+                          {...field}
+                          placeholder="Enter description"
+                        />
                       </Form.Item>
                     )}
                   />

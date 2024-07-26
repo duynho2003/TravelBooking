@@ -103,6 +103,7 @@ const ViewABlog = () => {
     if (blog) {
       reset({
         title: blog?.title,
+        description: blog?.description,
         content: blog?.content,
         activeStatus: blog?.activeStatus,
       });
@@ -283,6 +284,25 @@ const ViewABlog = () => {
                         help={error?.message}
                       >
                         <Input {...field} placeholder="Enter title" readOnly />
+                      </Form.Item>
+                    )}
+                  />
+
+                  <Controller
+                    name="description"
+                    control={control}
+                    rules={{ required: "Description is required" }}
+                    render={({ field, fieldState: { error } }) => (
+                      <Form.Item
+                        label="Description"
+                        validateStatus={error ? "error" : ""}
+                        help={error?.message}
+                      >
+                        <Input.TextArea
+                          {...field}
+                          placeholder="Enter description"
+                          readOnly
+                        />
                       </Form.Item>
                     )}
                   />

@@ -302,7 +302,7 @@ const ViewBlogs = () => {
                   border: "var(--green-dark)",
                 }}
               >
-                <Link to="/admin/tours/create">
+                <Link to="/staff/blogs/create">
                   <CustomText
                     size={"14px"}
                     weight={"500"}
