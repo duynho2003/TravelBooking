@@ -138,10 +138,11 @@ public class BlogController {
     @GetMapping("")
     public ResponseEntity<?> getAllBlogs(
             @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "10") int limit
+            @RequestParam(defaultValue = "10") int limit,
+            @RequestParam(defaultValue = "") String search
     ) {
         try {
-            PageResponseDto responsePage = blogService.getAllBlogs(page, limit);
+            PageResponseDto responsePage = blogService.getAllBlogs(page, limit, search);
 
             return ResponseEntity
                     .status(HttpStatus.OK)

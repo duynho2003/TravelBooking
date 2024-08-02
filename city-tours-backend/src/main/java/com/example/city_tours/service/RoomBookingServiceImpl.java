@@ -1,15 +1,10 @@
 package com.example.city_tours.service;
 
 import com.example.city_tours.dto.request.RoomBooking.CreateRoomBookingRequestDto;
-import com.example.city_tours.dto.request.TourRoomBooking.CreateTourRoomBookingRequestDto;
 import com.example.city_tours.dto.response.RoomBooking.CreateRoomBookingResponseDto;
 import com.example.city_tours.dto.response.RoomBooking.GetRoomBookingResponseDto;
-import com.example.city_tours.dto.response.RoomBooking.GetRoomBookingsByUserIdResponseDto;
-import com.example.city_tours.dto.response.Tour.GetAllToursResponseDto;
-import com.example.city_tours.dto.response.TourRoomBooking.CreateTourRoomBookingResponseDto;
 import com.example.city_tours.dto.response.User.PageResponseDto;
 import com.example.city_tours.entity.*;
-import com.example.city_tours.enums.ActiveStatus;
 import com.example.city_tours.enums.ReviewStatus;
 import com.example.city_tours.exception.ResourceNotFoundException;
 import com.example.city_tours.repository.*;
@@ -20,28 +15,23 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
 public class RoomBookingServiceImpl implements RoomBookingService{
 
-    private final TourRepository tourRepository;
-    private final TourRoomBookingRepository tourRoomBookingRepository;
     private final RoomRepository roomRepository;
     private final CustomerRepository customerRepository;
     private final RoomBookingRepository roomBookingRepository;
     private final UserRepository userRepository;
-    private final TourBookingRepository tourBookingRepository;
 
     @Override
     public CreateRoomBookingResponseDto createRoomBooking(CreateRoomBookingRequestDto requestDto) {
+
         Optional<Room> optionalRoom = roomRepository.findById(requestDto.getRoomId());
 
         if (!optionalRoom.isPresent()) {
@@ -68,6 +58,7 @@ public class RoomBookingServiceImpl implements RoomBookingService{
         roomBooking.setUpdatedAt(LocalDateTime.now());
         roomBooking.setCustomer(customer);
         roomBooking.setRoom(optionalRoom.get());
+        roomBooking.setHotelName(requestDto.getHotelName());
 
         RoomBooking savedRoomBooking = roomBookingRepository.save(roomBooking);
 
@@ -82,17 +73,34 @@ public class RoomBookingServiceImpl implements RoomBookingService{
         responseDto.setCreatedAt(savedRoomBooking.getCreatedAt().toString());
         responseDto.setCustomerId(savedRoomBooking.getCustomer().getId());
         responseDto.setRoomId(savedRoomBooking.getRoom().getId());
+        responseDto.setHotelName(savedRoomBooking.getHotelName());
 
         return responseDto;
     }
 
     @Override
-    public PageResponseDto getAllRoomBookings(int page, int limit) {
+    public PageResponseDto getAllRoomBookings(int page, int limit, String hotelName, Integer hotelId) {
 
         // Fetch tours from the repository with pagination
         Pageable pageable = PageRequest.of(page - 1, limit);
 
-        Page<RoomBooking> roomBookingPage = roomBookingRepository.findAll(pageable);
+        Specification<Room> spec = (root, query, cb) -> {
+            Predicate predicate = cb.conjunction();
+
+            if (hotelName != null && !hotelName.isEmpty()) {
+                Predicate hotelNamePredicate = cb.like(cb.lower(root.get("hotelName")), "%" + hotelName.toLowerCase() + "%");
+                predicate = cb.and(predicate, hotelNamePredicate);
+            }
+
+            if (hotelId != null) {
+                Predicate hotelIdPredicate = cb.equal(root.get("room").get("hotels").get("id"), hotelId);
+                predicate = cb.and(predicate, hotelIdPredicate);
+            }
+
+            return predicate;
+        };
+
+        Page<RoomBooking> roomBookingPage = roomBookingRepository.findAll(spec, pageable);
 
         // Retrieve the total number of tours
         long totalRoomBookings = roomBookingPage.getTotalElements();
@@ -117,10 +125,10 @@ public class RoomBookingServiceImpl implements RoomBookingService{
             responseDto.setPrice(roomBooking.getPrice());
             responseDto.setReviewStatus(roomBooking.getReviewStatus().toString());
             responseDto.setRoomType(roomBooking.getRoomType());
-//            responseDto.setCustomerId(roomBooking.getCustomer().getId());
             responseDto.setRoomId(roomBooking.getRoom().getId());
             responseDto.setCreatedAt(roomBooking.getCreatedAt());
             responseDto.setUpdatedAt(roomBooking.getUpdatedAt());
+            responseDto.setHotelName(roomBooking.getHotelName());
 
             // Add responseDto to the list
             responseDtoList.add(responseDto);

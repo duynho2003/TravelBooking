@@ -25,5 +25,7 @@ public class GetAllTourBookingsResponseDto {
     private String bookingStatus;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private String paymentStatus;
+    private String code;
 
 }

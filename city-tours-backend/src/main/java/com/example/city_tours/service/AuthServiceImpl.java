@@ -9,11 +9,11 @@ import com.example.city_tours.dto.response.Auth.RegisterResponseDto;
 import com.example.city_tours.entity.*;
 import com.example.city_tours.enums.UserStatus;
 import com.example.city_tours.exception.*;
-import com.example.city_tours.repository.BlacklistTokenRepository;
+import com.example.city_tours.repository.ConfirmationTokenRepository;
+import com.example.city_tours.repository.PasswordResetTokenRepository;
 import com.example.city_tours.repository.RoleRepository;
 import com.example.city_tours.repository.UserRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -25,9 +25,6 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Service

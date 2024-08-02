@@ -1,10 +1,9 @@
 package com.example.city_tours.repository;
 
-import com.example.city_tours.entity.Room;
-import com.example.city_tours.entity.RoomBooking;
-import com.example.city_tours.entity.TourRoomBooking;
+import com.example.city_tours.entity.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDateTime;
@@ -18,4 +17,6 @@ public interface RoomBookingRepository extends JpaRepository<RoomBooking, Long> 
     Page<RoomBooking> findAllByCustomerId(Long customerId, Pageable pageable);
 
     List<RoomBooking> findByCreatedAtBetween(LocalDateTime startDateTime, LocalDateTime endDateTime);
+
+    Page<RoomBooking> findAll(Specification<Room> spec, Pageable pageable);
 }

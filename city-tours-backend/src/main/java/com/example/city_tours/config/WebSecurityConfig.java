@@ -73,6 +73,8 @@ public class WebSecurityConfig {
                             authorize.requestMatchers("/api/v1/payments/**").permitAll();
                             authorize.requestMatchers(HttpMethod.GET, "/api/v1/hotelReviews").permitAll();
                             authorize.requestMatchers(HttpMethod.GET, "/api/v1/hotelReviews/{hotelId}").permitAll();
+                            authorize.requestMatchers(HttpMethod.GET, "/api/v1/tourReviews").permitAll();
+                            authorize.requestMatchers(HttpMethod.GET, "/api/v1/tourReviews/{tourId}").permitAll();
                             authorize.requestMatchers(HttpMethod.GET, "/api/v1/provinces").permitAll();
                             authorize.requestMatchers(HttpMethod.GET, "/api/v1/blogs").permitAll();
                             authorize.requestMatchers(HttpMethod.GET, "/api/v1/blogs/{blogId}").permitAll();

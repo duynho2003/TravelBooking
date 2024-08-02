@@ -7,11 +7,7 @@ import com.example.city_tours.dto.request.Auth.*;
 import com.example.city_tours.dto.response.Auth.LoginResponseDto;
 import com.example.city_tours.dto.response.Auth.RegisterResponseDto;
 import com.example.city_tours.dto.response.Auth.UploadResponseDto;
-import com.example.city_tours.entity.ConfirmationToken;
-import com.example.city_tours.entity.ConfirmationTokenRepository;
-import com.example.city_tours.entity.PasswordResetToken;
-import com.example.city_tours.entity.User;
-import com.example.city_tours.enums.UserStatus;
+import com.example.city_tours.repository.ConfirmationTokenRepository;
 import com.example.city_tours.exception.*;
 import com.example.city_tours.repository.UserRepository;
 import com.example.city_tours.service.AuthService;
@@ -19,11 +15,8 @@ import com.example.city_tours.service.CloudinaryService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.web.csrf.InvalidCsrfTokenException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.time.LocalDateTime;
 
 @AllArgsConstructor
 @RestController

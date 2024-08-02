@@ -15,6 +15,7 @@ public class UpdateBlogResponseDto {
 
     private Long id;
     private String title;
+    private String hashTags;
     private String author;
     private String thumbnail;
     private String description;

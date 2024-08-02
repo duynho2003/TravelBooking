@@ -1,4 +1,4 @@
-package com.example.city_tours.dto.response.Blog;
+package com.example.city_tours.dto.response.TourReview;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,16 +11,14 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Getter
 @Setter
-public class CreateBlogResponseDto {
+public class GetAllTourReviewsResponseDto {
 
     private Long id;
-    private String title;
-    private String hashTags;
-    private String author;
-    private String thumbnail;
-    private String description;
+    private Long customerId;
+    private Long tourId;
+    private String customerName;
     private String content;
-    private String activeStatus;
+    private Double rating;
     private LocalDateTime createdAt;
 
 }

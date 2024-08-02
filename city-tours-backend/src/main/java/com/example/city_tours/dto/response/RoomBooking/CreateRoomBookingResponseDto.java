@@ -20,5 +20,6 @@ public class CreateRoomBookingResponseDto {
     private String reviewStatus;
     private String roomType;
     private String createdAt;
+    private String hotelName;
 
 }

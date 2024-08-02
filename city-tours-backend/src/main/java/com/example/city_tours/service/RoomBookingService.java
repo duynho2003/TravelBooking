@@ -11,7 +11,7 @@ public interface RoomBookingService {
 
     CreateRoomBookingResponseDto createRoomBooking(CreateRoomBookingRequestDto createRoomBookingRequestDto);
 
-    PageResponseDto getAllRoomBookings(int page, int limit);
+    PageResponseDto getAllRoomBookings(int page, int limit, String hotelName, Integer hotelId);
 
     PageResponseDto getRoomBookingsByUserId(Long userId, int page, int limit);
 

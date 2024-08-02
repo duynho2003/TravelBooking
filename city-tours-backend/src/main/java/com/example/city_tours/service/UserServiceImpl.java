@@ -34,9 +34,7 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService{
 
     private final UserRepository userRepository;
-
     private final PasswordEncoder passwordEncoder;
-
     private final RoleRepository roleRepository;
     private final RoomBookingRepository roomBookingRepository;
     private final TourBookingRepository tourBookingRepository;
@@ -238,6 +236,8 @@ public class UserServiceImpl implements UserService{
                 aTourBookingResponseDto.setCustomerName(tourBooking.getCustomer().getName());
                 aTourBookingResponseDto.setCreatedAt(tourBooking.getCreatedAt());
                 aTourBookingResponseDto.setUpdatedAt(tourBooking.getUpdatedAt());
+                aTourBookingResponseDto.setReviewStatus(tourBooking.getReviewStatus().toString());
+                aTourBookingResponseDto.setStartTime(tourBooking.getStartTime());
 
                 // Add responseDto to the list
                 responseDtoList.add(aTourBookingResponseDto);

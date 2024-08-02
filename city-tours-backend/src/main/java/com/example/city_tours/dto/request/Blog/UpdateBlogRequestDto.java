@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 public class UpdateBlogRequestDto {
 
     private String title;
+    private String hashTags;
     private String thumbnail;
     private String description;
     private String content;

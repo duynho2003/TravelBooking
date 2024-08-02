@@ -62,11 +62,13 @@ public class RoomBookingController {
     @GetMapping("")
     public ResponseEntity<?> getAllRoomBookings(
             @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "10") int limit
+            @RequestParam(defaultValue = "10") int limit,
+            @RequestParam(defaultValue = "") String hotelName,
+            @RequestParam(required = false) Integer hotelId
     ) {
         try {
             // Call userService to get a page of accounts
-            PageResponseDto responsePage = roomBookingService.getAllRoomBookings(page, limit);
+            PageResponseDto responsePage = roomBookingService.getAllRoomBookings(page, limit, hotelName, hotelId);
 
             // Return success response
             return ResponseEntity

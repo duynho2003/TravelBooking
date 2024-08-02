@@ -59,7 +59,7 @@ public class SetupDataLoader implements
             website.setPhone("0123456789");
             website.setAddress("Hồ Chí Minh");
             website.setWorkingDate("Monday - Sunday");
-            website.setWorkingTime("7h-17h");
+            website.setWorkingTime("07:00 AM - 17:00 PM");
             website.setCreatedAt(LocalDateTime.now());
             website.setUpdatedAt(LocalDateTime.now());
 

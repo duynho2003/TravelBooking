@@ -23,6 +23,8 @@ public class GetATourBookingResponseDto {
     private int babies;
     private Double amount;
     private String bookingStatus;
+    private String reviewStatus;
+    private String startTime;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 

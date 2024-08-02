@@ -15,5 +15,9 @@ public class StatisticalResponseDto {
     private Double incomeHotels;
     private Double incomeTours;
     private int quantityTransactions;
+    private double customerChangePercent;
+    private double hotelIncomeChangePercent;
+    private double tourIncomeChangePercent;
+    private double transactionChangePercent;
 
 }

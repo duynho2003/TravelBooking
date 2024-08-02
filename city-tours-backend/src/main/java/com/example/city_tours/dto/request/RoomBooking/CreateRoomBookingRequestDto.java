@@ -18,5 +18,6 @@ public class CreateRoomBookingRequestDto {
     private Double price;
     private String roomType;
     private String roomNumber;
+    private String hotelName;
 
 }

@@ -25,7 +25,10 @@ import com.example.city_tours.enums.BookedStatus;
 import com.example.city_tours.exception.ResourceCanNotBeDeletedException;
 import com.example.city_tours.exception.ResourceNotFoundException;
 import com.example.city_tours.repository.*;
+import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.Subquery;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -35,6 +38,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
@@ -58,6 +62,7 @@ public class BlogServiceImpl implements BlogService{
         Blog blog = new Blog();
 
         blog.setTitle(requestDto.getTitle());
+        blog.setHashTags(requestDto.getHashTags());
         blog.setAuthor(user.getUsername());
         blog.setThumbnail(requestDto.getThumbnail());
         blog.setDescription(requestDto.getDescription());
@@ -74,6 +79,7 @@ public class BlogServiceImpl implements BlogService{
 
         responseDto.setId(savedBlog.getId());
         responseDto.setTitle(savedBlog.getTitle());
+        responseDto.setHashTags(savedBlog.getHashTags());
         responseDto.setAuthor(savedBlog.getAuthor());
         responseDto.setThumbnail(savedBlog.getThumbnail());
         responseDto.setDescription(savedBlog.getDescription());
@@ -97,6 +103,7 @@ public class BlogServiceImpl implements BlogService{
         Blog blog = optionalBlog.get();
 
         blog.setTitle(requestDto.getTitle());
+        blog.setHashTags(requestDto.getHashTags());
         blog.setThumbnail(requestDto.getThumbnail());
         blog.setDescription(requestDto.getDescription());
         blog.setContent(requestDto.getContent());
@@ -108,6 +115,7 @@ public class BlogServiceImpl implements BlogService{
 
         responseDto.setId(updatedBlog.getId());
         responseDto.setTitle(updatedBlog.getTitle());
+        responseDto.setHashTags(updatedBlog.getHashTags());
         responseDto.setAuthor(updatedBlog.getAuthor());
         responseDto.setThumbnail(updatedBlog.getThumbnail());
         responseDto.setDescription(updatedBlog.getDescription());
@@ -136,11 +144,31 @@ public class BlogServiceImpl implements BlogService{
     }
 
     @Override
-    public PageResponseDto getAllBlogs(int page, int limit) {
+    public PageResponseDto getAllBlogs(int page, int limit, String search) {
+
+        Specification<Blog> spec = (root, query, cb) -> {
+            Predicate predicate = cb.conjunction();
+
+            if (search != null && !search.isEmpty()) {
+                String searchLower = search.toLowerCase();
+
+                // Predicate for matching title
+                Predicate titlePredicate = cb.like(cb.lower(root.get("title")), "%" + searchLower + "%");
+
+                // Predicate for matching hashtags
+                // Assuming hashTags is a collection, you need to convert it into a string for comparison
+                Predicate hashTagsPredicate = cb.like(cb.lower(root.get("hashTags")), "%" + searchLower + "%");
+
+                // Combine both predicates using "OR"
+                predicate = cb.or(titlePredicate, hashTagsPredicate);
+            }
+
+            return predicate;
+        };
 
         Pageable pageable = PageRequest.of(page - 1, limit);
 
-        Page<Blog> blogPage = blogRepository.findAll(pageable);
+        Page<Blog> blogPage = blogRepository.findAll(spec, pageable);
 
         long totalBlogs = blogPage.getTotalElements();
 
@@ -157,6 +185,7 @@ public class BlogServiceImpl implements BlogService{
 
             responseDto.setId(blog.getId());
             responseDto.setTitle(blog.getTitle());
+            responseDto.setHashTags(blog.getHashTags());
             responseDto.setAuthor(blog.getAuthor());
             responseDto.setThumbnail(blog.getThumbnail());
             responseDto.setDescription(blog.getDescription());
@@ -194,6 +223,7 @@ public class BlogServiceImpl implements BlogService{
 
         responseDto.setId(blog.getId());
         responseDto.setTitle(blog.getTitle());
+        responseDto.setHashTags(blog.getHashTags());
         responseDto.setAuthor(blog.getAuthor());
         responseDto.setThumbnail(blog.getThumbnail());
         responseDto.setDescription(blog.getDescription());

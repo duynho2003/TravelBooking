@@ -23,5 +23,6 @@ public class GetRoomBookingsByUserIdResponseDto {
     private Long roomId;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private String hotelName;
 
 }

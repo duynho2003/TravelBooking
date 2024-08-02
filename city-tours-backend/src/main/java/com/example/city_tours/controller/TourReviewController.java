@@ -3,43 +3,39 @@ package com.example.city_tours.controller;
 import com.example.city_tours.common.ApiErrorResponse;
 import com.example.city_tours.common.ApiSuccessResponse;
 import com.example.city_tours.common.ErrorCode;
-import com.example.city_tours.dto.request.TourBooking.CreateTourBookingRequestDto;
-import com.example.city_tours.dto.request.TourRoomBooking.CreateTourRoomBookingRequestDto;
-import com.example.city_tours.dto.response.TourBooking.CreateTourBookingResponseDto;
-import com.example.city_tours.dto.response.TourBooking.GetAllTourBookingsResponseDto;
-import com.example.city_tours.dto.response.TourRoomBooking.CreateTourRoomBookingResponseDto;
+import com.example.city_tours.dto.request.HotelReview.CreateHotelReviewRequestDto;
+import com.example.city_tours.dto.request.TourReview.CreateTourReviewRequestDto;
+import com.example.city_tours.dto.response.HotelReview.CreateHotelReviewResponseDto;
+import com.example.city_tours.dto.response.TourReview.CreateTourReviewResponseDto;
 import com.example.city_tours.dto.response.User.PageResponseDto;
 import com.example.city_tours.exception.ResourceNotFoundException;
 import com.example.city_tours.exception.ServerErrorException;
-import com.example.city_tours.repository.TourBookingRepository;
-import com.example.city_tours.service.TourBookingService;
-import com.example.city_tours.service.TourRoomBookingService;
+import com.example.city_tours.service.HotelReviewService;
+import com.example.city_tours.service.TourReviewService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @AllArgsConstructor
 @RestController
-@RequestMapping("/api/v1/tourBookings")
-public class TourBookingController {
+@RequestMapping("/api/v1/tourReviews")
+public class TourReviewController {
 
-    private TourBookingService tourBookingService;
+    private TourReviewService tourReviewService;
 
-    @PreAuthorize("hasAnyRole('ROLE_CUSTOMER', 'ROLE_STAFF', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'STAFF', 'ADMIN')")
     @PostMapping("/create")
-    public ResponseEntity<?> createTourBooking(@RequestBody CreateTourBookingRequestDto createTourBookingRequestDto) {
+    public ResponseEntity<?> createTourReview(@RequestBody CreateTourReviewRequestDto requestDto) {
         try {
-            CreateTourBookingResponseDto responseDto = tourBookingService.createTourBooking(createTourBookingRequestDto);
+            CreateTourReviewResponseDto responseDto = tourReviewService.createTourReview(requestDto);
 
             return ResponseEntity
                     .status(HttpStatus.CREATED)
                     .body(new ApiSuccessResponse<>(
                             HttpStatus.CREATED.value(),
-                            "Created tour room booking successfully",
+                            "Created tour review successfully",
                             responseDto
                     ));
         } catch (ResourceNotFoundException e) {
@@ -63,27 +59,22 @@ public class TourBookingController {
         }
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_STAFF', 'ROLE_ADMIN')")
     @GetMapping("")
-    public ResponseEntity<?> getAllTourBookings(
+    public ResponseEntity<?> getAllTourReviews(
             @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "10") int limit,
-            @RequestParam(defaultValue = "") String tourName,
-            @RequestParam(required = false) Integer tourId
+            @RequestParam(defaultValue = "10") int limit
     ) {
         try {
-            PageResponseDto responsePage = tourBookingService.getAllTourBookings(page, limit, tourName, tourId);
+            PageResponseDto responsePage = tourReviewService.getAllTourReviews(page, limit);
 
-            // Return success response
             return ResponseEntity
                     .status(HttpStatus.OK)
                     .body(new ApiSuccessResponse<>(
                             HttpStatus.OK.value(),
-                            "Get all tour bookings successfully",
+                            "Get all tour reviews successfully",
                             responsePage
                     ));
         } catch (ResourceNotFoundException e) {
-            // Return error response for resource not found
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
                     .body(new ApiErrorResponse(
@@ -93,7 +84,6 @@ public class TourBookingController {
                             "http://localhost:5050/docs/errors/1015"
                     ));
         } catch (ServerErrorException e) {
-            // Return error response for server error
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ApiErrorResponse(
@@ -105,26 +95,23 @@ public class TourBookingController {
         }
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_CUSTOMER', 'ROLE_STAFF', 'ROLE_ADMIN')")
-    @GetMapping("/{userId}")
-    public ResponseEntity<?> getAllTourBookingsByUserId(
-            @PathVariable Long userId,
+    @GetMapping("/{tourId}")
+    public ResponseEntity<?> getTourReviewsByTourId(
+            @PathVariable Long tourId,
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int limit
     ) {
         try {
-            PageResponseDto responsePage = tourBookingService.getAllTourBookingsByUserId(userId, page, limit);
+            PageResponseDto responsePage = tourReviewService.getTourReviewsByTourId(tourId, page, limit);
 
-            // Return success response
             return ResponseEntity
                     .status(HttpStatus.OK)
                     .body(new ApiSuccessResponse<>(
                             HttpStatus.OK.value(),
-                            "Get all tour bookings by userId successfully",
+                            "Get tour reviews by tour id successfully",
                             responsePage
                     ));
         } catch (ResourceNotFoundException e) {
-            // Return error response for resource not found
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
                     .body(new ApiErrorResponse(
@@ -134,7 +121,6 @@ public class TourBookingController {
                             "http://localhost:5050/docs/errors/1015"
                     ));
         } catch (ServerErrorException e) {
-            // Return error response for server error
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ApiErrorResponse(

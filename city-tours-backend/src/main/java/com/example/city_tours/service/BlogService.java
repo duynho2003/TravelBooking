@@ -17,7 +17,7 @@ public interface BlogService {
     CreateBlogResponseDto createBlog(CreateBlogRequestDto createBlogRequestDto);
     UpdateBlogResponseDto updateBlog(Long blogId, UpdateBlogRequestDto updateBlogRequestDto);
     void deleteBlog(Long blogId);
-    PageResponseDto getAllBlogs(int page, int limit);
+    PageResponseDto getAllBlogs(int page, int limit, String search);
     GetBlogByIdResponseDto getBlogById(Long blogId);
 
 //    CreateTourResponseDto createTour(CreateTourRequestDto createTourRequestDto);

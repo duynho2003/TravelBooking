@@ -26,35 +26,108 @@ public class StatisticalServiceImpl implements StatisticalService{
     private final RoomBookingRepository roomBookingRepository;
     private final CustomerRepository customerRepository;
 
+//    public StatisticalResponseDto getStatistical(String dateStr, String weekStr, String monthStr, String yearStr) {
+//
+//        LocalDateTime startDateTime = null;
+//        LocalDateTime endDateTime = null;
+//
+//        try {
+//            if (dateStr != null) {
+//                LocalDate date = LocalDate.parse(dateStr, DateTimeFormatter.ISO_DATE);
+//                startDateTime = date.atStartOfDay();
+//                endDateTime = startDateTime.plusDays(1);
+//            } else if (weekStr != null) {
+//                String[] parts = weekStr.split("-");
+//                Year weekYear = Year.parse(parts[0]);
+//                int weekNumber = Integer.parseInt(parts[1].substring(0, parts[1].indexOf("th")));
+//                startDateTime = LocalDate.now().withYear(weekYear.getValue()).with(IsoFields.WEEK_OF_WEEK_BASED_YEAR, weekNumber).atStartOfDay();
+//                endDateTime = startDateTime.plusWeeks(1);
+//            } else if (monthStr != null) {
+//                YearMonth yearMonth = YearMonth.parse(monthStr, DateTimeFormatter.ofPattern("yyyy-MM"));
+//                startDateTime = yearMonth.atDay(1).atStartOfDay();
+//                endDateTime = startDateTime.plusMonths(1);
+//            } else if (yearStr != null) {
+//                Year year = Year.parse(yearStr);
+//                startDateTime = LocalDate.of(year.getValue(), 1, 1).atStartOfDay();
+//                endDateTime = startDateTime.plusYears(1);
+//            }
+//        } catch (DateTimeParseException e) {
+//            throw new ServerErrorException("Invalid date format");
+//        }
+//
+//        LocalDateTime finalStartDateTime = startDateTime;
+//        LocalDateTime finalEndDateTime = endDateTime;
+//        int quantityCustomers = (int) customerRepository.findAll().stream()
+//                .filter(customer -> isWithinRange(customer.getCreatedAt(), finalStartDateTime, finalEndDateTime))
+//                .count();
+//
+//        double incomeHotels = calculateRoomBookingIncome(roomBookingRepository.findAll(), startDateTime, endDateTime);
+//        double incomeTours = calculateTourBookingIncome(tourBookingRepository.findAll(), startDateTime, endDateTime);
+//
+//        LocalDateTime finalStartDateTime1 = startDateTime;
+//        LocalDateTime finalEndDateTime1 = endDateTime;
+//        int quantityTransactions = (int) transactionRepository.findAll().stream()
+//                .filter(transaction -> isWithinRange(transaction.getCreatedAt(), finalStartDateTime1, finalEndDateTime1))
+//                .count();
+//
+//        StatisticalResponseDto responseDto = new StatisticalResponseDto();
+//        responseDto.setQuantityCustomers(quantityCustomers);
+//        DecimalFormat df = new DecimalFormat("#.##");
+//        responseDto.setIncomeHotels(Double.valueOf(df.format(incomeHotels)));
+//        responseDto.setIncomeTours(Double.valueOf(df.format(incomeTours)));
+//        responseDto.setQuantityTransactions(quantityTransactions);
+//
+//        return responseDto;
+//    }
+
     public StatisticalResponseDto getStatistical(String dateStr, String weekStr, String monthStr, String yearStr) {
 
         LocalDateTime startDateTime = null;
         LocalDateTime endDateTime = null;
+        LocalDateTime prevStartDateTime = null;
+        LocalDateTime prevEndDateTime = null;
 
         try {
             if (dateStr != null) {
                 LocalDate date = LocalDate.parse(dateStr, DateTimeFormatter.ISO_DATE);
                 startDateTime = date.atStartOfDay();
                 endDateTime = startDateTime.plusDays(1);
+
+                // Calculate previous date range
+                prevStartDateTime = startDateTime.minusDays(1);
+                prevEndDateTime = startDateTime;
             } else if (weekStr != null) {
                 String[] parts = weekStr.split("-");
                 Year weekYear = Year.parse(parts[0]);
                 int weekNumber = Integer.parseInt(parts[1].substring(0, parts[1].indexOf("th")));
                 startDateTime = LocalDate.now().withYear(weekYear.getValue()).with(IsoFields.WEEK_OF_WEEK_BASED_YEAR, weekNumber).atStartOfDay();
                 endDateTime = startDateTime.plusWeeks(1);
+
+                // Calculate previous week range
+                prevStartDateTime = startDateTime.minusWeeks(1);
+                prevEndDateTime = endDateTime.minusWeeks(1);
             } else if (monthStr != null) {
                 YearMonth yearMonth = YearMonth.parse(monthStr, DateTimeFormatter.ofPattern("yyyy-MM"));
                 startDateTime = yearMonth.atDay(1).atStartOfDay();
                 endDateTime = startDateTime.plusMonths(1);
+
+                // Calculate previous month range
+                prevStartDateTime = startDateTime.minusMonths(1);
+                prevEndDateTime = endDateTime.minusMonths(1);
             } else if (yearStr != null) {
                 Year year = Year.parse(yearStr);
                 startDateTime = LocalDate.of(year.getValue(), 1, 1).atStartOfDay();
                 endDateTime = startDateTime.plusYears(1);
+
+                // Calculate previous year range
+                prevStartDateTime = startDateTime.minusYears(1);
+                prevEndDateTime = endDateTime.minusYears(1);
             }
         } catch (DateTimeParseException e) {
             throw new ServerErrorException("Invalid date format");
         }
 
+        // Current period statistics
         LocalDateTime finalStartDateTime = startDateTime;
         LocalDateTime finalEndDateTime = endDateTime;
         int quantityCustomers = (int) customerRepository.findAll().stream()
@@ -70,15 +143,50 @@ public class StatisticalServiceImpl implements StatisticalService{
                 .filter(transaction -> isWithinRange(transaction.getCreatedAt(), finalStartDateTime1, finalEndDateTime1))
                 .count();
 
+        // Previous period statistics
+        LocalDateTime finalPrevStartDateTime = prevStartDateTime;
+        LocalDateTime finalPrevEndDateTime = prevEndDateTime;
+        int prevQuantityCustomers = (int) customerRepository.findAll().stream()
+                .filter(customer -> isWithinRange(customer.getCreatedAt(), finalPrevStartDateTime, finalPrevEndDateTime))
+                .count();
+
+        double prevIncomeHotels = calculateRoomBookingIncome(roomBookingRepository.findAll(), prevStartDateTime, prevEndDateTime);
+        double prevIncomeTours = calculateTourBookingIncome(tourBookingRepository.findAll(), prevStartDateTime, prevEndDateTime);
+
+        LocalDateTime finalPrevStartDateTime1 = prevStartDateTime;
+        LocalDateTime finalPrevEndDateTime1 = prevEndDateTime;
+        int prevQuantityTransactions = (int) transactionRepository.findAll().stream()
+                .filter(transaction -> isWithinRange(transaction.getCreatedAt(), finalPrevStartDateTime1, finalPrevEndDateTime1))
+                .count();
+
+        // Calculate percentage changes
+        double customerChangePercent = calculatePercentageChange(prevQuantityCustomers, quantityCustomers);
+        double hotelIncomeChangePercent = calculatePercentageChange(prevIncomeHotels, incomeHotels);
+        double tourIncomeChangePercent = calculatePercentageChange(prevIncomeTours, incomeTours);
+        double transactionChangePercent = calculatePercentageChange(prevQuantityTransactions, quantityTransactions);
+
         StatisticalResponseDto responseDto = new StatisticalResponseDto();
         responseDto.setQuantityCustomers(quantityCustomers);
-        DecimalFormat df = new DecimalFormat("#.##");
-        responseDto.setIncomeHotels(Double.valueOf(df.format(incomeHotels)));
-        responseDto.setIncomeTours(Double.valueOf(df.format(incomeTours)));
+        responseDto.setIncomeHotels(Double.valueOf(new DecimalFormat("#.##").format(incomeHotels)));
+        responseDto.setIncomeTours(Double.valueOf(new DecimalFormat("#.##").format(incomeTours)));
         responseDto.setQuantityTransactions(quantityTransactions);
+
+        // Set percentage changes
+        responseDto.setCustomerChangePercent(customerChangePercent);
+        responseDto.setHotelIncomeChangePercent(hotelIncomeChangePercent);
+        responseDto.setTourIncomeChangePercent(tourIncomeChangePercent);
+        responseDto.setTransactionChangePercent(transactionChangePercent);
 
         return responseDto;
     }
+
+    private double calculatePercentageChange(double previous, double current) {
+        if (previous == 0) {
+            return current > 0 ? 100.0 : 0.0;
+        }
+        return ((current - previous) / previous) * 100;
+    }
+
 
     private double calculateRoomBookingIncome(List<RoomBooking> roomBookings, LocalDateTime startDateTime, LocalDateTime endDateTime) {
         return roomBookings.stream()

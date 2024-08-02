@@ -1,5 +1,6 @@
 package com.example.city_tours.dto.response.TourBooking;
 
+import com.example.city_tours.enums.PaymentStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,5 +24,7 @@ public class CreateTourBookingResponseDto {
     private Double amount;
     private LocalDateTime createdAt;
     private String bookingStatus;
+    private String paymentStatus;
+    private String code;
 
 }

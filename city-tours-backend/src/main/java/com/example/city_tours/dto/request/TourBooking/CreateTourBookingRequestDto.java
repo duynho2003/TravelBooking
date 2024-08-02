@@ -1,5 +1,6 @@
 package com.example.city_tours.dto.request.TourBooking;
 
+import com.example.city_tours.enums.PaymentStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,5 +20,6 @@ public class CreateTourBookingRequestDto {
     private int baby;
     private Double amount;
     private String bookingStatus;
+    private String paymentStatus;
 
 }

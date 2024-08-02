@@ -1,6 +1,5 @@
 package com.example.city_tours.entity;
 
-import com.example.city_tours.enums.ReviewStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,26 +13,18 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Entity
-@Table(name = "room_bookings")
-public class RoomBooking {
+@Table(name = "tour_reviews")
+public class TourReview {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String startDate;
+    private String customerName;
 
-    private String endDate;
+    private String content;
 
-    private Double price;
-
-    private ReviewStatus reviewStatus;
-
-    private String roomType;
-
-    private String roomNumber;
-
-    private String hotelName;
+    private Double rating;
 
     private LocalDateTime createdAt;
 
@@ -44,7 +35,7 @@ public class RoomBooking {
     private Customer customer;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "room_id")
-    private Room room;
+    @JoinColumn(name = "tour_id")
+    private Tour tour;
 
 }

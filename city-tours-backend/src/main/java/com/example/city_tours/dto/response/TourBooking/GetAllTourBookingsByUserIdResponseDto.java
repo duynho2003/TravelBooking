@@ -29,5 +29,7 @@ public class GetAllTourBookingsByUserIdResponseDto {
     private String thumbnail;
     private String startTime;
     private String locations;
+    private String paymentStatus;
+    private String code;
 
 }
