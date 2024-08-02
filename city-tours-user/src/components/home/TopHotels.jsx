@@ -174,6 +174,7 @@ export default function TopHotels({ userId, hotels }) {
               hoverable
               style={{
                 width: "100%",
+                height: "100%",
               }}
             >
               <Link

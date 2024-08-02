@@ -10,6 +10,7 @@ export default function BlogDetail() {
   // Constants
   const INIT_PAGE = 1;
   const INIT_LIMIT = 5;
+  const INIT_SEARCH = "";
 
   // Redux Store
   const dispatch = useDispatch();
@@ -22,6 +23,7 @@ export default function BlogDetail() {
   const [pagination, setPagination] = useState({
     page: INIT_PAGE,
     limit: INIT_LIMIT,
+    search: INIT_SEARCH,
   });
 
   // useEffect for loading data

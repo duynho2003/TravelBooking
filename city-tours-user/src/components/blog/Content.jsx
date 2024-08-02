@@ -1,4 +1,4 @@
-import { Col, Row, Grid, Breadcrumb, Select, Image, Button } from "antd";
+import { Col, Row, Grid, Breadcrumb, Select, Image, Button, Tag } from "antd";
 import CustomText from "../common/CustomText";
 import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -152,6 +152,40 @@ export default function Content({ blogs, blog }) {
                 >
                   {blog?.title}
                 </CustomText>
+              </Col>
+            </Row>
+
+            {/* Hash tags */}
+            <Row
+              style={{
+                width: "100%",
+              }}
+              justify={"space-between"}
+            >
+              <Col
+                span={24}
+                style={{
+                  marginBottom: "10px",
+                }}
+              >
+                <CustomText
+                  size={"12px"}
+                  weight={"400"}
+                  color={"var(--gray-text)"}
+                >
+                  Hash tags:
+                </CustomText>{" "}
+                {blog?.hashTags?.split(", ")?.map((tag, index) => (
+                  <Tag key={index} color="var(--pink)">
+                    <CustomText
+                      size={"12px"}
+                      weight={"400"}
+                      color={"var(--white)"}
+                    >
+                      {tag}
+                    </CustomText>
+                  </Tag>
+                ))}
               </Col>
             </Row>
 

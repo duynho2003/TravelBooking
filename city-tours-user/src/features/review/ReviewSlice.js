@@ -22,27 +22,6 @@ export const createHotelReview = createAsyncThunk(
   }
 );
 
-// export const getAllHotelReviews = createAsyncThunk(
-//   "reviews/getAllHotelReviews",
-//   async () => {
-//     try {
-//       const response = await reviewApi.getAllHotelReviews();
-//       console.log("response slice: ", response);
-
-//       if (response?.error) {
-//         console.log("response slice error: ", response.error);
-//         return { error: response.error };
-//       }
-
-//       return response.data;
-//     } catch (error) {
-//       console.log("response slice error: ", error);
-
-//       return { error };
-//     }
-//   }
-// );
-
 export const getHotelReviewsByHotelId = createAsyncThunk(
   "reviews/getHotelReviewsByHotelId",
   async (hotelId) => {
@@ -64,11 +43,54 @@ export const getHotelReviewsByHotelId = createAsyncThunk(
   }
 );
 
+export const createTourReview = createAsyncThunk(
+  "reviews/createTourReview",
+  async (data) => {
+    try {
+      const response = await reviewApi.createTourReview(data);
+      console.log("response slice: ", response);
+
+      if (response?.error) {
+        console.log("response slice error: ", response.error);
+        return { error: response.error };
+      }
+
+      return response;
+    } catch (error) {
+      console.log("response slice error: ", error);
+
+      return { error };
+    }
+  }
+);
+
+export const getTourReviewsByTourId = createAsyncThunk(
+  "reviews/getTourReviewsByTourId",
+  async (tourId) => {
+    try {
+      const response = await reviewApi.getTourReviewsByTourId(tourId);
+      console.log("response slice: ", response);
+
+      if (response?.error) {
+        console.log("response slice error: ", response.error);
+        return { error: response.error };
+      }
+
+      return response.data;
+    } catch (error) {
+      console.log("response slice error: ", error);
+
+      return { error };
+    }
+  }
+);
+
 const reviewSlice = createSlice({
   name: "reviews",
   initialState: {
     list: null,
     listHotelReviews: null,
+    listTourReviews: null,
     page: null,
     limit: null,
     skip: null,
@@ -86,39 +108,12 @@ const reviewSlice = createSlice({
 
     builder.addCase(createHotelReview.fulfilled, (state, action) => {
       state.loading = false;
-
-      // if (action.payload.error) {
-      //   state.message = action.payload.error.message;
-      //   state.error = action.payload.error.moreInfo;
-      // } else {
-      //   state.message = null;
-      //   state.error = null;
-      // }
     });
 
     builder.addCase(createHotelReview.rejected, (state, action) => {
       state.loading = false;
       state.error = action.error.message;
     });
-
-    // Get all hotel reviews
-    // builder.addCase(getAllHotelReviews.pending, (state) => {
-    //   state.loading = true;
-    // });
-
-    // builder.addCase(getAllHotelReviews.fulfilled, (state, action) => {
-    //   state.list = action.payload.data;
-    //   state.page = action.payload.page;
-    //   state.limit = action.payload.limit;
-    //   state.skip = action.payload.skip;
-    //   state.totals = action.payload.totals;
-    //   state.loading = false;
-    // });
-
-    // builder.addCase(getAllHotelReviews.rejected, (state, action) => {
-    //   state.loading = false;
-    //   state.error = action.error.message;
-    // });
 
     // Get hotel reviews by hotel id
     builder.addCase(getHotelReviewsByHotelId.pending, (state) => {
@@ -135,6 +130,39 @@ const reviewSlice = createSlice({
     });
 
     builder.addCase(getHotelReviewsByHotelId.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.error.message;
+    });
+
+    // Create tour review
+    builder.addCase(createTourReview.pending, (state) => {
+      state.loading = true;
+    });
+
+    builder.addCase(createTourReview.fulfilled, (state, action) => {
+      state.loading = false;
+    });
+
+    builder.addCase(createTourReview.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.error.message;
+    });
+
+    // Get tour reviews by tour id
+    builder.addCase(getTourReviewsByTourId.pending, (state) => {
+      state.loading = true;
+    });
+
+    builder.addCase(getTourReviewsByTourId.fulfilled, (state, action) => {
+      state.listTourReviews = action.payload.data;
+      state.page = action.payload.page;
+      state.limit = action.payload.limit;
+      state.skip = action.payload.skip;
+      state.totals = action.payload.totals;
+      state.loading = false;
+    });
+
+    builder.addCase(getTourReviewsByTourId.rejected, (state, action) => {
       state.loading = false;
       state.error = action.error.message;
     });

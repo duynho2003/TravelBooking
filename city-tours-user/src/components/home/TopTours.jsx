@@ -511,7 +511,7 @@ export default function TopTours({ userId, tours }) {
             weight={"600"}
             color={"var(--white)"}
             isButton={true}
-            link={`/tours/list?minPrice=0&maxPrice=5000000&review=&rating=&depart=&startDate=&completed=`}
+            link={`/tours/list?minPrice=0&maxPrice=500000000&review=&rating=&depart=&startDate=&completed=`}
           >
             View all Tours
           </CustomText>

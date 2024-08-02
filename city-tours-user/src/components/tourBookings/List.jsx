@@ -85,6 +85,13 @@ export default function Content({
     handleTableChange(page, pagination.limit);
   };
 
+  function formatDate(date) {
+    if (!date) return "";
+
+    const dateObject = new Date(date);
+    return dateObject.toLocaleString("vi-VN");
+  }
+
   return (
     <>
       <Row
@@ -255,11 +262,9 @@ export default function Content({
                           <Col
                             span={24}
                             style={{
-                              display: "flex",
-                              justifyContent: "start",
-                              alignItems: "center",
                               marginBottom: "10px",
                             }}
+                            className="truncated-name"
                           >
                             <CustomText
                               size={"16px"}
@@ -282,7 +287,7 @@ export default function Content({
                               weight={"400"}
                               color={"var(--gray-text)"}
                             >
-                              Tour Code:
+                              Code:
                             </CustomText>{" "}
                             <Tag color="var(--green-dark)">
                               <CustomText
@@ -296,7 +301,7 @@ export default function Content({
                           </Col>
 
                           {/* Remaining Seats */}
-                          {/* <Col
+                          <Col
                             style={{
                               marginBottom: "10px",
                             }}
@@ -306,7 +311,7 @@ export default function Content({
                               weight={"400"}
                               color={"var(--gray-text)"}
                             >
-                              Remaining seats:
+                              Number of people:
                             </CustomText>{" "}
                             {tourBooking?.adults && (
                               <Tag color="var(--green-dark)">
@@ -320,7 +325,9 @@ export default function Content({
                                 </CustomText>
                               </Tag>
                             )}
-                            {tourBooking?.children && (
+                            {tourBooking?.children === 0 ? (
+                              ""
+                            ) : (
                               <Tag color="var(--green-dark)">
                                 <CustomText
                                   size={"12px"}
@@ -332,7 +339,9 @@ export default function Content({
                                 </CustomText>
                               </Tag>
                             )}
-                            {tourBooking?.babies && (
+                            {tourBooking?.baby === 0 ? (
+                              ""
+                            ) : (
                               <Tag color="var(--green-dark)">
                                 <CustomText
                                   size={"12px"}
@@ -342,11 +351,33 @@ export default function Content({
                                   <FontAwesomeIcon
                                     icon={faPersonBreastfeeding}
                                   />
-                                  ({tourBooking?.babies})
+                                  ({tourBooking?.baby})
                                 </CustomText>
                               </Tag>
                             )}
-                          </Col> */}
+                          </Col>
+
+                          {/* Date of booking */}
+                          <Col
+                            style={{
+                              marginBottom: "10px",
+                            }}
+                          >
+                            <CustomText
+                              size={"13px"}
+                              weight={"400"}
+                              color={"var(--gray-text)"}
+                            >
+                              Date of booking:
+                            </CustomText>{" "}
+                            <CustomText
+                              size={"12px"}
+                              weight={"400"}
+                              color={"var(--gray-text)"}
+                            >
+                              {formatDate(tourBooking?.createdAt)}
+                            </CustomText>
+                          </Col>
                         </Col>
                       </Col>
                     </Row>

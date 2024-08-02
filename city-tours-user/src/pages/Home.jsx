@@ -42,7 +42,7 @@ export default function Home() {
           page: INIT_PAGE,
           limit: INIT_LIMIT,
           minPrice: "0",
-          maxPrice: "5000000",
+          maxPrice: "500000000",
           review: "",
           rating: RATING_DESC,
           depart: "",

@@ -62,6 +62,10 @@ export const API_ROUTE = {
 
   GET_HOTEL_REVIEW_BY_HOTEL_ID: "v1/hotelReviews/",
 
+  CREATE_TOUR_REVIEW: "v1/tourReviews/create",
+
+  GET_TOUR_REVIEW_BY_TOUR_ID: "v1/tourReviews/",
+
   // Provinces
   GET_ALL_PROVINCES: "v1/provinces",
 

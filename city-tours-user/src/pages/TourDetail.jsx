@@ -12,12 +12,15 @@ import Banner from "../components/tour/Banner";
 import Content from "../components/tour/Content";
 import { useParams } from "react-router-dom";
 import Loading from "../components/common/Loading";
+import { getTourReviewsByTourId } from "../features/review/ReviewSlice";
 
 export default function TourDetail() {
   // Redux Store
   const dispatch = useDispatch();
   const userId = useSelector((state) => state.auth?.info?.id);
+  const tours = useSelector((state) => state.tours?.list);
   const tour = useSelector((state) => state.tours?.selectedTour);
+  const reviews = useSelector((state) => state.reviews?.listTourReviews);
   const { tourId } = useParams();
 
   //Local State
@@ -25,6 +28,8 @@ export default function TourDetail() {
 
   // useEffect for loading data
   useEffect(() => {
+    dispatch(getTourReviewsByTourId(tourId));
+
     dispatch(getTourById(tourId))
       .then(() => {
         setTimeout(() => {
@@ -35,6 +40,10 @@ export default function TourDetail() {
         console.error(error.message);
       });
   }, [dispatch]);
+
+  const sortedReviews = reviews
+    ?.filter((review) => review?.createdAt)
+    ?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
   return (
     <>
@@ -51,7 +60,7 @@ export default function TourDetail() {
             }}
           ></Row>
           <Banner tour={tour} />
-          <Content userId={userId} tour={tour} />
+          <Content userId={userId} tour={tour} reviews={sortedReviews} />
         </>
       )}
     </>

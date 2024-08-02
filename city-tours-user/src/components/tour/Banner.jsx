@@ -77,15 +77,18 @@ export default function Banner({ tour }) {
                   display: "flex",
                   flexDirection: "column",
                 }}
+                className="truncated-name"
               >
-                <CustomText
-                  size={"36px"}
-                  weight={"700"}
-                  color={"var(--white)"}
-                  isUppercase={true}
-                >
-                  {tour?.name}
-                </CustomText>
+                <Col className="truncated-name">
+                  <CustomText
+                    size={"36px"}
+                    weight={"700"}
+                    color={"var(--white)"}
+                    isUppercase={true}
+                  >
+                    {tour?.name}
+                  </CustomText>
+                </Col>
 
                 <CustomText size={"14px"} weight={"500"} color={"var(--white)"}>
                   {tour?.address}

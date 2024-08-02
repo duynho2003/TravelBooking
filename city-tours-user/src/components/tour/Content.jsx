@@ -14,6 +14,9 @@ import {
   InputNumber,
   Select,
   notification,
+  Modal,
+  Form,
+  Spin,
 } from "antd";
 import category1 from "../../assets/images/category-1.jpg";
 import category2 from "../../assets/images/category-2.jpg";
@@ -59,15 +62,28 @@ import goongjs from "@goongmaps/goong-js";
 import polyline from "@mapbox/polyline";
 import goongApi from "../../services/goongJs/goongApi";
 import { createWishlist } from "../../features/wishlist/WishlistSlice";
+import { Controller, useForm } from "react-hook-form";
+import {
+  createTourReview,
+  getTourReviewsByTourId,
+} from "../../features/review/ReviewSlice";
+import { getInfoCustomer } from "../../features/customer/CustomerSlice";
 
 const { useBreakpoint } = Grid;
 const { Option } = Select;
 
-export default function Content({ userId, tour }) {
+export default function Content({ userId, tour, reviews }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const sub = useSelector((state) => state.auth?.info?.sub);
+  const tourBookings = useSelector(
+    (state) => state.customer?.info?.tourBookings
+  );
+  const customerName = useSelector(
+    (state) => state.customer?.info?.customer?.name
+  );
+  const customerEmail = useSelector((state) => state.customer?.info?.email);
 
   const [selectedStartTime, setSelectedStartTime] = useState(null);
   const [quantityAdults, setQuantityAdults] = useState(1);
@@ -393,8 +409,200 @@ export default function Content({ userId, tour }) {
     }
   };
 
+  const { control, handleSubmit, reset } = useForm();
+  const [loadingButton, setLoadingButton] = useState(false);
+  const [isModalShowReviewOpen, setIsModalShowReviewOpen] = useState(false);
+  const handleShowReview = () => {
+    setIsModalShowReviewOpen(true);
+  };
+
+  const handleSubmitReview = async (data) => {
+    const newData = {
+      userId: userId,
+      tourId: parseInt(tour?.id),
+      tourBookingId: data.tourBookingId,
+      customerName: customerName,
+      content: data.content,
+      rating: data.rating,
+    };
+
+    console.log("newData: ", newData);
+
+    setLoadingButton(true);
+
+    try {
+      const action = await dispatch(createTourReview(newData));
+
+      console.log("action: ", action);
+
+      if (createTourReview.fulfilled.match(action)) {
+        if (action?.payload?.status === 201) {
+          notification.success({
+            message: "Review submitted successfully",
+            description: "Your review has been successfully submitted.",
+          });
+          setIsModalShowReviewOpen(false);
+          dispatch(getTourById(tour?.id));
+          dispatch(getTourReviewsByTourId(tour?.id));
+          dispatch(getInfoCustomer(userId));
+          reset();
+        } else {
+          const error = action?.payload?.error.message || "Unknown error";
+          notification.error({
+            message: "Review submission error",
+            description: error,
+          });
+        }
+      } else if (createTourReview.rejected.match(action)) {
+        const error = action?.payload?.error.message || "Unknown error";
+        notification.error({
+          message: "Review submission error",
+          description: error,
+        });
+      }
+    } catch (error) {
+      notification.error({
+        message: "System error",
+        description:
+          "The server couldn't fulfill a valid request due to an issue with the server.",
+      });
+    } finally {
+      setLoadingButton(false);
+    }
+  };
+
+  const handleCancelReview = () => {
+    setIsModalShowReviewOpen(false);
+  };
+
+  function checkTourBooking() {
+    // Lặp qua từng phần tử trong roomBookings
+    for (let i = 0; i < tourBookings?.length; i++) {
+      let booking = tourBookings[i];
+      let bookingTourId = booking?.tourId;
+      let bookingReviewType = booking?.reviewStatus;
+
+      // Nếu reviewType của booking là PROVIDED thì bỏ qua và tiếp tục vòng lặp
+      if (bookingReviewType === "PROVIDED") {
+        continue;
+      }
+
+      // So sánh roomId của booking và id của room
+      if (bookingTourId === tour?.id) {
+        return true; // Nếu trùng thì trả về true
+      }
+    }
+
+    return false;
+  }
+
   return (
     <>
+      <Modal
+        title={
+          <CustomText size={"20px"} weight={"500"} color={"var(--black-text)"}>
+            Write your review
+          </CustomText>
+        }
+        open={isModalShowReviewOpen}
+        onCancel={handleCancelReview}
+        footer={false}
+      >
+        <Form onFinish={handleSubmit(handleSubmitReview)} layout="vertical">
+          <Form.Item label="Name">
+            <Input value={customerName} readOnly />
+          </Form.Item>
+
+          <Form.Item label="Email">
+            <Input value={customerEmail} readOnly />
+          </Form.Item>
+
+          <Controller
+            name="tourBookingId"
+            control={control}
+            render={({ field, fieldState: { error } }) => (
+              <Form.Item
+                label="Tour Times"
+                validateStatus={error ? "error" : ""}
+                help={error?.message}
+              >
+                <Select
+                  {...field}
+                  onChange={(value) => {
+                    field.onChange(value);
+                  }}
+                  placeholder="Choose tour"
+                  style={{
+                    width: "100%",
+                  }}
+                >
+                  {tourBookings
+                    ?.filter(
+                      (tourBooking) =>
+                        tourBooking?.reviewStatus === "NOT_PROVIDED"
+                    )
+                    .map((tourBooking) => (
+                      <Option key={tourBooking?.id} value={tourBooking?.id}>
+                        {tourBooking?.startTime}
+                      </Option>
+                    ))}
+                </Select>
+              </Form.Item>
+            )}
+          />
+
+          <Controller
+            name="content"
+            control={control}
+            rules={{ required: "Content is required" }}
+            render={({ field, fieldState: { error } }) => (
+              <Form.Item
+                label="Content"
+                validateStatus={error ? "error" : ""}
+                help={error?.message}
+              >
+                <Input.TextArea {...field} placeholder="Write your review" />
+              </Form.Item>
+            )}
+          />
+
+          <Controller
+            name="rating"
+            control={control}
+            rules={{ required: "Rating is required" }}
+            render={({ field, fieldState: { error } }) => (
+              <Form.Item
+                label="Rating"
+                validateStatus={error ? "error" : ""}
+                help={error?.message}
+              >
+                <Rate {...field} />
+              </Form.Item>
+            )}
+          />
+
+          <Form.Item
+            style={{
+              marginBottom: 20,
+              textAlign: "right",
+            }}
+          >
+            <Button
+              htmlType="submit"
+              style={{
+                background: "var(--green-dark)",
+                color: "var(--white)",
+                // width: "100%",
+              }}
+              icon={loadingButton ? <Spin /> : null}
+              loading={loadingButton}
+            >
+              Submit
+            </Button>
+          </Form.Item>
+        </Form>
+      </Modal>
+
       <Row
         style={{
           width: "100%",
@@ -865,7 +1073,7 @@ export default function Content({ userId, tour }) {
             </Row>
 
             {/* Reivews */}
-            {/* <Row
+            <Row
               style={{
                 width: "100%",
                 padding: "20px 0",
@@ -892,7 +1100,6 @@ export default function Content({ userId, tour }) {
                 </CustomText>
 
                 <Button
-                  htmlType="submit"
                   size="large"
                   className="hover-button"
                   style={{
@@ -902,6 +1109,8 @@ export default function Content({ userId, tour }) {
                     borderRadius: "3px",
                     cursor: "pointer",
                   }}
+                  disabled={!checkTourBooking()}
+                  onClick={handleShowReview}
                 >
                   <CustomText
                     size={"14px"}
@@ -931,105 +1140,104 @@ export default function Content({ userId, tour }) {
                     weight={"400"}
                     color={"var(--gray-light)"}
                   >
-                    {tour?.numberOfRating} Reviews{" "}
                     <Rate
                       disabled
-                      value={tour?.numberOfRating}
-                      character={({ index = 0 }) => customIcons[index + 1]}
+                      value={tour?.rating}
                       style={{
                         fontSize: "15px",
                         color: "var(--orange)",
-                        marginRight: "5px",
+                        marginRight: "10px",
                       }}
                     />
+                    ({tour?.numberOfRating})
                   </CustomText>
                 </Row>
 
-                <Row
-                  style={{
-                    width: "100%",
-                    padding: "20px 0",
-                  }}
-                >
-                  <Row
-                    justify={"space-between"}
-                    style={{
-                      width: "100%",
-                      padding: "20px 0",
-                    }}
-                  >
-                    <Col>
-                      <Avatar
-                        size={60}
-                        icon={<UserOutlined />}
+                {reviews &&
+                  reviews.length > 0 &&
+                  reviews?.map((review) => (
+                    <Row
+                      style={{
+                        width: "100%",
+                        padding: "20px 0",
+                      }}
+                    >
+                      <Row
+                        justify={"space-between"}
                         style={{
-                          marginRight: "10px",
+                          width: "100%",
+                          padding: "20px 0",
                         }}
-                      />
-                      <CustomText
-                        size={"18px"}
-                        weight={"500"}
-                        color={"var(--black-light)"}
                       >
-                        John Doe
-                      </CustomText>
-                    </Col>
+                        <Col>
+                          <Avatar
+                            size={60}
+                            icon={<UserOutlined />}
+                            style={{
+                              marginRight: "10px",
+                            }}
+                          />
+                          <CustomText
+                            size={"18px"}
+                            weight={"500"}
+                            color={"var(--black-light)"}
+                          >
+                            {review?.customerName}
+                          </CustomText>
+                        </Col>
 
-                    <Col>
-                      <CustomText
-                        size={"12px"}
-                        weight={"400"}
-                        color={"var(--black-light)"}
-                        isItalic={true}
-                      >
-                        26/06/2024
-                      </CustomText>
-                    </Col>
-                  </Row>
+                        <Col>
+                          <CustomText
+                            size={"12px"}
+                            weight={"400"}
+                            color={"var(--black-light)"}
+                            isItalic={true}
+                          >
+                            {new Date(review?.createdAt).toLocaleString()}
+                          </CustomText>
+                        </Col>
+                      </Row>
 
-                  <Row
-                    justify={"space-between"}
-                    style={{
-                      width: "100%",
-                    }}
-                  >
-                    <Col>
-                      <CustomText
-                        size={"14px"}
-                        weight={"400"}
-                        color={"var(--black-light)"}
-                      >
-                        "Lorem ipsum dolor sit amet, consectetur adipiscing
-                        elit. Sed a lorem quis neque interdum consequat ut sed
-                        sem. Duis quis tempor nunc. Interdum et malesuada fames
-                        ac ante ipsum primis in faucibus."
-                      </CustomText>
-                    </Col>
-                  </Row>
-
-                  <Row
-                    justify={"space-between"}
-                    style={{
-                      width: "100%",
-                      padding: "20px 0",
-                      borderBottom: "2px solid var(--border)",
-                    }}
-                  >
-                    <Col>
-                      <Rate
-                        defaultValue={5}
-                        character={({ index = 0 }) => customIcons[index + 1]}
+                      <Row
+                        justify={"space-between"}
                         style={{
-                          fontSize: "15px",
-                          color: "var(--orange)",
-                          marginRight: "15px !important",
+                          width: "100%",
                         }}
-                      />
-                    </Col>
-                  </Row>
-                </Row>
+                      >
+                        <Col>
+                          <CustomText
+                            size={"14px"}
+                            weight={"400"}
+                            color={"var(--black-light)"}
+                          >
+                            {review?.content}
+                          </CustomText>
+                        </Col>
+                      </Row>
+
+                      <Row
+                        justify={"space-between"}
+                        style={{
+                          width: "100%",
+                          padding: "20px 0",
+                          borderBottom: "2px solid var(--border)",
+                        }}
+                      >
+                        <Col>
+                          <Rate
+                            value={review?.rating}
+                            style={{
+                              fontSize: "15px",
+                              color: "var(--orange)",
+                              marginRight: "15px !important",
+                            }}
+                          />
+                        </Col>
+                      </Row>
+                    </Row>
+                  ))}
               </Col>
-            </Row> */}
+            </Row>
           </Col>
 
           {/* Col booking */}
@@ -1041,29 +1249,6 @@ export default function Content({ userId, tour }) {
               gap: "20px",
             }}
           >
-            {/* <Button
-              size="large"
-              className="hover-button"
-              style={{
-                width: "100%",
-                background: "var(--pink)",
-                border: "var(--green-dark)",
-                color: "var(--white)",
-                borderRadius: "3px",
-                cursor: "pointer",
-              }}
-              // onClick={handleShowMap}
-            >
-              <CustomText
-                size={"14px"}
-                weight={"600"}
-                color={"var(--white)"}
-                isUppercase={true}
-              >
-                View on map
-              </CustomText>
-            </Button> */}
-
             <Row
               style={{
                 width: "100%",

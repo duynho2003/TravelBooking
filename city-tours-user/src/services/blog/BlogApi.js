@@ -3,9 +3,9 @@ import { API_ROUTE } from "../../utils/Constants";
 
 const blogApi = {
   getAllBlogs: async (panigation) => {
-    const { page, limit } = panigation;
+    const { page, limit, search } = panigation;
 
-    const url = `${API_ROUTE.GET_ALL_BLOGS}?page=${page}&limit=${limit}`;
+    const url = `${API_ROUTE.GET_ALL_BLOGS}?page=${page}&limit=${limit}&search=${search}`;
     try {
       const response = await axiosClient.get(url);
       return response;

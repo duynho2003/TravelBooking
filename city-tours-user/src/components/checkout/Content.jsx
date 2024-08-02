@@ -143,6 +143,7 @@ export default function Content({ tour }) {
       baby: tourBookingData?.baby,
       amount: tourBookingData?.totalAmount,
       bookingStatus: "SUCCESS",
+      paymentStatus: "SUCCESS",
     };
 
     try {

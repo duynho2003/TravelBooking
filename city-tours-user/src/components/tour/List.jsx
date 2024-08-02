@@ -612,6 +612,59 @@ export default function List({
                       </CustomText>
                     </Col>
 
+                    {/* Remaining Seats */}
+                    <Col
+                      style={{
+                        marginBottom: "10px",
+                      }}
+                    >
+                      <CustomText
+                        size={"13px"}
+                        weight={"400"}
+                        color={"var(--gray-text)"}
+                      >
+                        Number of people:
+                      </CustomText>{" "}
+                      {tour?.adults && (
+                        <Tag color="var(--green-dark)">
+                          <CustomText
+                            size={"12px"}
+                            weight={"400"}
+                            color={"var(--white)"}
+                          >
+                            <FontAwesomeIcon icon={faUser} /> ({tour?.adults})
+                          </CustomText>
+                        </Tag>
+                      )}
+                      {tour?.child === 0 ? (
+                        ""
+                      ) : (
+                        <Tag color="var(--green-dark)">
+                          <CustomText
+                            size={"12px"}
+                            weight={"400"}
+                            color={"var(--white)"}
+                          >
+                            <FontAwesomeIcon icon={faChild} /> ({tour?.child})
+                          </CustomText>
+                        </Tag>
+                      )}
+                      {tour?.baby === 0 ? (
+                        ""
+                      ) : (
+                        <Tag color="var(--green-dark)">
+                          <CustomText
+                            size={"12px"}
+                            weight={"400"}
+                            color={"var(--white)"}
+                          >
+                            <FontAwesomeIcon icon={faPersonBreastfeeding} />(
+                            {tour?.baby})
+                          </CustomText>
+                        </Tag>
+                      )}
+                    </Col>
+
                     {/* Slot */}
                     {/* <Col span={24}>
                       <CustomText

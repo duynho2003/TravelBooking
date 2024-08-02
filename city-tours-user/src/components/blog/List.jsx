@@ -205,6 +205,32 @@ export default function List({
                       </CustomText>
                     </Col>
 
+                    {/* Hash tags */}
+                    <Col
+                      style={{
+                        marginBottom: "10px",
+                      }}
+                    >
+                      <CustomText
+                        size={"12px"}
+                        weight={"400"}
+                        color={"var(--gray-text)"}
+                      >
+                        Hash tags:
+                      </CustomText>{" "}
+                      {blog?.hashTags?.split(", ")?.map((tag, index) => (
+                        <Tag key={index} color="var(--pink)">
+                          <CustomText
+                            size={"12px"}
+                            weight={"400"}
+                            color={"var(--white)"}
+                          >
+                            {tag}
+                          </CustomText>
+                        </Tag>
+                      ))}
+                    </Col>
+
                     {/* Description */}
                     <Col
                       span={24}
@@ -241,7 +267,7 @@ export default function List({
                       <CustomText
                         size={"13px"}
                         weight={"600"}
-                        color={"var(--pink)"}
+                        color={"var(--green-dark)"}
                       >
                         {formatDateTime(blog?.createdAt)}
                       </CustomText>

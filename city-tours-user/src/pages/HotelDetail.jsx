@@ -48,6 +48,10 @@ export default function HotelDetail() {
     });
   };
 
+  const sortedReviews = reviews
+    ?.filter((review) => review?.createdAt)
+    ?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
   return (
     <>
       {/* Show loading */}
@@ -63,7 +67,7 @@ export default function HotelDetail() {
             }}
           ></Row>
           <Banner hotel={hotel} />
-          <Detail userId={userId} hotel={hotel} reviews={reviews} />
+          <Detail userId={userId} hotel={hotel} reviews={sortedReviews} />
         </>
       )}
     </>

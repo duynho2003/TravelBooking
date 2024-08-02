@@ -15,7 +15,20 @@ import {
   faMoneyBill1,
 } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Col, Row, Grid, Image, Menu, Badge, Dropdown, Button } from "antd";
+import {
+  Col,
+  Row,
+  Grid,
+  Image,
+  Menu,
+  Badge,
+  Dropdown,
+  Button,
+  Modal,
+  Form,
+  Input,
+  Spin,
+} from "antd";
 import CustomText from "./CustomText";
 import logo from "../../assets/images/logo.png";
 import product from "../../assets/images/product.jpg";
@@ -27,14 +40,41 @@ import authApi from "../../services/auth/AuthApi";
 import { initInfoBeforeReload, logout } from "../../features/auth/AuthSlice";
 import { logoutCustomer } from "../../features/customer/CustomerSlice";
 import { useEffect, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { SearchOutlined } from "@ant-design/icons";
 
 const { useBreakpoint } = Grid;
 
 export default function Header({ websiteInfo }) {
+  const { control, handleSubmit, reset } = useForm({});
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const sub = useSelector((state) => state.auth?.info?.sub);
+
+  // Local state
+  const [isSearchBlogOpen, setIsSearchBlogOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const handleShowSearchBlog = () => {
+    setIsSearchBlogOpen(true);
+  };
+
+  const handleCancelSearchBlog = () => {
+    setIsSearchBlogOpen(false);
+  };
+
+  const handleSearchBlog = (value) => {
+    console.log("value: ", value);
+  };
+
+  const onSubmit = (data) => {
+    console.log("data: ", data);
+
+    navigate(`/blogs/list?search=${data.search}`);
+    setIsSearchBlogOpen(false);
+    reset();
+  };
 
   const screens = useBreakpoint();
 
@@ -82,7 +122,7 @@ export default function Header({ websiteInfo }) {
                 size={"13px"}
                 weight={"400"}
                 color={"var(--black-text)"}
-                link={`/tours/list?minPrice=0&maxPrice=5000000&review=&rating=&depart=&startDate=&completed=`}
+                link={`/tours/list?minPrice=0&maxPrice=500000000&review=&rating=&depart=&startDate=&completed=`}
               >
                 All Tours List
               </CustomText>
@@ -152,7 +192,7 @@ export default function Header({ websiteInfo }) {
                 size={"13px"}
                 weight={"400"}
                 color={"var(--black-text)"}
-                link={"/blogs/list"}
+                link={`/blogs/list?page=1&limit=5&search=`}
               >
                 All Blogs List
               </CustomText>
@@ -456,26 +496,89 @@ export default function Header({ websiteInfo }) {
             }}
           >
             <CustomText size={"19px"} weight={"600"} color={"var(--gray-text)"}>
-              <FontAwesomeIcon icon={faSearch} />
+              <FontAwesomeIcon
+                icon={faSearch}
+                onClick={handleShowSearchBlog}
+                style={{ cursor: "pointer" }}
+              />
             </CustomText>
 
-            {/* <Dropdown
-              menu={{
-                items,
-              }}
-              placement="bottomRight"
-              arrow
+            <Modal
+              open={isSearchBlogOpen}
+              onOk={handleSearchBlog}
+              onCancel={handleCancelSearchBlog}
+              centered={true}
+              footer={false}
             >
-              <Badge count={7}>
-                <CustomText
-                  size={"19px"}
-                  weight={"600"}
-                  color={"var(--gray-text)"}
+              <Form onFinish={handleSubmit(onSubmit)} layout="vertical">
+                <Form.Item>
+                  <CustomText
+                    size={"18px"}
+                    weight={"600"}
+                    color={"var(--gray-text)"}
+                    isButton={true}
+                  >
+                    Search Blogs Quickly
+                  </CustomText>
+                </Form.Item>
+
+                <Row
+                  style={{
+                    width: "100%",
+                  }}
+                  justify={"space-between"}
+                  align={"middle"} // Center items vertically if needed
                 >
-                  <FontAwesomeIcon icon={faBagShopping} />
-                </CustomText>
-              </Badge>
-            </Dropdown> */}
+                  <Controller
+                    name="search"
+                    control={control}
+                    render={({ field, fieldState: { error } }) => (
+                      <Form.Item
+                        validateStatus={error ? "error" : ""}
+                        help={error?.message}
+                        style={{
+                          flex: 1,
+                          margin: 0,
+                        }}
+                      >
+                        <Input
+                          prefix={<SearchOutlined />}
+                          {...field}
+                          placeholder="Enter title or hash tags"
+                          style={{
+                            width: "100%",
+                          }}
+                        />
+                      </Form.Item>
+                    )}
+                  />
+                  <Button
+                    htmlType="submit"
+                    size="large"
+                    className="hover-button"
+                    style={{
+                      background: "var(--green-dark)",
+                      color: "var(--white)",
+                      borderRadius: "5px",
+                      cursor: "pointer",
+                      marginBottom: "0 !important",
+                      marginLeft: "10px",
+                    }}
+                    icon={loading ? <Spin /> : null}
+                    loading={loading}
+                  >
+                    <CustomText
+                      size={"13px"}
+                      weight={"700"}
+                      color={"var(--white)"}
+                      isButton={true}
+                    >
+                      Search
+                    </CustomText>
+                  </Button>
+                </Row>
+              </Form>
+            </Modal>
 
             {/* <Badge count={wishlistCount}> */}
             <CustomText

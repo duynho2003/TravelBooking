@@ -239,6 +239,7 @@ export default function Detail({ userId, hotel, reviews }) {
       discount: discount,
       price: price,
       totalAmount: totalAmount,
+      hotelName: selectedHotel.name,
     };
 
     setDataTourRoomBooking(newRoom);
@@ -406,6 +407,12 @@ export default function Detail({ userId, hotel, reviews }) {
           "The server couldn't fulfill a valid request due to an issue with the server.",
       });
     }
+  };
+
+  const [selectedImage, setSelectedImage] = useState(hotel?.thumbnailUrls?.[0]);
+
+  const handleImageClick = (image) => {
+    setSelectedImage(image);
   };
 
   return (
@@ -615,7 +622,7 @@ export default function Detail({ userId, hotel, reviews }) {
                 width: "100%",
                 padding: "0 0 20px 0",
               }}
-              justify={"space-between"}
+              justify="space-between"
             >
               <Col
                 span={4}
@@ -628,28 +635,57 @@ export default function Detail({ userId, hotel, reviews }) {
                   padding: "10px 0",
                 }}
               >
+                <CustomText size="22px" weight="500" color="var(--gray-text)">
+                  Images
+                </CustomText>
               </Col>
 
-              <Row
-                gutter={[10, 10]}
-                style={{
-                  width: "100%",
-                }}
-              >
-                {hotel?.thumbnailUrls?.map((thumb, index) => (
-                  <Col key={index} span={12}>
-                    <Image
-                      src={thumb}
-                      style={{
-                        width: "100%",
-                        height: "300px",
-                        objectFit: "cover",
-                        borderRadius: "3px",
-                      }}
-                    />
-                  </Col>
-                ))}
-              </Row>
+              <Col span={18}>
+                <Col
+                  span={24}
+                  style={{
+                    marginBottom: "10px",
+                  }}
+                >
+                  <Image
+                    src={selectedImage}
+                    style={{
+                      width: "100%",
+                      height: "300px",
+                      objectFit: "cover",
+                      borderRadius: "3px",
+                    }}
+                  />
+                </Col>
+
+                <Row
+                  gutter={[10, 10]}
+                  style={{
+                    width: "100%",
+                  }}
+                >
+                  {hotel?.thumbnailUrls?.map((thumb, index) => (
+                    <Col key={index} span={6}>
+                      <Image
+                        src={thumb}
+                        style={{
+                          width: "100%",
+                          height: "100px",
+                          objectFit: "cover",
+                          borderRadius: "3px",
+                          cursor: "pointer",
+                          border:
+                            thumb === selectedImage
+                              ? "2px solid var(--pink)"
+                              : "none",
+                        }}
+                        preview={false}
+                        onClick={() => handleImageClick(thumb)}
+                      />
+                    </Col>
+                  ))}
+                </Row>
+              </Col>
             </Row>
 
             {/* Description */}
@@ -1129,7 +1165,7 @@ export default function Detail({ userId, hotel, reviews }) {
                     weight={"400"}
                     color={"var(--gray-light)"}
                   >
-                    {hotel?.numberOfRating} Reviews{" "}
+                    {hotel?.numberOfRating} Star{" "}
                     <Rate
                       disabled
                       value={hotel?.rating}
