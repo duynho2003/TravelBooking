@@ -91,21 +91,21 @@ export default function MainLayout() {
           label: <Link to="/staff/blogs/view">View blogs</Link>,
           path: "/staff/blogs/view",
         },
-        {
-          key: `/staff/blogs/view/${blogId}`,
-          label: "View a blog",
-          path: `/staff/blogs/view/${blogId}`,
-        },
+        // {
+        //   key: `/staff/blogs/view/${blogId}`,
+        //   label: "View a blog",
+        //   path: `/staff/blogs/view/${blogId}`,
+        // },
         {
           key: "/staff/blogs/create",
           label: <Link to="/staff/blogs/create">Create new blog</Link>,
           path: "/staff/blogs/create",
         },
-        {
-          key: `/staff/blogs/update/${blogId}`,
-          label: "Update blog",
-          path: `/staff/blogs/update/${blogId}`,
-        },
+        // {
+        //   key: `/staff/blogs/update/${blogId}`,
+        //   label: "Update blog",
+        //   path: `/staff/blogs/update/${blogId}`,
+        // },
       ],
     },
   ];

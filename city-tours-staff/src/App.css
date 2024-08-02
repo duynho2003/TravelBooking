@@ -179,3 +179,10 @@
 .ant-timeline-item .ant-timeline-item-last .ant-timeline-item-left {
   padding-bottom: 0 !important;
 }
+
+.truncated-text {
+  white-space: nowrap; /* Prevents text from wrapping */
+  overflow: hidden; /* Hides overflowed text */
+  text-overflow: ellipsis; /* Displays ... for overflowed text */
+  max-width: 150px; /* Set a max width (adjust as necessary) */
+}

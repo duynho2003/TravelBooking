@@ -34,7 +34,7 @@ import { activeStatus } from "../../utils/enums/ActiveStatus";
 import dayjs from "dayjs";
 import "dayjs/locale/en";
 import customParseFormat from "dayjs/plugin/customParseFormat";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { roomTypes } from "../../utils/enums/RoomTypes";
 import { getBlogById } from "../../features/blog/BlogSlice";
 dayjs.extend(customParseFormat);
@@ -43,6 +43,7 @@ import "react-quill/dist/quill.snow.css";
 import { faPlus, faX } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { PlusOutlined } from "@ant-design/icons";
+import { vietnamProvinces } from "../../utils/data/VietnamProvinces";
 
 const { RangePicker } = DatePicker;
 const { Text } = Typography;
@@ -90,7 +91,7 @@ const UpdateBlog = () => {
   const [isModalTourRoomBooking, setIsModalTourRoomBooking] = useState(false);
   const [totalPriceRoom, setTotalPriceRoom] = useState(null);
 
-  console.log("schedules: ", schedules);
+  const [hashTags, setHashtags] = useState("");
 
   // React Hook Form
   const { control, handleSubmit, reset } = useForm();
@@ -110,6 +111,7 @@ const UpdateBlog = () => {
     if (blog) {
       reset({
         title: blog?.title,
+        hashTags: hashTagsArray,
         description: blog?.description,
         content: blog?.content,
         activeStatus: blog?.activeStatus,
@@ -153,9 +155,12 @@ const UpdateBlog = () => {
 
     let thumbnailToUse = selectedImage ? await uploadImage() : blog?.thumbnail;
 
+    const hashTagsString = hashTags?.join(", ");
+
     const newData = {
       blogId: blogId,
       title: data.title,
+      hashTags: hashTagsString,
       description: data.description,
       content: data.content,
       activeStatus: blog?.activeStatus,
@@ -253,6 +258,9 @@ const UpdateBlog = () => {
               borderBottom: "1px solid var(--border)",
               padding: "0 0 20px 0",
               marginBottom: "10px",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
             }}
           >
             <Breadcrumb
@@ -271,6 +279,24 @@ const UpdateBlog = () => {
                 },
               ]}
             />
+
+            <Button
+              style={{
+                background: "var(--green-dark)",
+                border: "var(--green-dark)",
+              }}
+            >
+              <Link to="/staff/blogs/view">
+                <CustomText
+                  size={"14px"}
+                  weight={"500"}
+                  color={"var(--white)"}
+                  isButton={true}
+                >
+                  Back
+                </CustomText>
+              </Link>
+            </Button>
           </Col>
           <Col xl={24}>
             <Form onFinish={handleSubmit(onSubmit)} layout="vertical">
@@ -292,6 +318,38 @@ const UpdateBlog = () => {
                         help={error?.message}
                       >
                         <Input {...field} placeholder="Enter title" />
+                      </Form.Item>
+                    )}
+                  />
+
+                  <Controller
+                    name="hashTags"
+                    control={control}
+                    render={({ field, fieldState: { error } }) => (
+                      <Form.Item
+                        label="Hashtags"
+                        validateStatus={error ? "error" : ""}
+                        help={error?.message}
+                      >
+                        <Select
+                          {...field}
+                          mode="multiple"
+                          onChange={(value) => {
+                            field.onChange(value);
+                            setHashtags(value);
+                            console.log("hashTags: ", hashTags);
+                          }}
+                          placeholder="Choose hashtags"
+                        >
+                          {vietnamProvinces.map((province) => (
+                            <Select.Option
+                              key={province.value}
+                              value={province.value}
+                            >
+                              {province.value}
+                            </Select.Option>
+                          ))}
+                        </Select>
                       </Form.Item>
                     )}
                   />

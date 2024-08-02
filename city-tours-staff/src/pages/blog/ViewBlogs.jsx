@@ -309,7 +309,7 @@ const ViewBlogs = () => {
                     color={"var(--white)"}
                     isButton={true}
                   >
-                    Create Tour
+                    Create Blog
                   </CustomText>
                 </Link>
               </Button>

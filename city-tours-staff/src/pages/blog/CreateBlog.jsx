@@ -37,6 +37,8 @@ import "react-quill/dist/quill.snow.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { PlusOutlined, SearchOutlined } from "@ant-design/icons";
+import { Link } from "react-router-dom";
+import { vietnamProvinces } from "../../utils/data/VietnamProvinces";
 
 const { RangePicker } = DatePicker;
 const { Text } = Typography;
@@ -74,6 +76,7 @@ const CreateBlog = () => {
   const [selectedHotelRooms, setSelectedHotelRooms] = useState([]);
   const [hasRooms, setHasRooms] = useState(true);
   const [startTime, setStartTime] = useState("");
+  const [hashTags, setHashtags] = useState("");
 
   // React Hook Form
   const { control, handleSubmit, reset } = useForm();
@@ -118,9 +121,12 @@ const CreateBlog = () => {
     try {
       const thumbnail = await uploadImage();
 
+      const hashTagsString = hashTags?.join(", ");
+
       const newData = {
         userId: userId,
         title: data.title,
+        hashTags: hashTagsString,
         description: data.description,
         content: data.content,
         thumbnail: thumbnail,
@@ -210,6 +216,9 @@ const CreateBlog = () => {
               borderBottom: "1px solid var(--border)",
               padding: "0 0 20px 0",
               marginBottom: "10px",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
             }}
           >
             <Breadcrumb
@@ -228,6 +237,24 @@ const CreateBlog = () => {
                 },
               ]}
             />
+
+            <Button
+              style={{
+                background: "var(--green-dark)",
+                border: "var(--green-dark)",
+              }}
+            >
+              <Link to="/staff/blogs/view">
+                <CustomText
+                  size={"14px"}
+                  weight={"500"}
+                  color={"var(--white)"}
+                  isButton={true}
+                >
+                  Back
+                </CustomText>
+              </Link>
+            </Button>
           </Col>
           <Col xl={24}>
             <Form onFinish={handleSubmit(onSubmit)} layout="vertical">
@@ -249,6 +276,37 @@ const CreateBlog = () => {
                         help={error?.message}
                       >
                         <Input {...field} placeholder="Enter title" />
+                      </Form.Item>
+                    )}
+                  />
+
+                  <Controller
+                    name="hastag"
+                    control={control}
+                    render={({ field, fieldState: { error } }) => (
+                      <Form.Item
+                        label="Hashtags"
+                        validateStatus={error ? "error" : ""}
+                        help={error?.message}
+                      >
+                        <Select
+                          {...field}
+                          mode="multiple"
+                          onChange={(value) => {
+                            field.onChange(value);
+                            setHashtags(value);
+                          }}
+                          placeholder="Choose hashtags"
+                        >
+                          {vietnamProvinces.map((province) => (
+                            <Select.Option
+                              key={province.value}
+                              value={province.value}
+                            >
+                              {province.value}
+                            </Select.Option>
+                          ))}
+                        </Select>
                       </Form.Item>
                     )}
                   />

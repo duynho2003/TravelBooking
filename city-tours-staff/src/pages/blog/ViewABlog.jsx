@@ -33,7 +33,7 @@ import Loading from "../../components/common/Loading";
 import dayjs from "dayjs";
 import "dayjs/locale/en";
 import customParseFormat from "dayjs/plugin/customParseFormat";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { roomTypes } from "../../utils/enums/RoomTypes";
 import { getBlogById } from "../../features/blog/BlogSlice";
 dayjs.extend(customParseFormat);
@@ -83,7 +83,7 @@ const ViewABlog = () => {
   const [isModalTourRoomBooking, setIsModalTourRoomBooking] = useState(false);
   const [totalPriceRoom, setTotalPriceRoom] = useState(null);
 
-  console.log("blogId: ", blogId);
+  const [hashTags, setHashtags] = useState("");
 
   // React Hook Form
   const { control, handleSubmit, reset } = useForm();
@@ -103,10 +103,14 @@ const ViewABlog = () => {
     if (blog) {
       reset({
         title: blog?.title,
+        hashTags: blog?.hashTags,
         description: blog?.description,
         content: blog?.content,
         activeStatus: blog?.activeStatus,
       });
+
+      const hashTagsArray = blog?.hashTags?.split(", ");
+      setHashtags(hashTagsArray);
 
       if (!isLoading) {
         setTimeout(() => {
@@ -245,6 +249,9 @@ const ViewABlog = () => {
               borderBottom: "1px solid var(--border)",
               padding: "0 0 20px 0",
               marginBottom: "10px",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
             }}
           >
             <Breadcrumb
@@ -263,6 +270,24 @@ const ViewABlog = () => {
                 },
               ]}
             />
+
+            <Button
+              style={{
+                background: "var(--green-dark)",
+                border: "var(--green-dark)",
+              }}
+            >
+              <Link to="/staff/blogs/view">
+                <CustomText
+                  size={"14px"}
+                  weight={"500"}
+                  color={"var(--white)"}
+                  isButton={true}
+                >
+                  Back
+                </CustomText>
+              </Link>
+            </Button>
           </Col>
           <Col xl={24}>
             <Form onFinish={handleSubmit(onSubmit)} layout="vertical">
@@ -284,6 +309,20 @@ const ViewABlog = () => {
                         help={error?.message}
                       >
                         <Input {...field} placeholder="Enter title" readOnly />
+                      </Form.Item>
+                    )}
+                  />
+
+                  <Controller
+                    name="hashTags"
+                    control={control}
+                    render={({ field, fieldState: { error } }) => (
+                      <Form.Item
+                        label="Hashtags"
+                        validateStatus={error ? "error" : ""}
+                        help={error?.message}
+                      >
+                        <Select value={hashTags} mode="tags"></Select>
                       </Form.Item>
                     )}
                   />
