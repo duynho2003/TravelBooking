@@ -116,6 +116,8 @@ const ViewStatisticals = () => {
         );
 
         setStatisticalData(response.data.data);
+
+        console.log("statisticalData: ", statisticalData);
       } catch (error) {
         console.error("Failed to fetch data", error);
       } finally {
@@ -288,6 +290,17 @@ const ViewStatisticals = () => {
     },
   };
 
+  const customersPercent = statisticalData?.customerChangePercent || 0;
+  const incomeHotelsPercent = statisticalData?.hotelIncomeChangePercent || 0;
+  const incomeToursPercent = statisticalData?.tourIncomeChangePercent || 0;
+  const transactionsPercent = statisticalData?.transactionChangePercent || 0;
+
+  const getBorderColor = (percent) => {
+    if (percent < 0) return "#f5222d";
+    if (percent === 0) return "#1890ff";
+    return "#87d068";
+  };
+
   return (
     <>
       {!showContent && <Loading />}
@@ -448,7 +461,7 @@ const ViewStatisticals = () => {
                   borderBottom: "6px solid var(--green-dark)",
                   height: "auto",
                   borderRadius: "5px",
-                  padding: "20px",
+                  padding: "15px",
                   display: "flex",
                   justifyContent: "space-between",
                   alignItems: "center",
@@ -488,7 +501,7 @@ const ViewStatisticals = () => {
                       style={{
                         fontSize: "22px",
                         color: "var(--green-dark)",
-                        marginRight: "10px",
+                        marginRight: "5px",
                       }}
                     />
                     {statisticalData?.quantityCustomers}
@@ -497,12 +510,20 @@ const ViewStatisticals = () => {
                 <Col>
                   <Progress
                     type="circle"
-                    size={"small"}
-                    percent={90}
-                    strokeColor={{
-                      "0%": "#108ee9",
-                      "100%": "#87d068",
-                    }}
+                    size={70}
+                    percent={customersPercent}
+                    strokeColor={getBorderColor(customersPercent)}
+                    format={() => (
+                      <Text
+                        style={{
+                          fontSize: "14px",
+                          fontWeight: "600",
+                          color: getBorderColor(customersPercent),
+                        }}
+                      >
+                        {customersPercent}%
+                      </Text>
+                    )}
                   />
                 </Col>
               </Col>
@@ -518,7 +539,7 @@ const ViewStatisticals = () => {
                   borderBottom: "6px solid var(--green-dark)",
                   height: "auto",
                   borderRadius: "5px",
-                  padding: "20px",
+                  padding: "15px",
                   display: "flex",
                   justifyContent: "space-between",
                   alignItems: "center",
@@ -558,7 +579,7 @@ const ViewStatisticals = () => {
                       style={{
                         fontSize: "22px",
                         color: "var(--green-dark)",
-                        marginRight: "10px",
+                        marginRight: "5px",
                       }}
                     />
                     {new Intl.NumberFormat("vi-VN", {
@@ -570,12 +591,20 @@ const ViewStatisticals = () => {
                 <Col>
                   <Progress
                     type="circle"
-                    size={"small"}
-                    percent={90}
-                    strokeColor={{
-                      "0%": "#108ee9",
-                      "100%": "#87d068",
-                    }}
+                    size={70}
+                    percent={incomeHotelsPercent}
+                    strokeColor={getBorderColor(incomeHotelsPercent)}
+                    format={() => (
+                      <Text
+                        style={{
+                          fontSize: "14px",
+                          fontWeight: "600",
+                          color: getBorderColor(incomeHotelsPercent),
+                        }}
+                      >
+                        {incomeHotelsPercent}%
+                      </Text>
+                    )}
                   />
                 </Col>
               </Col>
@@ -591,7 +620,7 @@ const ViewStatisticals = () => {
                   borderBottom: "6px solid var(--green-dark)",
                   height: "auto",
                   borderRadius: "5px",
-                  padding: "20px",
+                  padding: "15px",
                   display: "flex",
                   justifyContent: "space-between",
                   alignItems: "center",
@@ -631,7 +660,7 @@ const ViewStatisticals = () => {
                       style={{
                         fontSize: "22px",
                         color: "var(--green-dark)",
-                        marginRight: "10px",
+                        marginRight: "5px",
                       }}
                     />
                     {new Intl.NumberFormat("vi-VN", {
@@ -643,12 +672,20 @@ const ViewStatisticals = () => {
                 <Col>
                   <Progress
                     type="circle"
-                    size={"small"}
-                    percent={90}
-                    strokeColor={{
-                      "0%": "#108ee9",
-                      "100%": "#87d068",
-                    }}
+                    size={70}
+                    percent={incomeToursPercent}
+                    strokeColor={getBorderColor(incomeToursPercent)}
+                    format={() => (
+                      <Text
+                        style={{
+                          fontSize: "14px",
+                          fontWeight: "600",
+                          color: getBorderColor(incomeToursPercent),
+                        }}
+                      >
+                        {incomeToursPercent}%
+                      </Text>
+                    )}
                   />
                 </Col>
               </Col>
@@ -664,7 +701,7 @@ const ViewStatisticals = () => {
                   borderBottom: "6px solid var(--green-dark)",
                   height: "auto",
                   borderRadius: "5px",
-                  padding: "20px",
+                  padding: "15px",
                   display: "flex",
                   justifyContent: "space-between",
                   alignItems: "center",
@@ -704,7 +741,7 @@ const ViewStatisticals = () => {
                       style={{
                         fontSize: "22px",
                         color: "var(--green-dark)",
-                        marginRight: "10px",
+                        marginRight: "5px",
                       }}
                     />
                     {statisticalData?.quantityTransactions}
@@ -713,12 +750,20 @@ const ViewStatisticals = () => {
                 <Col>
                   <Progress
                     type="circle"
-                    size={"small"}
-                    percent={90}
-                    strokeColor={{
-                      "0%": "#108ee9",
-                      "100%": "#87d068",
-                    }}
+                    size={70}
+                    percent={transactionsPercent}
+                    strokeColor={getBorderColor(transactionsPercent)}
+                    format={() => (
+                      <Text
+                        style={{
+                          fontSize: "14px",
+                          fontWeight: "600",
+                          color: getBorderColor(transactionsPercent),
+                        }}
+                      >
+                        {transactionsPercent}%
+                      </Text>
+                    )}
                   />
                 </Col>
               </Col>

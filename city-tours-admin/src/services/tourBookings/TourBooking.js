@@ -15,9 +15,9 @@ const tourBookingApi = {
   },
 
   getAllRoomBookings: async (panigation) => {
-    const { page, limit } = panigation;
+    const { page, limit, hotelName, hotelId } = panigation;
 
-    const url = `${API_ROUTE.GET_ALL_ROOM_BOOKINGS}?page=${page}&limit=${limit}`;
+    const url = `${API_ROUTE.GET_ALL_ROOM_BOOKINGS}?page=${page}&limit=${limit}&hotelName=${hotelName}&hotelId=${hotelId}`;
     try {
       const response = await axiosClient.get(url);
       return response;

@@ -93,7 +93,7 @@ const ViewABlog = () => {
   const [isModalTourRoomBooking, setIsModalTourRoomBooking] = useState(false);
   const [totalPriceRoom, setTotalPriceRoom] = useState(null);
 
-  console.log("blogId: ", blogId);
+  const [hashTags, setHashtags] = useState("");
 
   // React Hook Form
   const { control, handleSubmit, reset } = useForm();
@@ -113,10 +113,14 @@ const ViewABlog = () => {
     if (blog) {
       reset({
         title: blog?.title,
+        hashTags: blog?.hashTags,
         description: blog?.description,
         content: blog?.content,
         activeStatus: blog?.activeStatus,
       });
+
+      const hashTagsArray = blog?.hashTags?.split(", ");
+      setHashtags(hashTagsArray);
 
       if (!isLoading) {
         setTimeout(() => {
@@ -315,6 +319,20 @@ const ViewABlog = () => {
                         help={error?.message}
                       >
                         <Input {...field} placeholder="Enter title" readOnly />
+                      </Form.Item>
+                    )}
+                  />
+
+                  <Controller
+                    name="hashTags"
+                    control={control}
+                    render={({ field, fieldState: { error } }) => (
+                      <Form.Item
+                        label="Hashtags"
+                        validateStatus={error ? "error" : ""}
+                        help={error?.message}
+                      >
+                        <Select value={hashTags} mode="tags"></Select>
                       </Form.Item>
                     )}
                   />

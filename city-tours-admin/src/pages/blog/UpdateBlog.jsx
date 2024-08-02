@@ -46,6 +46,7 @@ import { faPlus, faX } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { PlusOutlined } from "@ant-design/icons";
 import goongApi from "../../services/goongJs/goongApi";
+import { vietnamProvinces } from "../../utils/data/VietnamProvinces";
 
 const { RangePicker } = DatePicker;
 const { Text } = Typography;
@@ -93,7 +94,7 @@ const UpdateBlog = () => {
   const [isModalTourRoomBooking, setIsModalTourRoomBooking] = useState(false);
   const [totalPriceRoom, setTotalPriceRoom] = useState(null);
 
-  console.log("schedules: ", schedules);
+  const [hashTags, setHashtags] = useState("");
 
   // React Hook Form
   const { control, handleSubmit, reset } = useForm();
@@ -111,8 +112,14 @@ const UpdateBlog = () => {
 
   useEffect(() => {
     if (blog) {
+      const hashTagsArray = blog?.hashTags?.split(", ");
+      setHashtags(hashTagsArray);
+
+      console.log("hashTagsArray: ", hashTagsArray);
+
       reset({
         title: blog?.title,
+        hashTags: hashTagsArray,
         description: blog?.description,
         content: blog?.content,
         activeStatus: blog?.activeStatus,
@@ -156,9 +163,12 @@ const UpdateBlog = () => {
 
     let thumbnailToUse = selectedImage ? await uploadImage() : blog?.thumbnail;
 
+    const hashTagsString = hashTags?.join(", ");
+
     const newData = {
       blogId: blogId,
       title: data.title,
+      hashTags: hashTagsString,
       description: data.description,
       content: data.content,
       activeStatus: data.activeStatus,
@@ -316,6 +326,38 @@ const UpdateBlog = () => {
                         help={error?.message}
                       >
                         <Input {...field} placeholder="Enter title" />
+                      </Form.Item>
+                    )}
+                  />
+
+                  <Controller
+                    name="hashTags"
+                    control={control}
+                    render={({ field, fieldState: { error } }) => (
+                      <Form.Item
+                        label="Hashtags"
+                        validateStatus={error ? "error" : ""}
+                        help={error?.message}
+                      >
+                        <Select
+                          {...field}
+                          mode="multiple"
+                          onChange={(value) => {
+                            field.onChange(value);
+                            setHashtags(value);
+                            console.log("hashTags: ", hashTags);
+                          }}
+                          placeholder="Choose hashtags"
+                        >
+                          {vietnamProvinces.map((province) => (
+                            <Select.Option
+                              key={province.value}
+                              value={province.value}
+                            >
+                              {province.value}
+                            </Select.Option>
+                          ))}
+                        </Select>
                       </Form.Item>
                     )}
                   />

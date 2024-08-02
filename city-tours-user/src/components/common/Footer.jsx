@@ -12,6 +12,7 @@ import {
   InstagramOutlined,
   PinterestOutlined,
   TwitterOutlined,
+  XOutlined,
   YoutubeOutlined,
 } from "@ant-design/icons";
 
@@ -128,14 +129,6 @@ export default function Footer({ websiteInfo }) {
               </CustomText>
 
               <CustomText size={"14px"} weight={"300"} color={"var(--white)"}>
-                Login
-              </CustomText>
-
-              <CustomText size={"14px"} weight={"300"} color={"var(--white)"}>
-                Register
-              </CustomText>
-
-              <CustomText size={"14px"} weight={"300"} color={"var(--white)"}>
                 Terms and condition
               </CustomText>
             </Col>
@@ -167,7 +160,7 @@ export default function Footer({ websiteInfo }) {
                 Tour guide
               </CustomText>
 
-              <CustomText size={"14px"} weight={"300"} color={"var(--white)"}>
+              <CustomText size={"14px"} weight={"300"} color={"var(--white)"} link={"/wishlist"}>
                 Wishlist
               </CustomText>
 
@@ -270,28 +263,20 @@ export default function Footer({ websiteInfo }) {
                 gap: "15px",
               }}
             >
-              <CustomText size={"14px"} weight={"600"} color={"var(--white)"}>
+              <CustomText size={"14px"} weight={"600"} color={"var(--white)"} link={"https://www.facebook.com"}>
                 <FacebookOutlined />
               </CustomText>
 
-              <CustomText size={"14px"} weight={"600"} color={"var(--white)"}>
-                <TwitterOutlined />
+              <CustomText size={"14px"} weight={"600"} color={"var(--white)"} link={"https://x.com/"}>
+                <XOutlined />
               </CustomText>
 
-              <CustomText size={"14px"} weight={"600"} color={"var(--white)"}>
-                <GoogleOutlined />
-              </CustomText>
-
-              <CustomText size={"14px"} weight={"600"} color={"var(--white)"}>
+              <CustomText size={"14px"} weight={"600"} color={"var(--white)"} link={"https://www.instagram.com/"}>
                 <InstagramOutlined />
               </CustomText>
 
-              <CustomText size={"14px"} weight={"600"} color={"var(--white)"}>
+              <CustomText size={"14px"} weight={"600"} color={"var(--white)"} link={"https://www.pinterest.com/"}>
                 <PinterestOutlined />
-              </CustomText>
-
-              <CustomText size={"14px"} weight={"600"} color={"var(--white)"}>
-                <YoutubeOutlined />
               </CustomText>
             </Col>
 

@@ -628,13 +628,6 @@ export default function Detail({ userId, hotel, reviews }) {
                   padding: "10px 0",
                 }}
               >
-                <CustomText
-                  size={"22px"}
-                  weight={"500"}
-                  color={"var(--gray-text)"}
-                >
-                  Images
-                </CustomText>
               </Col>
 
               <Row

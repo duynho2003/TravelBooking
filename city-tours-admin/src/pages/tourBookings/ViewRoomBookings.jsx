@@ -38,6 +38,7 @@ import {
   getAllRoomBookings,
   getAllTourBookings,
 } from "../../features/tourBooking/TourBookingSlice";
+import { getAllHotels } from "../../features/hotel/HotelSlice";
 
 const { Search } = Input;
 const { Option } = Select;
@@ -46,11 +47,12 @@ const { Text } = Typography;
 const ViewRoomBookings = () => {
   // Constants
   const INIT_PAGE = 1;
-  const INIT_LIMIT = 6;
+  const INIT_LIMIT = 5;
 
   // Redux State
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const hotels = useSelector((state) => state.hotels?.list);
   const roomBookings = useSelector(
     (state) => state.tourBookings?.roomBookingsList
   );
@@ -60,16 +62,28 @@ const ViewRoomBookings = () => {
   const error = useSelector((state) => state.tourBookings?.error);
 
   // Local State
+  const [hotelName, setHotelName] = useState("");
+  const [hotelId, setHotelId] = useState("");
   const [pageSize, setPageSize] = useState(INIT_LIMIT);
   const [pagination, setPagination] = useState({
     page: INIT_PAGE,
     limit: pageSize,
+    hotelName: hotelName,
+    hotelId: hotelId,
   });
   const [showContent, setShowContent] = useState(false);
+  const [uniqueHotelNames, setUniqueHotelNames] = useState([]);
 
   // useEffect for loading data
   useEffect(() => {
     dispatch(getAllRoomBookings(pagination));
+    dispatch(
+      getAllHotels({
+        page: 1,
+        limit: 10,
+        search: "",
+      })
+    );
 
     // Delay showing content after loading
     if (!isLoading) {
@@ -79,6 +93,28 @@ const ViewRoomBookings = () => {
     }
   }, [dispatch, pagination]);
 
+  useEffect(() => {
+    if (hotels && hotels.length > 0) {
+      const uniqueNamesSet = new Set();
+
+      const addedHotelIds = [];
+
+      hotels.forEach((hotel) => {
+        if (!addedHotelIds.includes(hotel.id)) {
+          uniqueNamesSet.add({
+            hotelId: hotel.id,
+            hotelName: hotel.name,
+          });
+          addedHotelIds.push(hotel.id);
+        }
+      });
+
+      const uniqueNamesArray = Array.from(uniqueNamesSet);
+
+      setUniqueHotelNames(uniqueNamesArray);
+    }
+  }, [hotels]);
+
   // Event Handlers
   const handleTableChange = (pagination) => {
     const { current, pageSize } = pagination;
@@ -86,6 +122,8 @@ const ViewRoomBookings = () => {
     setPagination({
       page: current,
       limit: pageSize,
+      hotelName: hotelName,
+      hotelId: hotelId,
     });
   };
 
@@ -94,6 +132,8 @@ const ViewRoomBookings = () => {
     setPagination({
       page: INIT_PAGE,
       limit: value,
+      hotelName: hotelName,
+      hotelId: hotelId,
     });
   };
 
@@ -123,6 +163,15 @@ const ViewRoomBookings = () => {
         </>
       ),
       render: (text, record, index) => index + 1,
+    },
+    {
+      title: (
+        <>
+          Hotel Name <FontAwesomeIcon icon={faCaretDown} />
+        </>
+      ),
+      dataIndex: "hotelName",
+      render: (text) => <div className="truncated-text">{text}</div>,
     },
     {
       title: (
@@ -199,6 +248,29 @@ const ViewRoomBookings = () => {
     },
   ];
 
+  const onSearch = (value) => {
+    console.log(value);
+
+    setPagination((prev) => ({
+      ...prev,
+      hotelName: value,
+      page: INIT_PAGE,
+    }));
+
+    setHotelName(value);
+  };
+
+  const onChangeHotel = (value) => {
+    console.log(value);
+    setPagination((prev) => ({
+      ...prev,
+      hotelId: value,
+      page: INIT_PAGE,
+    }));
+
+    setHotelId(value);
+  };
+
   return (
     <>
       {/* Show loading */}
@@ -262,6 +334,42 @@ const ViewRoomBookings = () => {
               </Button> */}
             </Col>
 
+            <Col
+              xl={24}
+              style={{
+                borderBottom: "1px solid var(--border)",
+                padding: "0 0 20px 0",
+                marginBottom: "10px",
+                display: "flex",
+                justifyContent: "end",
+                alignItems: "center",
+                gap: "20px",
+              }}
+            >
+              <Search
+                placeholder="Search hotel name"
+                onSearch={onSearch}
+                style={{
+                  width: 300,
+                }}
+              />
+
+              <Select
+                onChange={onChangeHotel}
+                style={{
+                  width: "300px",
+                }}
+                defaultValue={""}
+              >
+                <Option value={""}>All Hotels</Option>
+                {uniqueHotelNames.map((hotel) => (
+                  <Option key={hotel.hotelId} value={hotel.hotelId}>
+                    {hotel.hotelName}
+                  </Option>
+                ))}
+              </Select>
+            </Col>
+
             <Col xl={24}>
               <Table
                 columns={columns}
@@ -295,7 +403,6 @@ const ViewRoomBookings = () => {
                     <Option value={3}>3 / page</Option>
                     <Option value={4}>4 / page</Option>
                     <Option value={5}>5 / page</Option>
-                    <Option value={6}>6 / page</Option>
                   </Select>
                 </Col>
               </Row>

@@ -358,16 +358,16 @@ const CreateHotel = () => {
                   <Controller
                     name="rating"
                     control={control}
-                    rules={{ required: "Rating is required" }}
+                    rules={{ required: "Star is required" }}
                     render={({ field, fieldState: { error } }) => (
                       <Form.Item
-                        label="Rating"
+                        label="Star"
                         validateStatus={error ? "error" : ""}
                         help={error?.message}
                       >
                         <InputNumber
                           {...field}
-                          placeholder="Enter rating"
+                          placeholder="Enter star"
                           style={{
                             width: "100%",
                           }}

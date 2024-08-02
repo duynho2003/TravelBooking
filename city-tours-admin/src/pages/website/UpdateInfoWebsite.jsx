@@ -72,10 +72,10 @@ const UpdateInfoWebsite = () => {
         email: website?.email,
         phone: website?.phone,
         address: website?.address,
-        startDate: startDay.trim(),
-        endDate: endDay.trim(),
-        startTime: startTime.trim(),
-        endTime: endTime.trim(),
+        startDate: startDay?.trim(),
+        endDate: endDay?.trim(),
+        startTime: startTime?.trim(),
+        endTime: endTime?.trim(),
         logo: website?.logo,
       });
     }
