@@ -1,0 +1,3 @@
+{
+  "dart.flutterRunAdditionalArgs": ["--web-port=1234"]
+}
