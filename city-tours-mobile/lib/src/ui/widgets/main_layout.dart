@@ -130,7 +130,7 @@ class CustomDrawer extends StatelessWidget {
                   title: const Text('Hotel Bookings'),
                   onTap: () {
                     Navigator.of(context).pop();
-                    Navigator.pushNamed(context, '/hotel_bookings');
+                    Navigator.pushNamed(context, '/room_bookings');
                   },
                 ),
               ],

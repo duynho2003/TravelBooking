@@ -68,61 +68,72 @@ class _TopHotelState extends State<TopHotel> {
                 itemCount: snapshot.data!.length,
                 itemBuilder: (BuildContext context, int index) {
                   Hotel hotel = snapshot.data![index];
-                  return Card(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20.0),
-                    ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(20.0),
-                      child: Stack(
-                        fit: StackFit.expand,
-                        children: <Widget>[
-                          Image.network(
-                            hotel.thumbnailUrls.first,
-                            fit: BoxFit.cover,
-                          ),
-                          Positioned(
-                            bottom: 0,
-                            left: 0,
-                            right: 0,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10.0),
-                                gradient: AppColors.linearGradientBackground,
+
+                  return GestureDetector(
+                      onTap: () {
+                        Navigator.pushNamed(
+                          context,
+                          '/hotel_detail',
+                          arguments: hotel.id,
+                        );
+                      },
+                      child: Card(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20.0),
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(20.0),
+                          child: Stack(
+                            fit: StackFit.expand,
+                            children: <Widget>[
+                              Image.network(
+                                hotel.thumbnailUrls.first,
+                                fit: BoxFit.cover,
                               ),
-                              padding: const EdgeInsets.all(10),
-                              alignment: Alignment.center,
-                              child: Column(
-                                children: <Widget>[
-                                  Text(
-                                    hotel.name,
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                              Positioned(
+                                bottom: 0,
+                                left: 0,
+                                right: 0,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                    gradient:
+                                        AppColors.linearGradientBackground,
                                   ),
-                                  const SizedBox(height: 5),
-                                  RatingBarIndicator(
-                                    rating: 5.0,
-                                    itemBuilder: (context, index) => const Icon(
-                                      Icons.star,
-                                      color: Colors.amber,
-                                    ),
-                                    itemCount: 5,
-                                    itemSize: 14,
-                                    direction: Axis.horizontal,
+                                  padding: const EdgeInsets.all(10),
+                                  alignment: Alignment.center,
+                                  child: Column(
+                                    children: <Widget>[
+                                      Text(
+                                        hotel.name,
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                          fontSize: 12,
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 5),
+                                      RatingBarIndicator(
+                                        rating: 5.0,
+                                        itemBuilder: (context, index) =>
+                                            const Icon(
+                                          Icons.star,
+                                          color: Colors.amber,
+                                        ),
+                                        itemCount: 5,
+                                        itemSize: 14,
+                                        direction: Axis.horizontal,
+                                      ),
+                                    ],
                                   ),
-                                ],
+                                ),
                               ),
-                            ),
+                            ],
                           ),
-                        ],
-                      ),
-                    ),
-                  );
+                        ),
+                      ));
                 },
               );
             }

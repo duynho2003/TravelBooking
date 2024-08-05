@@ -48,6 +48,11 @@ class URI {
       '$BASE_URL_CHROME/tourReviews/create';
   static const String GET_ALL_BLOGS_CHROME = '$BASE_URL_CHROME/blogs';
   static const String GET_BLOG_BY_ID_CHROME = '$BASE_URL_CHROME/blogs/';
+  static const String GET_HOTEL_BY_ID_CHROME = '$BASE_URL_CHROME/hotels/';
+  static const String CREATE_ROOM_BOOKING_CHROME =
+      '$BASE_URL_CHROME/roomBookings/create';
+  static const String GET_ALL_ROOM_BOOKINGS_BY_USERID_CHROME =
+      '$BASE_URL_CHROME/roomBookings/';
 
   // Mobile
   static const String BASE_URL_MOBILE = "http://10.0.2.2:5050/api/v1";
@@ -70,4 +75,9 @@ class URI {
       '$BASE_URL_MOBILE/tourReviews/create';
   static const String GET_ALL_BLOGS_MOBILE = '$BASE_URL_MOBILE/blogs';
   static const String GET_BLOG_BY_ID_MOBILE = '$BASE_URL_MOBILE/blogs/';
+  static const String GET_HOTEL_BY_ID_MOBILE = '$BASE_URL_MOBILE/hotels/';
+  static const String CREATE_ROOM_BOOKING_MOBILE =
+      '$BASE_URL_MOBILE/roomBookings/create';
+  static const String GET_ALL_ROOM_BOOKINGS_BY_USERID_MOBILE =
+      '$BASE_URL_MOBILE/roomBookings/';
 }

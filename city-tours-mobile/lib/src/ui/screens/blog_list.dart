@@ -23,6 +23,8 @@ class _BlogListState extends State<BlogList> {
   final List<Blog> _blogs = [];
   late Future<void> _blogsFuture;
   final BlogApi _blogApi = BlogApi();
+  String _searchQuery = ''; // Biến trạng thái cho ô tìm kiếm
+  final TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
@@ -35,6 +37,7 @@ class _BlogListState extends State<BlogList> {
       List<Blog> blogs = await _blogApi.fetchBlogs(
         page: _currentPage,
         limit: _pageSize,
+        search: _searchQuery,
       );
       setState(() {
         if (blogs.isEmpty) {
@@ -50,6 +53,16 @@ class _BlogListState extends State<BlogList> {
         _hasMoreBlogs = false;
       });
     }
+  }
+
+  void _onSearchChanged(String query) {
+    setState(() {
+      _searchQuery = query;
+      _currentPage = 1; // Reset trang hiện tại khi tìm kiếm
+      _blogs.clear(); // Xóa danh sách blog hiện tại
+      _hasMoreBlogs = true; // Đặt lại trạng thái tìm kiếm
+      _blogsFuture = _fetchBlogs(); // Tải lại dữ liệu
+    });
   }
 
   @override
@@ -99,6 +112,28 @@ class _BlogListState extends State<BlogList> {
               fontSize: 14,
               fontWeight: FontWeight.w600,
               color: AppColors.grayText,
+            ),
+          ),
+          SizedBox(
+            width: 10,
+          ),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: TextField(
+                controller: _searchController,
+                onChanged: _onSearchChanged,
+                decoration: InputDecoration(
+                  contentPadding:
+                      const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+                  hintText: 'Search...',
+                  hintStyle: const TextStyle(fontSize: 12),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(15),
+                    borderSide: BorderSide(width: 1),
+                  ),
+                ),
+              ),
             ),
           ),
         ],

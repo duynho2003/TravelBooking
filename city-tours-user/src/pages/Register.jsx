@@ -185,7 +185,7 @@ export default function Register() {
                   validateStatus={error ? "error" : ""}
                   help={error?.message}
                 >
-                  <Input
+                  <Input.Password
                     {...field}
                     placeholder="Password"
                     onChange={(e) => {
@@ -209,7 +209,7 @@ export default function Register() {
                   validateStatus={error ? "error" : ""}
                   help={error?.message}
                 >
-                  <Input
+                  <Input.Password
                     {...field}
                     placeholder="Confirm Password"
                     onChange={(e) => {

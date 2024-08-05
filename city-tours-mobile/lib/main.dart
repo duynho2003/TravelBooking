@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/src/state/auth_provider.dart';
+import 'package:flutter_application_1/src/state/room_booking_provider.dart';
 import 'package:flutter_application_1/src/state/tour_booking_provider.dart';
 import 'package:flutter_application_1/src/ui/screens/blog_detail.dart';
 import 'package:flutter_application_1/src/ui/screens/blog_list.dart';
+import 'package:flutter_application_1/src/ui/screens/hotel_detail.dart';
+import 'package:flutter_application_1/src/ui/screens/room_bookings.dart';
 import 'package:flutter_application_1/src/ui/screens/tour_checkout_success.dart';
 import 'package:flutter_application_1/src/ui/screens/hotel_list.dart';
 import 'package:flutter_application_1/src/ui/screens/profile.dart';
@@ -15,6 +18,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_application_1/src/ui/screens/home.dart';
 import 'package:flutter_application_1/src/ui/screens/register.dart';
 import 'package:flutter_application_1/src/ui/screens/login.dart';
+import 'package:flutter_application_1/src/ui/screens/room_checkout.dart';
+import 'package:flutter_application_1/src/ui/screens/room_checkout_success.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -37,6 +42,7 @@ class MyApp extends StatelessWidget {
         providers: [
           ChangeNotifierProvider(create: (_) => AuthProvider()),
           ChangeNotifierProvider(create: (_) => TourBookingProvider()),
+          ChangeNotifierProvider(create: (_) => RoomBookingProvider()),
         ],
         child: MaterialApp(
           title: "City Tours",
@@ -72,22 +78,22 @@ class MyApp extends StatelessWidget {
                 );
 
               // Hotel
-              // case '/hotel_detail':
-              //   final int tourId = settings.arguments as int;
-              //   return MaterialPageRoute(
-              //     builder: (context) => TourDetail(tourId: tourId),
-              //   );
               case '/hotels_list':
                 return MaterialPageRoute(
                   builder: (context) => const HotelList(),
                 );
-              // case '/tour_bookings':
-              //   return MaterialPageRoute(
-              //     builder: (context) => const TourBookings(),
-              //   );
+              case '/hotel_detail':
+                final int hotelId = settings.arguments as int;
+                return MaterialPageRoute(
+                  builder: (context) => HotelDetail(hotelId: hotelId),
+                );
+              case '/room_bookings':
+                return MaterialPageRoute(
+                  builder: (context) => const RoomBookings(),
+                );
 
               // Payment
-              case '/checkout':
+              case '/tour_checkout':
                 final int tourId = settings.arguments as int;
                 return MaterialPageRoute(
                   builder: (context) => TourCheckout(tourId: tourId),
@@ -96,6 +102,16 @@ class MyApp extends StatelessWidget {
                 final args = settings.arguments as Map<String, dynamic>?;
                 return MaterialPageRoute(
                   builder: (context) => CheckoutSuccess(bookingData: args),
+                );
+              case '/room_checkout':
+                final int roomId = settings.arguments as int;
+                return MaterialPageRoute(
+                  builder: (context) => RoomCheckout(roomId: roomId),
+                );
+              case '/room_checkout_success':
+                final args = settings.arguments as Map<String, dynamic>?;
+                return MaterialPageRoute(
+                  builder: (context) => RoomCheckoutSuccess(bookingData: args),
                 );
 
               // Blog

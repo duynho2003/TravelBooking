@@ -1208,7 +1208,7 @@ class _TourDetailState extends State<TourDetail> {
       tourBookingProvider.setTourBooking(tourBooking);
 
       // Điều hướng đến trang checkout
-      Navigator.pushNamed(context, '/checkout', arguments: tourId);
+      Navigator.pushNamed(context, '/tour_checkout', arguments: tourId);
     }).catchError((error) {
       // Xử lý lỗi
       print('An error occurred: $error');

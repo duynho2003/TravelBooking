@@ -4,12 +4,10 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_application_1/src/utils/constants.dart';
 
 class BlogApi {
-  Future<List<Blog>> fetchBlogs({
-    int page = 1,
-    int limit = 4,
-  }) async {
-    final url =
-        Uri.parse('${URI.GET_ALL_BLOGS_MOBILE}?page=$page&limit=$limit');
+  Future<List<Blog>> fetchBlogs(
+      {int page = 1, int limit = 4, String? search}) async {
+    final url = Uri.parse(
+        '${URI.GET_ALL_BLOGS_MOBILE}?page=$page&limit=$limit&search=$search');
 
     try {
       final response = await http.get(url);
