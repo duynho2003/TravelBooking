@@ -1,5 +1,7 @@
 package com.example.city_tours.entity;
 
+import com.example.city_tours.enums.BookingStatus;
+import com.example.city_tours.enums.PaymentStatus;
 import com.example.city_tours.enums.ReviewStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -26,6 +28,9 @@ public class RoomBooking {
     private String endDate;
 
     private Double price;
+
+    private BookingStatus bookingStatus;
+    private PaymentStatus paymentStatus;
 
     private ReviewStatus reviewStatus;
 

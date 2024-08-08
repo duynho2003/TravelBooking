@@ -5,6 +5,8 @@ import com.example.city_tours.dto.response.RoomBooking.CreateRoomBookingResponse
 import com.example.city_tours.dto.response.RoomBooking.GetRoomBookingResponseDto;
 import com.example.city_tours.dto.response.User.PageResponseDto;
 import com.example.city_tours.entity.*;
+import com.example.city_tours.enums.BookingStatus;
+import com.example.city_tours.enums.PaymentStatus;
 import com.example.city_tours.enums.ReviewStatus;
 import com.example.city_tours.exception.ResourceNotFoundException;
 import com.example.city_tours.repository.*;
@@ -59,6 +61,8 @@ public class RoomBookingServiceImpl implements RoomBookingService{
         roomBooking.setCustomer(customer);
         roomBooking.setRoom(optionalRoom.get());
         roomBooking.setHotelName(requestDto.getHotelName());
+        roomBooking.setBookingStatus(BookingStatus.valueOf(requestDto.getBookingStatus()));
+        roomBooking.setPaymentStatus(PaymentStatus.valueOf(requestDto.getPaymentStatus()));
 
         RoomBooking savedRoomBooking = roomBookingRepository.save(roomBooking);
 
@@ -129,6 +133,8 @@ public class RoomBookingServiceImpl implements RoomBookingService{
             responseDto.setCreatedAt(roomBooking.getCreatedAt());
             responseDto.setUpdatedAt(roomBooking.getUpdatedAt());
             responseDto.setHotelName(roomBooking.getHotelName());
+            responseDto.setBookingStatus(roomBooking.getBookingStatus().toString());
+            responseDto.setPaymentStatus(roomBooking.getPaymentStatus().toString());
 
             // Add responseDto to the list
             responseDtoList.add(responseDto);
@@ -205,6 +211,8 @@ public class RoomBookingServiceImpl implements RoomBookingService{
             responseDto.setRoomId(roomBooking.getRoom().getId());
             responseDto.setCreatedAt(roomBooking.getCreatedAt());
             responseDto.setUpdatedAt(roomBooking.getUpdatedAt());
+            responseDto.setBookingStatus(roomBooking.getBookingStatus().toString());
+            responseDto.setPaymentStatus(roomBooking.getPaymentStatus().toString());
 
             // Add responseDto to the list
             responseDtoList.add(responseDto);

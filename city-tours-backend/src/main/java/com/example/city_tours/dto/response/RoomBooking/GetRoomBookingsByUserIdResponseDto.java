@@ -24,5 +24,7 @@ public class GetRoomBookingsByUserIdResponseDto {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private String hotelName;
+    private String bookingStatus;
+    private String paymentStatus;
 
 }

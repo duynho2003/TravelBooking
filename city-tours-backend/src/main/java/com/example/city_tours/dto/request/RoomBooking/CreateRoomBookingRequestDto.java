@@ -19,5 +19,7 @@ public class CreateRoomBookingRequestDto {
     private String roomType;
     private String roomNumber;
     private String hotelName;
+    private String bookingStatus;
+    private String paymentStatus;
 
 }
