@@ -173,8 +173,6 @@ const ViewTours = () => {
     return b.id - a.id;
   });
 
-  console.log("sortedTours: ", sortedTours);
-
   const columns = [
     {
       title: (

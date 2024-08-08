@@ -257,6 +257,11 @@ export default function AdminLayout() {
           label: <Link to="/admin/blogs/view">View blogs</Link>,
           path: "/admin/blogs/view",
         },
+        {
+          key: "/admin/blogs/archive/view",
+          label: <Link to="/admin/blogs/archive/view">View archive blogs</Link>,
+          path: "/admin/blogs/archive/view",
+        },
         // {
         //   key: `/admin/blogs/view/${blogId}`,
         //   label: "View a blog",

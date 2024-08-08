@@ -36,6 +36,7 @@ import ViewStatisticals from "./pages/statistical/ViewStatisticals";
 import CreateBlog from "./pages/blog/CreateBlog";
 import UpdateBlog from "./pages/blog/UpdateBlog";
 import ViewBlogs from "./pages/blog/ViewBlogs";
+import ViewArchiveBlogs from "./pages/blog/ViewArchiveBlogs";
 import ViewABlog from "./pages/blog/ViewABlog";
 import ViewToursCompleted from "./pages/tours/ViewToursCompleted";
 
@@ -118,6 +119,7 @@ function App() {
 
             {/* Blogs management */}
             <Route path="blogs/view" element={<ViewBlogs />} />
+            <Route path="blogs/archive/view" element={<ViewArchiveBlogs />} />
             <Route path="blogs/view/:blogId" element={<ViewABlog />} />
             <Route path="blogs/create" element={<CreateBlog />} />
             <Route path="blogs/update/:blogId" element={<UpdateBlog />} />

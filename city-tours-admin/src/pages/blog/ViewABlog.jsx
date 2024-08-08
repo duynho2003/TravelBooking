@@ -38,14 +38,15 @@ import "dayjs/locale/en";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import { Link, useParams } from "react-router-dom";
 import { roomTypes } from "../../utils/enums/RoomTypes";
-import { getBlogById } from "../../features/blog/BlogSlice";
+import { getAllBlogs, getBlogById } from "../../features/blog/BlogSlice";
 dayjs.extend(customParseFormat);
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
-import { faPlus, faX } from "@fortawesome/free-solid-svg-icons";
+import { faClock, faPlus, faX } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { PlusOutlined } from "@ant-design/icons";
 import goongApi from "../../services/goongJs/goongApi";
+import DOMPurify from "dompurify";
 
 const { RangePicker } = DatePicker;
 const { Text } = Typography;
@@ -58,6 +59,7 @@ const ViewABlog = () => {
   // Redux State
   const { blogId } = useParams();
   const dispatch = useDispatch();
+  const blogs = useSelector((state) => state.blogs?.list);
   const blog = useSelector((state) => state.blogs?.selectedBlog);
   const isLoading = useSelector((state) => state.blogs?.isLoading);
   const error = useSelector((state) => state.blogs?.error);
@@ -101,6 +103,13 @@ const ViewABlog = () => {
   // useEffect for loading data
   useEffect(() => {
     dispatch(getBlogById(blogId));
+
+    dispatch(
+      getAllBlogs({
+        page: 1,
+        limit: 20,
+      })
+    );
 
     if (!isLoading) {
       setTimeout(() => {
@@ -236,6 +245,22 @@ const ViewABlog = () => {
     ],
   };
 
+  function formatDateTime(dateTimeString) {
+    const date = new Date(dateTimeString);
+
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const year = date.getFullYear();
+
+    const hours = String(date.getHours()).padStart(2, "0");
+    const minutes = String(date.getMinutes()).padStart(2, "0");
+    const seconds = String(date.getSeconds()).padStart(2, "0");
+
+    return `${hours}:${minutes}:${seconds} ${day}/${month}/${year}`;
+  }
+
+  const sanitizedHTML = DOMPurify.sanitize(blog?.content);
+
   return (
     <>
       {/* Show loading */}
@@ -300,120 +325,378 @@ const ViewABlog = () => {
             </Button>
           </Col>
           <Col xl={24}>
-            <Form onFinish={handleSubmit(onSubmit)} layout="vertical">
+            <Row
+              style={{
+                width: "100%",
+                height: "auto",
+                background: "var(--bg-gray-light)",
+                padding: "0",
+              }}
+              justify={"center"}
+            >
               <Row
+                gutter={20}
                 style={{
                   width: "100%",
+                  height: "100%",
+                  padding: "40px 0",
                 }}
-                justify={"center"}
               >
-                <Col xxl={11} xl={11} lg={12} md={12} sm={24} xs={24}>
-                  <Controller
-                    name="title"
-                    control={control}
-                    rules={{ required: "Title is required" }}
-                    render={({ field, fieldState: { error } }) => (
-                      <Form.Item
-                        label="Title"
-                        validateStatus={error ? "error" : ""}
-                        help={error?.message}
-                      >
-                        <Input {...field} placeholder="Enter title" readOnly />
-                      </Form.Item>
-                    )}
-                  />
-
-                  <Controller
-                    name="hashTags"
-                    control={control}
-                    render={({ field, fieldState: { error } }) => (
-                      <Form.Item
-                        label="Hashtags"
-                        validateStatus={error ? "error" : ""}
-                        help={error?.message}
-                      >
-                        <Select value={hashTags} mode="tags"></Select>
-                      </Form.Item>
-                    )}
-                  />
-
-                  <Controller
-                    name="description"
-                    control={control}
-                    rules={{ required: "Description is required" }}
-                    render={({ field, fieldState: { error } }) => (
-                      <Form.Item
-                        label="Description"
-                        validateStatus={error ? "error" : ""}
-                        help={error?.message}
-                      >
-                        <Input.TextArea
-                          {...field}
-                          placeholder="Enter description"
-                          readOnly
-                        />
-                      </Form.Item>
-                    )}
-                  />
-
-                  <Controller
-                    name="content"
-                    control={control}
-                    render={({ field, fieldState: { error } }) => (
-                      <Form.Item
-                        label="Content"
-                        validateStatus={error ? "error" : ""}
-                        help={error?.message}
-                        style={{
-                          height: "520px",
-                        }}
-                      >
-                        <ReactQuill
-                          {...field}
-                          theme="snow"
-                          modules={modules}
-                          style={{
-                            height: "400px",
-                          }}
-                          readOnly
-                        />
-                      </Form.Item>
-                    )}
-                  />
-
-                  <Controller
-                    name="activeStatus"
-                    control={control}
-                    render={({ field, fieldState: { error } }) => (
-                      <Form.Item
-                        label="Active Status"
-                        validateStatus={error ? "error" : ""}
-                        help={error?.message}
-                      >
-                        <Input {...field} placeholder="Enter title" readOnly />
-                      </Form.Item>
-                    )}
-                  />
-
-                  <Form.Item
-                    label="Thumbnail"
-                    validateStatus={error ? "error" : ""}
-                    help={error?.message}
+                {/* Col content */}
+                <Col span={14}>
+                  {/* Title */}
+                  <Row
+                    style={{
+                      width: "100%",
+                    }}
+                    justify={"space-between"}
                   >
-                    <Image
-                      src={blog?.thumbnail}
-                      width={"100%"}
-                      height={"300px"}
+                    <Col
+                      span={24}
                       style={{
-                        border: "1px solid var(--border)",
-                        borderRadius: "10px",
-                        objectFit: "cover",
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "start",
+                        alignItems: "start",
+                        gap: "15px",
+                        padding: "10px 0",
                       }}
-                    />
-                  </Form.Item>
+                    >
+                      <CustomText
+                        size={"24px"}
+                        weight={"700"}
+                        color={"var(--gray-text)"}
+                      >
+                        {blog?.title}
+                      </CustomText>
+                    </Col>
+                  </Row>
+
+                  {/* Hash tags */}
+                  <Row
+                    style={{
+                      width: "100%",
+                    }}
+                    justify={"space-between"}
+                  >
+                    <Col
+                      span={24}
+                      style={{
+                        marginBottom: "10px",
+                      }}
+                    >
+                      <CustomText
+                        size={"12px"}
+                        weight={"400"}
+                        color={"var(--gray-text)"}
+                      >
+                        Hash tags:
+                      </CustomText>{" "}
+                      {blog?.hashTags?.split(", ")?.map((tag, index) => (
+                        <Tag key={index} color="var(--pink)">
+                          <CustomText
+                            size={"12px"}
+                            weight={"400"}
+                            color={"var(--white)"}
+                          >
+                            {tag}
+                          </CustomText>
+                        </Tag>
+                      ))}
+                    </Col>
+                  </Row>
+
+                  {/* Description */}
+                  <Row
+                    style={{
+                      width: "100%",
+                    }}
+                    justify={"space-between"}
+                  >
+                    <Col
+                      span={24}
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "start",
+                        alignItems: "start",
+                        gap: "15px",
+                        padding: "10px 0",
+                      }}
+                    >
+                      <CustomText
+                        size={"14px"}
+                        weight={"400"}
+                        color={"var(--gray-text)"}
+                        isItalic={true}
+                      >
+                        {blog?.description}
+                      </CustomText>
+                    </Col>
+                  </Row>
+
+                  {/* Created At */}
+                  <Row
+                    style={{
+                      width: "100%",
+                    }}
+                    justify={"space-between"}
+                  >
+                    <Col
+                      span={24}
+                      style={{
+                        display: "flex",
+                        justifyContent: "start",
+                        alignItems: "center",
+                        gap: "10px",
+                        padding: "10px 0",
+                      }}
+                    >
+                      <FontAwesomeIcon
+                        icon={faClock}
+                        style={{
+                          color: "var(--gray-light)",
+                        }}
+                      />
+                      <CustomText
+                        size={"14px"}
+                        weight={"600"}
+                        color={"var(--green-dark)"}
+                      >
+                        {formatDateTime(blog?.createdAt)}
+                      </CustomText>
+                    </Col>
+                  </Row>
+
+                  {/* Content */}
+                  <Row
+                    style={{
+                      width: "100%",
+                      padding: "20px 0",
+                    }}
+                    justify={"space-between"}
+                  >
+                    <Col
+                      span={24}
+                      style={{
+                        padding: "10px 0",
+                      }}
+                    >
+                      <div
+                        className="content"
+                        dangerouslySetInnerHTML={{
+                          __html: sanitizedHTML,
+                        }}
+                      />
+                    </Col>
+                  </Row>
+                </Col>
+
+                {/* Col other blog */}
+                <Col
+                  span={10}
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "20px",
+                  }}
+                >
+                  <Row
+                    style={{
+                      width: "100%",
+                    }}
+                  >
+                    <Col
+                      span={24}
+                      style={{
+                        background: "var(--gray-mid)",
+                        padding: "10px 20px",
+                        textAlign: "center",
+                        borderTopLeftRadius: "3px",
+                        borderTopRightRadius: "3px",
+                        marginBottom: "20px",
+                      }}
+                    >
+                      <CustomText
+                        size={"22px"}
+                        weight={"600"}
+                        color={"var(--white)"}
+                      >
+                        Other Blog
+                      </CustomText>
+                    </Col>
+
+                    <Col span={24}>
+                      {blogs && blogs.length > 0 ? (
+                        blogs?.map((blog) => (
+                          <Col
+                            key={blog?.id}
+                            span={24}
+                            style={{
+                              height: "auto",
+                              marginBottom: "10px",
+                            }}
+                          >
+                            <Row
+                              style={{
+                                width: "100%",
+                                height: "100%",
+                              }}
+                            >
+                              {/* Thumbnail */}
+                              <Col
+                                span={10}
+                                style={{
+                                  position: "relative",
+                                  overflow: "hidden",
+                                  height: "auto",
+                                }}
+                              >
+                                <Link
+                                  to={`/blogs/${blog?.id}`}
+                                  style={{
+                                    height: "100%",
+                                  }}
+                                >
+                                  <Image
+                                    src={blog.thumbnail}
+                                    preview={false}
+                                    width={"100%"}
+                                    style={{
+                                      height: "160px",
+                                      objectFit: "cover",
+                                      transition: "transform 0.3s ease-in-out",
+                                    }}
+                                    className="image-hover-zoom"
+                                  />
+                                </Link>
+                              </Col>
+
+                              {/* Content */}
+                              <Col
+                                span={14}
+                                style={{
+                                  height: "160px",
+                                  padding: "15px",
+                                  background: "var(--white)",
+                                  border: "1px solid var(--border)",
+                                }}
+                              >
+                                {/* Title */}
+                                <Col
+                                  span={24}
+                                  style={{
+                                    marginBottom: "10px",
+                                  }}
+                                  className="truncated-title"
+                                >
+                                  <CustomText
+                                    size={"16px"}
+                                    weight={"500"}
+                                    color={"var(--gray-text)"}
+                                    link={`/blogs/${blog?.id}`}
+                                  >
+                                    {blog?.title}
+                                  </CustomText>
+                                </Col>
+
+                                {/* Description */}
+                                <Col
+                                  span={24}
+                                  style={{
+                                    marginBottom: "10px",
+                                  }}
+                                  className="truncated-content"
+                                >
+                                  <CustomText
+                                    size={"12px"}
+                                    weight={"400"}
+                                    color={"var(--gray-text)"}
+                                  >
+                                    {blog?.description}
+                                  </CustomText>
+                                </Col>
+
+                                {/* Created At */}
+                                <Col
+                                  span={24}
+                                  style={{
+                                    display: "flex",
+                                    justifyContent: "start",
+                                    alignItems: "center",
+                                    gap: "10px",
+                                  }}
+                                >
+                                  <FontAwesomeIcon
+                                    icon={faClock}
+                                    style={{
+                                      color: "var(--gray-light)",
+                                    }}
+                                  />
+                                  <CustomText
+                                    size={"13px"}
+                                    weight={"600"}
+                                    color={"var(--pink)"}
+                                  >
+                                    {formatDateTime(blog?.createdAt)}
+                                  </CustomText>
+                                </Col>
+                              </Col>
+                            </Row>
+                          </Col>
+                        ))
+                      ) : (
+                        <Col
+                          span={24}
+                          style={{
+                            padding: "10px 0",
+                            textAlign: "center",
+                          }}
+                        >
+                          <CustomText
+                            size={"14px"}
+                            weight={"400"}
+                            color={"var(--gray-text)"}
+                          >
+                            No blog found
+                          </CustomText>
+                        </Col>
+                      )}
+
+                      {blogs && blogs.length > 0 && (
+                        <Col
+                          span={24}
+                          style={{
+                            padding: "10px 0",
+                            textAlign: "center",
+                          }}
+                        >
+                          <Button
+                            size="large"
+                            style={{
+                              background: "var(--white)",
+                              border: "2px solid var(--green-dark)",
+                              borderRadius: "3px",
+                              cursor: "pointer",
+                            }}
+                          >
+                            <CustomText
+                              size={"14px"}
+                              weight={"600"}
+                              color={"var(--green-dark)"}
+                              isButton={true}
+                              link={`/admin/blogs/view`}
+                            >
+                              View all Blogs
+                            </CustomText>
+                          </Button>
+                        </Col>
+                      )}
+                    </Col>
+                  </Row>
                 </Col>
               </Row>
-            </Form>
+            </Row>
           </Col>
         </Row>
       )}

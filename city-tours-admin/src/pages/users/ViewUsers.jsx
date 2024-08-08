@@ -282,7 +282,7 @@ const ViewUsers = () => {
           status === "ACTIVE"
             ? "Active"
             : status === "IN_ACTIVE"
-            ? "In Active"
+            ? "Disabled"
             : status;
 
         return (
@@ -313,8 +313,8 @@ const ViewUsers = () => {
           </Button>
 
           <Popconfirm
-            title="Delete user"
-            description="Are you sure to delete this user?"
+            title="Block user"
+            description="Are you sure to block this user?"
             icon={
               <QuestionCircleOutlined
                 style={{

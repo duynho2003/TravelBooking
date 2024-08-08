@@ -186,3 +186,8 @@
   text-overflow: ellipsis; /* Displays ... for overflowed text */
   max-width: 150px; /* Set a max width (adjust as necessary) */
 }
+
+.content img {
+  max-width: 100%;
+  height: auto;
+}

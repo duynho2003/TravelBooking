@@ -54,6 +54,7 @@ const ViewStatisticals = () => {
   const [weekStr, setWeekStr] = useState("");
   const [monthStr, setMonthStr] = useState("");
   const [yearStr, setYearStr] = useState("");
+  const [yearChartStr, setYearChartStr] = useState("");
 
   const [chartDataHotels, setChartDataHotels] = useState({
     labels: [],
@@ -94,15 +95,19 @@ const ViewStatisticals = () => {
 
         if (dateStr) {
           params.dateStr = dateStr;
+          setYearChartStr(dateStr?.slice(0, 4));
         }
         if (weekStr) {
           params.weekStr = weekStr;
+          setYearChartStr(weekStr?.slice(0, 4));
         }
         if (monthStr) {
           params.monthStr = monthStr;
+          setYearChartStr(monthStr?.slice(0, 4));
         }
         if (yearStr) {
           params.yearStr = yearStr;
+          setYearChartStr(yearStr);
         }
 
         const response = await axios.get(
@@ -141,7 +146,7 @@ const ViewStatisticals = () => {
       const token = Cookies.get("token");
       try {
         const response = await axios.get(
-          `http://localhost:5050/api/v1/statisticals/monthly-income-hotels/2024`,
+          `http://localhost:5050/api/v1/statisticals/monthly-income-hotels/${yearChartStr}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -182,14 +187,14 @@ const ViewStatisticals = () => {
     }, 1000);
 
     return () => clearTimeout(timer);
-  }, [isLoading]);
+  }, [isLoading, yearChartStr]);
 
   useEffect(() => {
     const fetchData = async () => {
       const token = Cookies.get("token");
       try {
         const response = await axios.get(
-          `http://localhost:5050/api/v1/statisticals/monthly-income-tours/2024`,
+          `http://localhost:5050/api/v1/statisticals/monthly-income-tours/${yearChartStr}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -230,7 +235,7 @@ const ViewStatisticals = () => {
     }, 1000);
 
     return () => clearTimeout(timer);
-  }, [isLoading]);
+  }, [isLoading, yearChartStr]);
 
   const disabledDate = (current) => {
     return current && current > dayjs().endOf("day");

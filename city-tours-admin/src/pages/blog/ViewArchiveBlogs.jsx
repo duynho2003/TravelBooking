@@ -37,7 +37,7 @@ const { Option } = Select;
 const { Text } = Typography;
 const { Search } = Input;
 
-const ViewBlogs = () => {
+const ViewArchiveBlogs = () => {
   // Constants
   const INIT_PAGE = 1;
   const INIT_LIMIT = 5;
@@ -148,7 +148,7 @@ const ViewBlogs = () => {
 
   // Sort by desc
   const sortedBlogs = blogs
-    ?.filter((blog) => blog.activeStatus === "ACTIVE")
+    ?.filter((blog) => blog.activeStatus === "IN_ACTIVE")
     .slice()
     .sort((a, b) => b.id - a.id);
 
@@ -189,6 +189,23 @@ const ViewBlogs = () => {
         if (!createdAt) return null;
 
         const dateObject = new Date(createdAt);
+        const formattedDate = dateObject.toLocaleString("vi-VN");
+
+        return formattedDate;
+      },
+    },
+    {
+      title: (
+        <>
+          Updated Date <FontAwesomeIcon icon={faCaretDown} />
+        </>
+      ),
+      dataIndex: "updatedAt",
+      render: (text, record) => {
+        const updatedAt = record?.updatedAt;
+        if (!updatedAt) return null;
+
+        const dateObject = new Date(updatedAt);
         const formattedDate = dateObject.toLocaleString("vi-VN");
 
         return formattedDate;
@@ -248,7 +265,7 @@ const ViewBlogs = () => {
           >
             <FontAwesomeIcon icon={faPen} />
           </Button> */}
-
+          {/* 
           <Popconfirm
             title="Archive blog"
             description="Are you sure you want to archive this blog?"
@@ -272,7 +289,7 @@ const ViewBlogs = () => {
             >
               <FontAwesomeIcon icon={faTrashCan} />
             </Button>
-          </Popconfirm>
+          </Popconfirm> */}
         </>
       ),
     },
@@ -362,4 +379,4 @@ const ViewBlogs = () => {
   );
 };
 
-export default ViewBlogs;
+export default ViewArchiveBlogs;
