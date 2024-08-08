@@ -175,10 +175,16 @@ public class HotelServiceImpl implements HotelService{
 
             // Add condition to search for username or email if search parameter is provided
             if (search != null && !search.isEmpty()) {
-                Predicate namePredicate = cb.like(cb.lower(root.get("name")), "%" + search.toLowerCase() + "%");
-                Predicate addressPredicate = cb.like(cb.lower(root.get("address")), "%" + search.toLowerCase() + "%");
+                String searchLower = search.toLowerCase();
+
+                // Tạo điều kiện tìm kiếm cho cả tên và địa chỉ
+                Predicate namePredicate = cb.like(cb.lower(root.get("name")), "%" + searchLower + "%");
+                Predicate addressPredicate = cb.like(cb.lower(root.get("address")), "%" + searchLower + "%");
+
+                // Kết hợp các điều kiện bằng OR
                 predicate = cb.or(namePredicate, addressPredicate);
             }
+
 
             // Add condition to search for username or email if search parameter is provided
             if (review != null && !review.isEmpty()) {

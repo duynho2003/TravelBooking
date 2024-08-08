@@ -151,11 +151,9 @@ public class UserServiceImpl implements UserService{
 
         User user = userOptional.get();
 
-        user.setRoles(new HashSet<>());
+        user.setStatus(UserStatus.IN_ACTIVE);
 
         userRepository.save(user);
-
-        userRepository.deleteById(userId);
 
     }
 

@@ -60,6 +60,7 @@ public class CustomerServiceImpl implements CustomerService{
         customer.setPhone(requestDto.getPhone());
         customer.setAddress(requestDto.getAddress());
         customer.setCreatedAt(LocalDateTime.now());
+        customer.setUpdatedAt(LocalDateTime.now());
         customer.setUser(user);
 
         Customer savedCustomer = customerRepository.save(customer);

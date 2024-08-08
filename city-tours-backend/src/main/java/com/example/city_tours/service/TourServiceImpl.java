@@ -19,10 +19,7 @@ import com.example.city_tours.enums.BookedStatus;
 import com.example.city_tours.exception.ResourceCanNotBeDeletedException;
 import com.example.city_tours.exception.ResourceNotFoundException;
 import com.example.city_tours.repository.*;
-import jakarta.persistence.criteria.Expression;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
-import jakarta.persistence.criteria.Subquery;
+import jakarta.persistence.criteria.*;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -31,6 +28,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -310,7 +308,7 @@ public class TourServiceImpl implements TourService{
 
             // Add condition to filter by startTime if startTime parameter is provided
             if (startDate != null && !startDate.isEmpty()) {
-                predicate = cb.and(predicate, cb.like(root.join("tourTimes").get("startDate"), "%" + startDate + "%"));
+                predicate = cb.and(predicate, cb.like(root.join("tourTimes").get("startDate"), "%" + startDate.toLowerCase() + "%"));
             }
 
             if (completed != null) {

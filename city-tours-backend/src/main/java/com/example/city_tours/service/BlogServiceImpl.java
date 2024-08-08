@@ -139,7 +139,10 @@ public class BlogServiceImpl implements BlogService{
 
         Blog blog = optionalBlog.get();
 
-        blogRepository.deleteById(blog.getId());
+        blog.setActiveStatus(ActiveStatus.IN_ACTIVE);
+        blog.setUpdatedAt(LocalDateTime.now());
+
+        blogRepository.save(blog);
 
     }
 
