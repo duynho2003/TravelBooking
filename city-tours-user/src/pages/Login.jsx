@@ -39,7 +39,7 @@ export default function Login() {
 
   // Handle event
   const onSubmit = async (data) => {
-    console.log(data);
+    // console.log(data); // kiem tra ten tai khoan va mat khau dang nhap
     setLoading(true);
 
     try {
