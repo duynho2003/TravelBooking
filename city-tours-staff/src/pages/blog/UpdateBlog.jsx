@@ -109,6 +109,9 @@ const UpdateBlog = () => {
 
   useEffect(() => {
     if (blog) {
+      const hashTagsArray = blog?.hashTags?.split(", ");
+      setHashtags(hashTagsArray);
+
       reset({
         title: blog?.title,
         hashTags: hashTagsArray,

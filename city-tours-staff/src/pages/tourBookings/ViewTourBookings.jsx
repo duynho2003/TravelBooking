@@ -55,12 +55,17 @@ const ViewTourBookings = () => {
   const error = useSelector((state) => state.tourBookings?.error);
 
   // Local State
+  const [tourName, setTourName] = useState("");
+  const [tourId, setTourId] = useState("");
   const [pageSize, setPageSize] = useState(INIT_LIMIT);
   const [pagination, setPagination] = useState({
     page: INIT_PAGE,
     limit: pageSize,
+    tourName: tourName,
+    tourId: tourId,
   });
   const [showContent, setShowContent] = useState(false);
+  const [uniqueTourNames, setUniqueTourNames] = useState([]);
 
   // useEffect for loading data
   useEffect(() => {
@@ -74,6 +79,33 @@ const ViewTourBookings = () => {
     }
   }, [dispatch, pagination]);
 
+  useEffect(() => {
+    if (tourBookings && tourBookings.length > 0) {
+      // Create a Set to store unique tour names
+      const uniqueNamesSet = new Set();
+
+      const addedTourIds = []; // Array to keep track of added tourIds
+
+      // Iterate over tourBookings and add unique tour objects to the Set
+      tourBookings.forEach((tourBooking) => {
+        // Check if tourId is already added
+        if (!addedTourIds.includes(tourBooking.tourId)) {
+          uniqueNamesSet.add({
+            tourId: tourBooking.tourId,
+            tourName: tourBooking.tourName,
+          });
+          addedTourIds.push(tourBooking.tourId); // Add tourId to the addedTourIds array
+        }
+      });
+
+      // Convert Set back to array
+      const uniqueNamesArray = Array.from(uniqueNamesSet);
+
+      // Update state with unique tour names
+      setUniqueTourNames(uniqueNamesArray);
+    }
+  }, [tourBookings]);
+
   // Event Handlers
   const handleTableChange = (pagination) => {
     const { current, pageSize } = pagination;
@@ -81,6 +113,8 @@ const ViewTourBookings = () => {
     setPagination({
       page: current,
       limit: pageSize,
+      tourName: tourName,
+      tourId: tourId,
     });
   };
 
@@ -89,6 +123,8 @@ const ViewTourBookings = () => {
     setPagination({
       page: INIT_PAGE,
       limit: value,
+      tourName: tourName,
+      tourId: tourId,
     });
   };
 
@@ -199,6 +235,29 @@ const ViewTourBookings = () => {
     },
   ];
 
+  const onSearch = (value) => {
+    console.log(value);
+
+    setPagination((prev) => ({
+      ...prev,
+      tourName: value,
+      page: INIT_PAGE,
+    }));
+
+    setTourName(value);
+  };
+
+  const onChangeTour = (value) => {
+    console.log(value);
+    setPagination((prev) => ({
+      ...prev,
+      tourId: value,
+      page: INIT_PAGE,
+    }));
+
+    setTourId(value);
+  };
+
   return (
     <>
       {/* Show loading */}
@@ -260,6 +319,42 @@ const ViewTourBookings = () => {
                   </CustomText>
                 </Link>
               </Button> */}
+            </Col>
+
+            <Col
+              xl={24}
+              style={{
+                borderBottom: "1px solid var(--border)",
+                padding: "0 0 20px 0",
+                marginBottom: "10px",
+                display: "flex",
+                justifyContent: "end",
+                alignItems: "center",
+                gap: "20px",
+              }}
+            >
+              <Search
+                placeholder="Search tour name"
+                onSearch={onSearch}
+                style={{
+                  width: 300,
+                }}
+              />
+
+              <Select
+                onChange={onChangeTour}
+                style={{
+                  width: "300px",
+                }}
+                defaultValue={""}
+              >
+                <Option value={""}>All Tours</Option>
+                {uniqueTourNames.map((tour) => (
+                  <Option key={tour.tourId} value={tour.tourId}>
+                    {tour.tourName}
+                  </Option>
+                ))}
+              </Select>
             </Col>
 
             <Col xl={24}>

@@ -61,7 +61,7 @@ export default function MainLayout() {
         {
           key: "/staff/bookings/hotel/view",
           label: (
-            <Link to="/staff/bookings/hotel/view">View hotel bookings</Link>
+            <Link to="/staff/bookings/hotel/view">View room bookings</Link>
           ),
           path: "/staff/bookings/hotel/view",
         },

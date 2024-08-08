@@ -4,6 +4,7 @@ import usersReducer from "../features/users/UserSlice";
 import tourBookingReducer from "../features/tourBooking/TourBookingSlice";
 import transactionsReducer from "../features/transaction/TransactionSlice";
 import blogsReducer from "../features/blog/BlogSlice";
+import hotelsReducer from "../features/hotel/HotelSlice";
 
 const rootReducer = {
   auth: authReducer,
@@ -11,6 +12,7 @@ const rootReducer = {
   tourBookings: tourBookingReducer,
   transactions: transactionsReducer,
   blogs: blogsReducer,
+  hotels: hotelsReducer,
 };
 
 const store = configureStore({

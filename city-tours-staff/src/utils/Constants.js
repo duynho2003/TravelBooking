@@ -36,4 +36,7 @@ export const API_ROUTE = {
   GET_BLOG_BY_ID: "v1/blogs/",
 
   DELETE_BLOG: "v1/blogs/",
+
+  // Hotels
+  GET_ALL_HOTELS: "v1/hotels",
 };
