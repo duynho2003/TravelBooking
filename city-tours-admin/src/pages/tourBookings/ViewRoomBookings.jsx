@@ -224,18 +224,22 @@ const ViewRoomBookings = () => {
     {
       title: (
         <>
-          Review Status <FontAwesomeIcon icon={faCaretDown} />
+          Booking Status <FontAwesomeIcon icon={faCaretDown} />
         </>
       ),
-      dataIndex: "reviewStatus",
-      render: (reviewStatus) => {
+      dataIndex: "bookingStatus",
+      render: (bookingStatus) => {
         let color, tagText;
-        switch (reviewStatus) {
-          case "NOT_PROVIDED":
+        switch (bookingStatus) {
+          case "FAILED":
+            color = "red";
+            tagText = "Failed";
+            break;
+          case "PENDING":
             color = "blue";
             tagText = "Pending";
             break;
-          case "PROVIDED":
+          case "SUCCESS":
             color = "green";
             tagText = "Success";
             break;

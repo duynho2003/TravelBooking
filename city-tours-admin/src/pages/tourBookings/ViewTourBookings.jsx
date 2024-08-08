@@ -106,8 +106,6 @@ const ViewTourBookings = () => {
     }
   }, [tourBookings]);
 
-  console.log("tourBookings: ", tourBookings);
-
   // Event Handlers
   const handleTableChange = (pagination) => {
     const { current, pageSize } = pagination;
@@ -259,8 +257,6 @@ const ViewTourBookings = () => {
 
     setTourId(value);
   };
-
-  console.log("pagination: ", pagination);
 
   return (
     <>

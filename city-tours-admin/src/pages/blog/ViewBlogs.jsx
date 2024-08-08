@@ -18,6 +18,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { deleteBlog, getAllBlogs } from "../../features/blog/BlogSlice";
 import "../../App.css";
 import {
+  faBoxArchive,
   faCaretDown,
   faEye,
   faPen,
@@ -270,7 +271,7 @@ const ViewBlogs = () => {
                 color: "var(--gray-light)",
               }}
             >
-              <FontAwesomeIcon icon={faTrashCan} />
+              <FontAwesomeIcon icon={faBoxArchive} />
             </Button>
           </Popconfirm>
         </>
