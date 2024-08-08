@@ -464,7 +464,7 @@ export default function Content({ blogs, blog }) {
                         weight={"600"}
                         color={"var(--green-dark)"}
                         isButton={true}
-                        link={`/blogs/list`}
+                        link={`/blogs/list?search=`}
                       >
                         View all Blogs
                       </CustomText>

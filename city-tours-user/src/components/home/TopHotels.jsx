@@ -368,7 +368,7 @@ export default function TopHotels({ userId, hotels }) {
             weight={"600"}
             color={"var(--white)"}
             isButton={true}
-            link={`/hotels/list?review=`}
+            link={`/hotels/list`}
           >
             View all Hotels
           </CustomText>

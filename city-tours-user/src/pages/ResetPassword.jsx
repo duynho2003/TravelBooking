@@ -141,7 +141,7 @@ export default function ResetPassword() {
                   validateStatus={error ? "error" : ""}
                   help={error?.message}
                 >
-                  <Input
+                  <Input.Password
                     {...field}
                     placeholder="Enter new password"
                     onChange={(e) => {
@@ -165,7 +165,7 @@ export default function ResetPassword() {
                   validateStatus={error ? "error" : ""}
                   help={error?.message}
                 >
-                  <Input
+                  <Input.Password
                     {...field}
                     placeholder="Enter confirm new password"
                     onChange={(e) => {

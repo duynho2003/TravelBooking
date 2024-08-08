@@ -59,6 +59,7 @@ export default function Home() {
           limit: INIT_LIMIT,
           review: "",
           rating: RATING_DESC,
+          search: "",
         })
       );
 

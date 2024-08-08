@@ -18,7 +18,7 @@ export default function Search() {
 
   const onSubmit = (data) => {
     navigate(
-      `/tours/list?minPrice=0&maxPrice=5000000&review=&rating=&depart=${data.depart}&startDate=${startDate}&completed=`
+      `/tours/list?minPrice=0&maxPrice=500000000&review=&rating=&depart=${data.depart}&startDate=${startDate}&completed=`
     );
   };
 

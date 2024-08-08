@@ -77,7 +77,9 @@ export default function BlogList() {
     navigate(`${location.pathname}?${urlSearchParams.toString()}`);
   };
 
-  const sortedBlogs = blogs?.filter((blog) => blog?.activeStatus === "ACTIVE");
+  const sortedBlogs = blogs
+    ?.filter((blog) => blog?.activeStatus === "ACTIVE")
+    .sort((a, b) => new Date(b?.createdAt) - new Date(a?.createdAt));
 
   console.log("sortedBlogs: ", sortedBlogs);
 

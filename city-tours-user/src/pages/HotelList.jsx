@@ -32,24 +32,21 @@ export default function HotelList() {
   const [pagination, setPagination] = useState({
     page: INIT_PAGE,
     limit: pageSize,
-    // minPrice: "0",
-    // maxPrice: "5000000",
     review: "",
+    search: "",
   });
   const [showContent, setShowContent] = useState(false);
 
   const location = useLocation();
   const urlSearchParams = new URLSearchParams(location.search);
-  // const initialMinPrice = urlSearchParams.get("minPrice");
-  // const initialMaxPrice = urlSearchParams.get("maxPrice");
   const initialReview = urlSearchParams.get("review");
+  const initialSearch = urlSearchParams.get("search");
 
   useEffect(() => {
     setPagination((prevState) => ({
       ...prevState,
-      // minPrice: initialMinPrice,
-      // maxPrice: initialMaxPrice,
-      review: initialReview,
+      review: initialReview || "",
+      search: initialSearch || "",
     }));
   }, [initialReview]);
 
@@ -68,7 +65,7 @@ export default function HotelList() {
       });
   }, [dispatch, pagination]);
 
-  const handleTableChange = (current, pageSize, review) => {
+  const handleTableChange = (current, pageSize, review, search) => {
     setShowContent(false);
 
     scrollToTop();
@@ -77,14 +74,12 @@ export default function HotelList() {
       ...pagination,
       page: current,
       limit: pageSize,
-      // minPrice: minPrice,
-      // maxPrice: maxPrice,
       review: review,
+      search: search,
     });
 
-    // urlSearchParams.set("minPrice", minPrice);
-    // urlSearchParams.set("maxPrice", maxPrice);
     urlSearchParams.set("review", review);
+    urlSearchParams.set("search", search);
 
     navigate(`${location.pathname}?${urlSearchParams.toString()}`);
   };

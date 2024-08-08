@@ -11,6 +11,8 @@ import {
   Image,
   Pagination,
   Tag,
+  Form,
+  Input,
 } from "antd";
 import CustomText from "../common/CustomText";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -29,11 +31,17 @@ import {
   faUtensils,
 } from "@fortawesome/free-solid-svg-icons";
 import { faClock } from "@fortawesome/free-regular-svg-icons";
-import { FrownOutlined, MehOutlined, SmileOutlined } from "@ant-design/icons";
+import {
+  FrownOutlined,
+  MehOutlined,
+  SearchOutlined,
+  SmileOutlined,
+} from "@ant-design/icons";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import { useState } from "react";
 import badgeSave from "../../assets/images/badge_save.png";
+import { Controller, useForm } from "react-hook-form";
 dayjs.extend(customParseFormat);
 
 const { useBreakpoint } = Grid;
@@ -71,29 +79,27 @@ export default function Content({
   };
 
   // Event Handlers
-  // const onChangeSlider = (value) => {
-  //   // console.log("Value change slider: ", value);
-  //   // const minPrice = value?.[0];
-  //   // const maxPrice = value?.[1];
-  //   const review = pagination.review;
-  //   handleTableChange(1, pagination.limit, review);
-  // };
-
   const onChangePanigation = (page) => {
-    // const minPrice = pagination.minPrice;
-    // const maxPrice = pagination.maxPrice;
     const review = pagination.review;
+    const search = pagination.search;
 
-    handleTableChange(page, pagination.limit, review);
+    handleTableChange(page, pagination.limit, review, search);
   };
 
   const onChangeRadioGroup = (e) => {
-    // console.log("radio checked", e.target.value);
     setValueRadio(e.target.value);
-    // const minPrice = pagination.minPrice;
-    // const maxPrice = pagination.maxPrice;
     const review = e.target.value;
-    handleTableChange(1, pagination.limit, review);
+    handleTableChange(1, pagination.limit, review, pagination.search);
+  };
+
+  const { control, handleSubmit } = useForm({});
+
+  const onSubmit = (data) => {
+    console.log(data.address);
+
+    const search = data.address;
+
+    handleTableChange(1, pagination.limit, pagination.review, search);
   };
 
   return (
@@ -213,56 +219,66 @@ export default function Content({
                   Filters
                 </CustomText>
               </Col>
-              <Row
-                style={{
-                  width: "100%",
-                  padding: "20px",
-                  background: "var(--white)",
-                  borderBottomLeftRadius: "3px",
-                  borderBottomRightRadius: "3px",
-                }}
-              >
-                {/* Price */}
-                {/* <Row
+              <Col>
+                {/* Search address */}
+                <Form
+                  onFinish={handleSubmit(onSubmit)}
+                  layout="vertical"
                   style={{
-                    width: "100%",
-                    padding: "10px 0",
-                    borderBottom: "1px solid var(--border)",
+                    background: "var(--white)",
+                    borderRadius: "5px",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    padding: "0 20px",
                   }}
-                  justify={"space-between"}
                 >
-                  <Col
-                    span={24}
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: "5px",
-                    }}
-                  >
-                    <CustomText
-                      size={"14px"}
-                      weight={"400"}
-                      color={"var(--gray-text)"}
-                    >
-                      Price
-                    </CustomText>
+                  <Controller
+                    name="address"
+                    control={control}
+                    rules={{ required: "Address is required." }}
+                    render={({ field, fieldState: { error } }) => (
+                      <Form.Item
+                        label="Address"
+                        validateStatus={error ? "error" : ""}
+                        help={error?.message}
+                      >
+                        <Input {...field} placeholder="Enter address" />
+                      </Form.Item>
+                    )}
+                  />
 
-                    <Slider
-                      marks={marks}
-                      range
-                      // defaultValue={[pagination.minPrice, pagination.maxPrice]}
-                      min={0}
-                      max={5000000}
-                      onChangeComplete={onChangeSlider}
-                    />
-                  </Col>
-                </Row> */}
+                  <Form.Item>
+                    <Button
+                      htmlType="submit"
+                      size="middle"
+                      className="hover-button"
+                      style={{
+                        background: "var(--green-dark)",
+                        color: "var(--white)",
+                        borderRadius: "3px",
+                        cursor: "pointer",
+                        marginBottom: "0 !important",
+                        marginTop: "30px",
+                      }}
+                    >
+                      <CustomText
+                        size={"13px"}
+                        weight={"700"}
+                        color={"var(--white)"}
+                        isButton={true}
+                      >
+                        Search
+                      </CustomText>
+                    </Button>
+                  </Form.Item>
+                </Form>
 
                 {/* Review */}
                 <Row
                   style={{
                     width: "100%",
-                    padding: "10px 0",
+                    padding: "10px 20px",
                     // marginTop: "15px",
                   }}
                   justify={"space-between"}
@@ -334,7 +350,7 @@ export default function Content({
                     </Radio.Group>
                   </Col>
                 </Row>
-              </Row>
+              </Col>
             </Row>
 
             {/* Need help */}
