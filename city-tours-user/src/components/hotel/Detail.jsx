@@ -1435,52 +1435,6 @@ export default function Detail({ userId, hotel, reviews }) {
                     )}
                   </Col>
                 </Row>
-
-                {/* Discount */}
-                <Row
-                  style={{
-                    width: "100%",
-                    padding: "10px 0",
-                    borderBottom: "1px solid var(--border)",
-                  }}
-                  justify={"space-between"}
-                >
-                  <Col
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: "5px",
-                    }}
-                  >
-                    <CustomText
-                      size={"14px"}
-                      weight={"400"}
-                      color={"var(--gray-text)"}
-                    >
-                      Discount
-                    </CustomText>
-                  </Col>
-
-                  <Col
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: "5px",
-                    }}
-                  >
-                    <CustomText
-                      size={"14px"}
-                      weight={"400"}
-                      color={"var(--gray-text)"}
-                    >
-                      {new Intl.NumberFormat("vi-VN", {
-                        style: "currency",
-                        currency: "VND",
-                      }).format(selectedRoomRedux?.discount || 0)}
-                    </CustomText>
-                  </Col>
-                </Row>
-
                 {/* Days */}
                 <Row
                   style={{
@@ -1544,7 +1498,7 @@ export default function Detail({ userId, hotel, reviews }) {
                       weight={"400"}
                       color={"var(--gray-text)"}
                     >
-                      Total price
+                      Total price / day
                     </CustomText>
                   </Col>
 
@@ -1566,13 +1520,57 @@ export default function Detail({ userId, hotel, reviews }) {
                       }).format(
                         selectedRoomRedux?.roomHolidays?.find(
                           (holiday) => holiday.date === getCurrentDate()
-                        )?.price - selectedRoomRedux?.discount ||
+                        )?.price ||
                           (isWeekend
                             ? selectedRoomRedux?.weekendPrice
-                            : selectedRoomRedux?.weekdayPrice) -
-                            selectedRoomRedux?.discount ||
+                            : selectedRoomRedux?.weekdayPrice) ||
                           0
                       )}
+                    </CustomText>
+                  </Col>
+                </Row>
+
+                {/* Discount */}
+                <Row
+                  style={{
+                    width: "100%",
+                    padding: "10px 0",
+                    borderBottom: "1px solid var(--border)",
+                  }}
+                  justify={"space-between"}
+                >
+                  <Col
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "5px",
+                    }}
+                  >
+                    <CustomText
+                      size={"14px"}
+                      weight={"600"}
+                      color={"var(--pink)"}
+                    >
+                      Discount
+                    </CustomText>
+                  </Col>
+
+                  <Col
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "5px",
+                    }}
+                  >
+                    <CustomText
+                      size={"14px"}
+                      weight={"600"}
+                      color={"var(--pink)"}
+                    >
+                      {new Intl.NumberFormat("vi-VN", {
+                        style: "currency",
+                        currency: "VND",
+                      }).format(selectedRoomRedux?.discount || 0)}
                     </CustomText>
                   </Col>
                 </Row>

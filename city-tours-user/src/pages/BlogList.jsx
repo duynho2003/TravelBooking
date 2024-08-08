@@ -9,7 +9,7 @@ import List from "../components/blog/List";
 export default function BlogList() {
   // Constants
   const INIT_PAGE = 1;
-  const INIT_LIMIT = 5;
+  const INIT_LIMIT = 4;
 
   // Redux State
   const dispatch = useDispatch();

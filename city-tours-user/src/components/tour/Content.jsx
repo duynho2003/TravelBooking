@@ -795,6 +795,7 @@ export default function Content({ userId, tour, reviews }) {
                 }}
               >
                 <div
+                  className="content"
                   dangerouslySetInnerHTML={{
                     __html: sanitizedHTML,
                   }}

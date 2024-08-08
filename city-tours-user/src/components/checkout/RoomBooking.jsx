@@ -143,6 +143,7 @@ export default function RoomBooking({ tour }) {
       roomType: roomBookingData?.roomType,
       roomNumber: roomBookingData?.roomNumber,
       bookingStatus: "SUCCESS",
+      paymentStatus: "SUCCESS",
       hotelName: roomBookingData?.hotelName,
     };
 

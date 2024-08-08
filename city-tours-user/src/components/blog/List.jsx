@@ -50,7 +50,7 @@ export default function List({
   const screens = useBreakpoint();
 
   const onChangePanigation = (page) => {
-    handleTableChange(page, pagination.limit);
+    handleTableChange(page, pagination.limit, pagination.search);
   };
 
   function formatDateTime(dateTimeString) {
