@@ -328,6 +328,7 @@ export default function Header({ websiteInfo }) {
               size={"12px"}
               weight={"600"}
               color={"var(--black-text)"}
+              link={"tel:0981578920"}
             >
               <FontAwesomeIcon
                 icon={faPhone}
@@ -335,7 +336,7 @@ export default function Header({ websiteInfo }) {
                   marginRight: "3px",
                 }}
               />
-              {websiteInfo?.phone || "0045 043204434"}
+              +{websiteInfo?.phone || "(84) 0981578920"}
             </CustomText>
           </Col>
 

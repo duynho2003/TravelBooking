@@ -145,7 +145,7 @@ export default function List({
                       size={"14px"}
                       weight={"400"}
                       color={"var(--black-text)"}
-                      link={"/tours"}
+                      link={"/tours/list?minPrice=0&maxPrice=500000000&review=&rating=&depart=&startDate=&completed="}
                     >
                       Tours List
                     </CustomText>

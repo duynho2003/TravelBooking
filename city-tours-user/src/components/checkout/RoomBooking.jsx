@@ -338,13 +338,6 @@ export default function RoomBooking({ tour }) {
                         Your Details
                       </CustomText>
 
-                      <CustomText
-                        size={"13px"}
-                        weight={"400"}
-                        color={"var(--gray-text)"}
-                      >
-                        Mussum ipsum cacilds, vidis litro abertis
-                      </CustomText>
                     </Col>
                   </Row>
                 </Col>
@@ -371,7 +364,7 @@ export default function RoomBooking({ tour }) {
                     justify={"space-between"}
                   >
                     <Col span={11}>
-                      <Form.Item label="Name">
+                      <Form.Item label="Name" required>
                         {customerName ? (
                           <Input value={customerName} />
                         ) : (
@@ -389,12 +382,13 @@ export default function RoomBooking({ tour }) {
                     </Col>
 
                     <Col span={11}>
-                      <Form.Item label="Phone">
+                      <Form.Item label="Phone" required>
                         {phone ? (
                           <Input value={phone} />
                         ) : (
                           <Input
                             placeholder="Enter your phone"
+                            type="number"
                             onChange={(e) =>
                               setYourDetails({
                                 ...yourDetails,
@@ -407,7 +401,7 @@ export default function RoomBooking({ tour }) {
                     </Col>
 
                     <Col span={11}>
-                      <Form.Item label="Address">
+                      <Form.Item label="Address" required>
                         {address ? (
                           <Input value={address} />
                         ) : (

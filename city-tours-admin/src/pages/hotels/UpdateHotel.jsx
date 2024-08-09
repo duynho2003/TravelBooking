@@ -679,7 +679,7 @@ const UpdateHotel = () => {
               }}
             >
               <Tag>{view.name}</Tag>
-              {view.images.split(",").map((image, idx) => (
+              {view?.images?.split(",").map((image, idx) => (
                 <Image
                   key={idx}
                   src={image}

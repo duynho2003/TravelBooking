@@ -149,7 +149,7 @@ export default function Content({
                       size={"14px"}
                       weight={"400"}
                       color={"var(--black-text)"}
-                      link={"/tours"}
+                      link={"/hotels/list"}
                     >
                       Hotels List
                     </CustomText>

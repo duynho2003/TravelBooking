@@ -417,6 +417,7 @@ export default function Detail() {
                               {...field}
                               size="small"
                               placeholder="Not update"
+                              type="number"
                               suffix={
                                 <Tooltip title="Can edit information">
                                   <EditOutlined

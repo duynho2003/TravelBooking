@@ -1,5 +1,6 @@
 import {
   faEnvelope,
+  faLocation,
   faPhone,
   faUpDown,
 } from "@fortawesome/free-solid-svg-icons";
@@ -69,13 +70,14 @@ export default function Footer({ websiteInfo }) {
               }}
             >
               <CustomText size={"14px"} weight={"600"} color={"var(--white)"}>
-                NEXT HELP?
+                NEED HELP?
               </CustomText>
 
               <CustomText
                 size={"14px"}
                 weight={"600"}
                 color={"var(--yellow-light)"}
+                link={"tel:0981578920"}
               >
                 <FontAwesomeIcon
                   icon={faPhone}
@@ -83,7 +85,7 @@ export default function Footer({ websiteInfo }) {
                     marginRight: "3px",
                   }}
                 />
-                +{websiteInfo?.phone || "45 423 445 99"}
+                +{websiteInfo?.phone || "(84) 0981578920"}
               </CustomText>
 
               <CustomText
@@ -97,7 +99,21 @@ export default function Footer({ websiteInfo }) {
                     marginRight: "3px",
                   }}
                 />
-                {websiteInfo?.email || "help@citytours.com"}
+                {websiteInfo?.email || "city_tours@gmail.com"}
+              </CustomText>
+
+              <CustomText
+                size={"14px"}
+                weight={"600"}
+                color={"var(--yellow-light)"}
+              >
+                <FontAwesomeIcon
+                  icon={faLocation}
+                  style={{
+                    marginRight: "3px",
+                  }}
+                />
+                {websiteInfo?.address || "590 Cach Mang Thang Tam"}
               </CustomText>
             </Col>
 
@@ -152,12 +168,12 @@ export default function Footer({ websiteInfo }) {
                 DISCOVER
               </CustomText>
 
-              <CustomText size={"14px"} weight={"300"} color={"var(--white)"}>
-                Community blog
+              <CustomText size={"14px"} weight={"300"} color={"var(--white)"} link={"/blogs/list?page=1&limit=4&search="}>
+                Blogs
               </CustomText>
 
-              <CustomText size={"14px"} weight={"300"} color={"var(--white)"}>
-                Tour guide
+              <CustomText size={"14px"} weight={"300"} color={"var(--white)"} link={"/tours/list?minPrice=0&maxPrice=500000000&review=&rating=&depart=&startDate=&completed="}>
+                Tours
               </CustomText>
 
               <CustomText size={"14px"} weight={"300"} color={"var(--white)"} link={"/wishlist"}>
@@ -182,11 +198,11 @@ export default function Footer({ websiteInfo }) {
                 gap: "15px",
               }}
             >
-              <CustomText size={"14px"} weight={"600"} color={"var(--white)"}>
+              {/* <CustomText size={"14px"} weight={"600"} color={"var(--white)"}>
                 SETTINGS
-              </CustomText>
+              </CustomText> */}
 
-              <Select
+              {/* <Select
                 defaultValue="English"
                 suffixIcon={<FontAwesomeIcon icon={faUpDown} />}
                 style={{
@@ -238,7 +254,7 @@ export default function Footer({ websiteInfo }) {
                     label: "RUB",
                   },
                 ]}
-              />
+              /> */}
             </Col>
           </Row>
 

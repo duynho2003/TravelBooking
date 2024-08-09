@@ -218,6 +218,25 @@ public class RoomServiceImpl implements RoomService{
 
         Room savedRoom = roomRepository.save(room);
 
+
+        List<RoomView> roomViewList = roomViewRepository.findByRoomId(room.getId());
+        roomViewRepository.deleteAll(roomViewList);
+
+        Set<RoomView> roomViews = new HashSet<>();
+
+        if (requestDto.getRoomViews() != null) {
+            for (CreateRoomViewRequestDto roomViewRequestDto : requestDto.getRoomViews()) {
+                RoomView roomView = new RoomView();
+                roomView.setRoom(savedRoom);
+                roomView.setName(roomViewRequestDto.getView());
+                roomView.setImages(roomViewRequestDto.getViewImages());
+
+                roomViews.add(roomView);
+            }
+        }
+
+        roomViewRepository.saveAll(roomViews);
+
         UpdateRoomResponseDto responseDto = new UpdateRoomResponseDto();
         responseDto.setId(room.getId());
         responseDto.setRoomNumber(room.getRoomNumber());

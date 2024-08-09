@@ -75,7 +75,6 @@ export default function Categories() {
               color={"var(--white)"}
               link={"/"}
             >
-              1150 Locations
             </CustomText>
           </Link>
         </Col>
@@ -101,7 +100,7 @@ export default function Categories() {
             }}
           >
             <Link
-              to="/hotels"
+              to="/hotels/list"
               style={{
                 width: "100%",
               }}
@@ -141,7 +140,7 @@ export default function Categories() {
                     weight={"700"}
                     color={"var(--white)"}
                     isUppercase={true}
-                    link={"/tours"}
+                    link={"/tours/list?minPrice=0&maxPrice=500000000&review=&rating=&depart=&startDate=&completed="}
                   >
                     Tours
                   </CustomText>
@@ -149,9 +148,8 @@ export default function Categories() {
                     size={"14px"}
                     weight={"400"}
                     color={"var(--white)"}
-                    link={"/tours"}
+                    link={"/tours/list?minPrice=0&maxPrice=500000000&review=&rating=&depart=&startDate=&completed="}
                   >
-                    800 Locations
                   </CustomText>
                 </Link>
               </Col>
@@ -167,7 +165,7 @@ export default function Categories() {
             }}
           >
             <Link
-              to="/hotels"
+              to="/hotels/list"
               style={{
                 width: "100%",
               }}
@@ -206,7 +204,7 @@ export default function Categories() {
                     size={"21px"}
                     weight={"700"}
                     color={"var(--white)"}
-                    link={"/hotels"}
+                    link={"/hotels/list"}
                     isUppercase={true}
                   >
                     Hotels
@@ -215,9 +213,8 @@ export default function Categories() {
                     size={"14px"}
                     weight={"400"}
                     color={"var(--white)"}
-                    link={"/hotels"}
+                    link={"/hotels/list"}
                   >
-                    1132 Locations
                   </CustomText>
                 </Link>
               </Col>

@@ -151,9 +151,9 @@ const UpdateRoom = () => {
       setHolidaysData(initHolidaysData);
       setDefaultValuesDatePicker(initValuesDatePicker);
 
-      console.log("initHolidays: ", initHolidays);
-      console.log("initHolidaysData: ", initHolidaysData);
-      console.log("defaultValuesDatePicker: ", defaultValuesDatePicker);
+      // console.log("initHolidays: ", initHolidays);
+      // console.log("initHolidaysData: ", initHolidaysData);
+      // console.log("defaultValuesDatePicker: ", defaultValuesDatePicker);
     }
   }, [selectedRoom]);
 
@@ -185,7 +185,7 @@ const UpdateRoom = () => {
     const files = Array.from(e.target.files);
     setSelectedImagesUpdateRoom(files);
 
-    console.log("selectedImages: ", selectedImagesUpdateRoom);
+    // console.log("selectedImages: ", selectedImagesUpdateRoom);
   };
 
   // Function upload images add room
@@ -248,7 +248,7 @@ const UpdateRoom = () => {
 
   // Submit add room
   const onSubmitAddRoom = async (data) => {
-    // console.log("data: ", data);
+    console.log("data: ", data);
 
     try {
       setLoadingButton(true);
@@ -261,24 +261,41 @@ const UpdateRoom = () => {
         imageUrlsToUse = selectedRoom?.imageUrls || [];
       }
 
+      const uploadedImageUrls = await uploadImagesViews();
+
+
+      console.log({
+        images: uploadedImageUrls
+      });
+
+
+
       const newData = {
         roomId: parseInt(roomId),
         roomNumber: data.roomNumber,
         basePrice: data.basePrice,
         weekendPrice: data.weekendPrice,
         discount: data.discount || 0.0,
-        type: data.type,
+        type: data.roomType,
         numberOfResidents: data.numberOfResidents,
         activeStatus: data.activeStatus,
         roomHolidays: holidaysData,
+        quantityAdult: data.quantityAdult,
+        quantityChild: data.quantityChild,
         imageUrls: imageUrlsToUse,
+        roomViews: views.map(item => 
+        ({
+          view: item.name,
+          viewImages: item.images
+        })
+        )
       };
 
       console.log("newData: ", newData);
 
       const action = await dispatch(updateRoom(newData));
 
-      console.log("action: ", action);
+      // console.log("action: ", action);
 
       if (updateRoom.fulfilled.match(action)) {
         if (action?.payload?.status === 201) {
@@ -346,7 +363,7 @@ const UpdateRoom = () => {
 
       const action = await dispatch(updateRoom(newData));
 
-      console.log("action: ", action);
+      // console.log("action: ", action);
 
       if (updateRoom.fulfilled.match(action)) {
         if (action?.payload?.status === 201) {
@@ -413,7 +430,7 @@ const UpdateRoom = () => {
       const currentDate = new Date();
 
       const dayOfWeek = currentDate.getDay();
-      console.log("dayOfWeek: ", dayOfWeek);
+      // console.log("dayOfWeek: ", dayOfWeek);
 
       const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
 
@@ -423,7 +440,7 @@ const UpdateRoom = () => {
     checkWeekendDay();
   }, []);
 
-  console.log("isWeekend", isWeekend);
+  // console.log("isWeekend", isWeekend);
 
   const [holidays, setHolidays] = useState(null);
   const [holidaysData, setHolidaysData] = useState([]);
@@ -460,6 +477,8 @@ const UpdateRoom = () => {
   const [viewImage, setViewImage] = useState(null);
   const [selectedImagesViews, setSelectedImagesViews] = useState([]);
   const [isLoadingAddView, setIsLoadingAddView] = useState(false);
+
+
 
   const handleOpenViews = () => {
     setIsOpenViews(!isOpenViews);
@@ -502,13 +521,21 @@ const UpdateRoom = () => {
     }
   };
 
+
   const handleAddView = async () => {
     setIsLoadingAddView(true);
 
     try {
       const uploadedImageUrls = await uploadImagesViews();
 
-      setViews((prev) => [...prev, { view, viewImages: uploadedImageUrls }]);
+      console.log('>>>new views: ', {
+        view,
+        viewImages: uploadedImageUrls
+      })
+
+      
+
+      setViews((prev) => [...prev, { name: view, images: uploadedImageUrls.toString() }]);
 
       setView(null);
       setViewImage(null);
@@ -527,7 +554,7 @@ const UpdateRoom = () => {
     );
   };
 
-  console.log("views: ", views);
+  // console.log("views: ", views);
 
   const [percentageWeekdayPrice, setPercentageWeekdayPrice] = useState(0);
   const [percentageWeekendPrice, setPercentageWeekendPrice] = useState(0);
@@ -802,46 +829,47 @@ const UpdateRoom = () => {
                       header={<div>List Views</div>}
                       bordered
                       dataSource={views}
-                      renderItem={(item, index) => (
-                        <List.Item
-                          style={{
-                            display: "flex",
-                            justifyContent: "start",
-                            alignItems: "center",
-                            gap: "10px",
-                          }}
-                        >
-                          <Tag>{item?.name}</Tag>
-                          {item?.images?.split(",")?.map((image, idx) => (
-                            <img
-                              key={idx}
-                              src={image}
-                              alt={`View ${index + 1} Image ${idx + 1}`}
-                              style={{
-                                width: "50px",
-                                height: "50px",
-                                borderRadius: "5px",
-                              }}
-                            />
-                          ))}
-                          <FontAwesomeIcon
-                            icon={faX}
+                      renderItem={(item, index) => {
+                        console.log(">>>item: ", item)
+                        return <List.Item
+                        style={{
+                          display: "flex",
+                          justifyContent: "start",
+                          alignItems: "center",
+                          gap: "10px",
+                        }}
+                      >
+                        <Tag>{item?.name}</Tag>
+                        {item?.images?.split(",")?.map((image, idx) => (
+                          <img
+                            key={idx}
+                            src={image}
+                            alt={`View ${index + 1} Image ${idx + 1}`}
                             style={{
-                              cursor: "pointer",
-                              marginLeft: "8px",
-                              color: "var(--white)",
-                              display: "inline-block",
-                              width: "12px",
-                              height: "12px",
-                              border: "1px solid var(--pink)",
-                              padding: "2px",
-                              borderRadius: "50%",
-                              background: "var(--pink)",
+                              width: "50px",
+                              height: "50px",
+                              borderRadius: "5px",
                             }}
-                            onClick={() => handleDeleteView(index)}
                           />
-                        </List.Item>
-                      )}
+                        ))}
+                        <FontAwesomeIcon
+                          icon={faX}
+                          style={{
+                            cursor: "pointer",
+                            marginLeft: "8px",
+                            color: "var(--white)",
+                            display: "inline-block",
+                            width: "12px",
+                            height: "12px",
+                            border: "1px solid var(--pink)",
+                            padding: "2px",
+                            borderRadius: "50%",
+                            background: "var(--pink)",
+                          }}
+                          onClick={() => handleDeleteView(index)}
+                        />
+                      </List.Item>
+                      }}
                     />
                   </Form.Item>
 
@@ -1284,7 +1312,6 @@ const UpdateRoom = () => {
                       }}
                       icon={loadingButton ? <Spin /> : null}
                       loading={loadingButton}
-                      disabled
                     >
                       Save
                     </Button>

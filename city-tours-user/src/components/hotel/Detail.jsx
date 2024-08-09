@@ -1159,23 +1159,7 @@ export default function Detail({ userId, hotel, reviews }) {
                   padding: "10px 0",
                 }}
               >
-                <Row>
-                  <CustomText
-                    size={"18px"}
-                    weight={"400"}
-                    color={"var(--gray-light)"}
-                  >
-                    {hotel?.numberOfRating} Star{" "}
-                    <Rate
-                      disabled
-                      value={hotel?.rating}
-                      style={{
-                        fontSize: "15px",
-                        color: "var(--orange)",
-                      }}
-                    />
-                  </CustomText>
-                </Row>
+                
 
                 {reviews &&
                   reviews.length > 0 &&

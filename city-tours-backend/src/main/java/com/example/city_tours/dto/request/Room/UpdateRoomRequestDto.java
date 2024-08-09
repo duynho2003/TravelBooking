@@ -1,6 +1,7 @@
 package com.example.city_tours.dto.request.Room;
 
 import com.example.city_tours.dto.request.RoomHoliday.UpdateRoomHolidayRequestDto;
+import com.example.city_tours.dto.request.RoomView.CreateRoomViewRequestDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,5 +26,6 @@ public class UpdateRoomRequestDto {
     private String activeStatus;
     private Set<UpdateRoomHolidayRequestDto> roomHolidays;
     private Set<String> imageUrls;
+    private Set<CreateRoomViewRequestDto> roomViews;
 
 }
