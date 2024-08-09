@@ -187,7 +187,7 @@ const CreateUser = () => {
                       validateStatus={error ? "error" : ""}
                       help={error?.message}
                     >
-                      <Input {...field} placeholder="Enter your password" />
+                      <Input.Password {...field} placeholder="Enter your password" />
                     </Form.Item>
                   )}
                 />

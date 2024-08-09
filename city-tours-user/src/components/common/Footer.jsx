@@ -92,6 +92,7 @@ export default function Footer({ websiteInfo }) {
                 size={"14px"}
                 weight={"600"}
                 color={"var(--yellow-light)"}
+                link={"mailto:city_tours@gmail.com"}
               >
                 <FontAwesomeIcon
                   icon={faEnvelope}
