@@ -23,6 +23,7 @@ public class Wishlist {
     private Double rating;
     private int numberOfRating;
     private String price;
+    @Column(columnDefinition = "TEXT")
     private String description;
     private String thumbnail;
     private String type;
