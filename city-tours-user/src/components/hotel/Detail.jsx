@@ -1030,7 +1030,7 @@ export default function Detail({ userId, hotel, reviews }) {
                           (isWeekend
                             ? room?.weekendPrice +
                               room?.childCharge +
-                              room?.childBaby
+                              room?.babyCharge
                             : room?.weekdayPrice +
                               room?.childCharge +
                               room?.babyCharge) - room?.discount
