@@ -1,0 +1,56 @@
+CREATE DATABASE  IF NOT EXISTS `city_tours` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+USE `city_tours`;
+-- MySQL dump 10.13  Distrib 8.0.36, for Win64 (x86_64)
+--
+-- Host: localhost    Database: city_tours
+-- ------------------------------------------------------
+-- Server version	8.3.0
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!50503 SET NAMES utf8 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `room_images`
+--
+
+DROP TABLE IF EXISTS `room_images`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `room_images` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `room_id` bigint NOT NULL,
+  `image_url` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `FKtky1jnwoh1hv50m263p2vlt0y` (`room_id`),
+  CONSTRAINT `FKtky1jnwoh1hv50m263p2vlt0y` FOREIGN KEY (`room_id`) REFERENCES `rooms` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=104 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `room_images`
+--
+
+LOCK TABLES `room_images` WRITE;
+/*!40000 ALTER TABLE `room_images` DISABLE KEYS */;
+INSERT INTO `room_images` VALUES (1,1,'https://res.cloudinary.com/dbammk7wt/image/upload/v1722843794/dobclzo3drsd2lrheeg4.jpg'),(2,1,'https://res.cloudinary.com/dbammk7wt/image/upload/v1722843794/pcskygxjz5uwbez6xalo.jpg'),(3,1,'https://res.cloudinary.com/dbammk7wt/image/upload/v1722843794/kgdjgspijgbtjjqfxjco.jpg'),(4,1,'https://res.cloudinary.com/dbammk7wt/image/upload/v1722843794/olppghvujtxhj83khz23.jpg'),(5,2,'https://res.cloudinary.com/dbammk7wt/image/upload/v1722844494/grquppcdly5kk454wv7j.jpg'),(6,2,'https://res.cloudinary.com/dbammk7wt/image/upload/v1722844495/cucydaz8ncybovkisdn5.jpg'),(7,2,'https://res.cloudinary.com/dbammk7wt/image/upload/v1722844496/nf1d9k1nsuozn2amw3rk.jpg'),(8,2,'https://res.cloudinary.com/dbammk7wt/image/upload/v1722844494/zord13dvab2ohjxqrygs.jpg'),(15,3,'https://res.cloudinary.com/dbammk7wt/image/upload/v1722857247/rfyjajijynffq2f8alfh.jpg'),(16,3,'https://res.cloudinary.com/dbammk7wt/image/upload/v1722857247/y9zxwuxlxp3knt7jkxiy.jpg'),(17,3,'https://res.cloudinary.com/dbammk7wt/image/upload/v1722857247/i46ejohimlpcdy9bcjgd.jpg'),(18,4,'https://res.cloudinary.com/dbammk7wt/image/upload/v1723028414/nbfowpgzx0z6idmhagon.jpg'),(19,4,'https://res.cloudinary.com/dbammk7wt/image/upload/v1723028414/axoxrytd6y79q2rob4hx.jpg'),(20,4,'https://res.cloudinary.com/dbammk7wt/image/upload/v1723028414/wmklxs4ep34ynsnhmlis.jpg'),(21,4,'https://res.cloudinary.com/dbammk7wt/image/upload/v1723028414/sqvmjepjjg2n1wb1xpxm.jpg'),(22,5,'https://res.cloudinary.com/dbammk7wt/image/upload/v1723031026/broreej74b9l7nwoovpj.jpg'),(23,5,'https://res.cloudinary.com/dbammk7wt/image/upload/v1723031026/wncmsbuolz2swbbyti3v.jpg'),(24,5,'https://res.cloudinary.com/dbammk7wt/image/upload/v1723031026/zhyhf0s5mscbwv8hn17i.jpg'),(25,5,'https://res.cloudinary.com/dbammk7wt/image/upload/v1723031026/jrctxxzhjnufkymcbgro.jpg'),(26,6,'https://res.cloudinary.com/dbammk7wt/image/upload/v1723031161/z59xut5hgjudkwo3vpui.webp'),(27,6,'https://res.cloudinary.com/dbammk7wt/image/upload/v1723031161/dafuodd46oxea1cx3zwn.webp'),(28,6,'https://res.cloudinary.com/dbammk7wt/image/upload/v1723031161/lhicgm7hrcc8uzbcn8aj.webp'),(29,6,'https://res.cloudinary.com/dbammk7wt/image/upload/v1723031161/genzqsmcehjojeeckq1k.webp'),(34,8,'https://res.cloudinary.com/dbammk7wt/image/upload/v1723031491/i6or09brl6x39moq2dwh.webp'),(35,8,'https://res.cloudinary.com/dbammk7wt/image/upload/v1723031492/oqm2ik0ulungkqwwk68k.webp'),(36,8,'https://res.cloudinary.com/dbammk7wt/image/upload/v1723031491/u62dx7hcqyvosmccw4ws.webp'),(37,8,'https://res.cloudinary.com/dbammk7wt/image/upload/v1723031492/gctpdfyzhqqil21ebgor.webp'),(38,9,'https://res.cloudinary.com/dbammk7wt/image/upload/v1723031679/n6tmdu9lae3pvmsnoiwx.jpg'),(39,9,'https://res.cloudinary.com/dbammk7wt/image/upload/v1723031678/e9zk3ajhdyzzz2me6uzo.webp'),(40,9,'https://res.cloudinary.com/dbammk7wt/image/upload/v1723031678/wmcqnmuuyiawmboqfznf.webp'),(41,9,'https://res.cloudinary.com/dbammk7wt/image/upload/v1723031678/hkp8jrcfirbwttgamoat.webp'),(42,10,'https://res.cloudinary.com/dbammk7wt/image/upload/v1723031830/f3aw76gqeczsi1ry3qge.webp'),(43,10,'https://res.cloudinary.com/dbammk7wt/image/upload/v1723031831/czjxht3ftzjyvpxrvuyb.webp'),(44,10,'https://res.cloudinary.com/dbammk7wt/image/upload/v1723031830/wysefptwmg89cmhscv9q.webp'),(45,10,'https://res.cloudinary.com/dbammk7wt/image/upload/v1723031831/ewsknhnkrpmbjltdsgsk.jpg'),(46,11,'https://res.cloudinary.com/dbammk7wt/image/upload/v1723032045/bjpwmttkfk8xnmcye8s8.jpg'),(47,11,'https://res.cloudinary.com/dbammk7wt/image/upload/v1723032045/amcqroygpkq9uwdzojqf.jpg'),(48,11,'https://res.cloudinary.com/dbammk7wt/image/upload/v1723032045/fbj2jcpzb8ymg3jzof40.jpg'),(49,11,'https://res.cloudinary.com/dbammk7wt/image/upload/v1723032045/krzuxhzb44ztq5skeavl.jpg'),(50,12,'https://res.cloudinary.com/dbammk7wt/image/upload/v1723032148/pwmieb1poedtzlmcojcy.jpg'),(51,12,'https://res.cloudinary.com/dbammk7wt/image/upload/v1723032147/xqkgmck5byyqo0xcg96c.webp'),(52,12,'https://res.cloudinary.com/dbammk7wt/image/upload/v1723032148/e2xv6innsofjhybsgxvt.jpg'),(53,12,'https://res.cloudinary.com/dbammk7wt/image/upload/v1723032148/nionqb8etg9gfesmcrik.jpg'),(54,13,'https://res.cloudinary.com/dbammk7wt/image/upload/v1723032364/rzhb5qdx1jm7toknax84.jpg'),(55,13,'https://res.cloudinary.com/dbammk7wt/image/upload/v1723032365/rskmmlrdheg4whck4s1q.jpg'),(56,13,'https://res.cloudinary.com/dbammk7wt/image/upload/v1723032364/kzll5znuixz9oznjrhii.webp'),(57,13,'https://res.cloudinary.com/dbammk7wt/image/upload/v1723032365/ok0tc1o2b1icbcuaxhpt.jpg'),(58,14,'https://res.cloudinary.com/dbammk7wt/image/upload/v1723032561/mbpgmroavby9s5cev2f4.webp'),(59,14,'https://res.cloudinary.com/dbammk7wt/image/upload/v1723032561/t2noffe8mrae4rfmz2fk.jpg'),(60,14,'https://res.cloudinary.com/dbammk7wt/image/upload/v1723032561/im93jfco6cgdrsureyfu.jpg'),(61,14,'https://res.cloudinary.com/dbammk7wt/image/upload/v1723032561/kgbvlzkdddvqvdhdpxm5.jpg'),(62,15,'https://res.cloudinary.com/dbammk7wt/image/upload/v1723032716/vsfygcooncv2le6aarfo.webp'),(63,15,'https://res.cloudinary.com/dbammk7wt/image/upload/v1723032717/eeb6wmk5hnmcteivlvl4.webp'),(64,15,'https://res.cloudinary.com/dbammk7wt/image/upload/v1723032716/kskuvw6vdl5o7gzixlvc.webp'),(65,15,'https://res.cloudinary.com/dbammk7wt/image/upload/v1723032716/mcmxb5t8cgpp6rabm0gw.webp'),(66,16,'https://res.cloudinary.com/dbammk7wt/image/upload/v1723032837/dytwwlvrkznbva22mjjy.webp'),(67,16,'https://res.cloudinary.com/dbammk7wt/image/upload/v1723032837/hnrkkv0a4dmedgzldt0j.webp'),(68,16,'https://res.cloudinary.com/dbammk7wt/image/upload/v1723032837/j2ianfwawopcrtf1qfgb.webp'),(69,16,'https://res.cloudinary.com/dbammk7wt/image/upload/v1723032837/s5cct0rvyqwaxpn5jyoq.webp'),(70,17,'https://res.cloudinary.com/dbammk7wt/image/upload/v1723033006/inxmtp13wutivptysbci.jpg'),(71,17,'https://res.cloudinary.com/dbammk7wt/image/upload/v1723033006/ripop67dsqyhfhck3gxb.webp'),(72,17,'https://res.cloudinary.com/dbammk7wt/image/upload/v1723033006/tba8eppyinizht0jeqvf.webp'),(73,17,'https://res.cloudinary.com/dbammk7wt/image/upload/v1723033006/qlcviiyd5f3xkzo0u025.webp'),(74,18,'https://res.cloudinary.com/dbammk7wt/image/upload/v1723033129/d8xap2xgcr5or8cfqcwv.jpg'),(75,18,'https://res.cloudinary.com/dbammk7wt/image/upload/v1723033129/wl0pwnc8saksnuzlrx1b.jpg'),(76,18,'https://res.cloudinary.com/dbammk7wt/image/upload/v1723033129/sirsxhisrmegbxvizkll.jpg'),(77,18,'https://res.cloudinary.com/dbammk7wt/image/upload/v1723033128/aqbinucn2le2summxsnz.jpg'),(78,19,'https://res.cloudinary.com/dbammk7wt/image/upload/v1723033269/lk7wmvcdih2gxgoj4rkm.webp'),(79,19,'https://res.cloudinary.com/dbammk7wt/image/upload/v1723033269/qj3kwihjh7t0hgzq3aex.jpg'),(80,19,'https://res.cloudinary.com/dbammk7wt/image/upload/v1723033270/xrkjmflqhtyshzpijpw0.jpg'),(81,19,'https://res.cloudinary.com/dbammk7wt/image/upload/v1723033270/kpd3fovvpzzuv8ofdsrg.jpg'),(82,20,'https://res.cloudinary.com/dbammk7wt/image/upload/v1723033388/d2piadd41uazx2iwli8t.webp'),(83,20,'https://res.cloudinary.com/dbammk7wt/image/upload/v1723033388/wwfwxuvipybkklj22gjf.webp'),(84,20,'https://res.cloudinary.com/dbammk7wt/image/upload/v1723033388/vhdgllawiq6sduqbyetk.webp'),(85,20,'https://res.cloudinary.com/dbammk7wt/image/upload/v1723033388/twjmdq4jtz0x7fbikye0.webp'),(86,21,'https://res.cloudinary.com/dbammk7wt/image/upload/v1723033578/nlse7pst4lm4nhqi1s7l.webp'),(87,21,'https://res.cloudinary.com/dbammk7wt/image/upload/v1723033578/jeqku3ql2vllts79ddfg.webp'),(88,21,'https://res.cloudinary.com/dbammk7wt/image/upload/v1723033578/l29xevyfjj9kvakmyycb.webp'),(89,21,'https://res.cloudinary.com/dbammk7wt/image/upload/v1723033579/etoecqnu7xpbwtwe4mvj.jpg'),(90,22,'https://res.cloudinary.com/dbammk7wt/image/upload/v1723034737/ntokluecpxianaqcf1rm.webp'),(91,22,'https://res.cloudinary.com/dbammk7wt/image/upload/v1723034737/z3cvvl4wixvs8odl9qqq.webp'),(92,22,'https://res.cloudinary.com/dbammk7wt/image/upload/v1723034737/ztekcual02zsetua3od9.webp'),(93,22,'https://res.cloudinary.com/dbammk7wt/image/upload/v1723034737/zdhdx9il7ktb7bklnwm7.webp'),(94,23,'https://res.cloudinary.com/dbammk7wt/image/upload/v1723034831/ms0jqgqvdvo7xgaatfly.webp'),(95,23,'https://res.cloudinary.com/dbammk7wt/image/upload/v1723034832/xdovb63vcmr0nojhw5uj.jpg'),(96,23,'https://res.cloudinary.com/dbammk7wt/image/upload/v1723034831/qnskekrmko17whffbkxd.jpg'),(97,23,'https://res.cloudinary.com/dbammk7wt/image/upload/v1723034831/qexgm7peupahudvkmg92.jpg'),(98,7,'https://res.cloudinary.com/dbammk7wt/image/upload/v1723031271/p0r5zmybousmuoz2vozn.webp'),(99,7,'https://res.cloudinary.com/dbammk7wt/image/upload/v1723031271/clzl4ymmsnchgwyaydwb.webp'),(100,7,'https://res.cloudinary.com/dbammk7wt/image/upload/v1723031271/fkkq5um4j845nde6omhy.webp'),(101,7,'https://res.cloudinary.com/dbammk7wt/image/upload/v1723031271/zzs9ixjtxxfkq4wxyzco.webp'),(102,24,'https://res.cloudinary.com/dbammk7wt/image/upload/v1723189751/sr76pqacnftttp1p6sfv.jpg'),(103,25,'https://res.cloudinary.com/dbammk7wt/image/upload/v1723192083/bpyskgxaxyuvx1ri24c1.jpg');
+/*!40000 ALTER TABLE `room_images` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2024-08-10  2:47:06

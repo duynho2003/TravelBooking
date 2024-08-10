@@ -1,0 +1,72 @@
+CREATE DATABASE  IF NOT EXISTS `city_tours` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+USE `city_tours`;
+-- MySQL dump 10.13  Distrib 8.0.36, for Win64 (x86_64)
+--
+-- Host: localhost    Database: city_tours
+-- ------------------------------------------------------
+-- Server version	8.3.0
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!50503 SET NAMES utf8 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `tour_bookings`
+--
+
+DROP TABLE IF EXISTS `tour_bookings`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `tour_bookings` (
+  `adults` int NOT NULL,
+  `amount` double DEFAULT NULL,
+  `baby` int NOT NULL,
+  `booking_status` tinyint DEFAULT NULL,
+  `children` int NOT NULL,
+  `payment_status` tinyint DEFAULT NULL,
+  `review_status` tinyint DEFAULT NULL,
+  `created_at` datetime(6) DEFAULT NULL,
+  `customer_id` bigint DEFAULT NULL,
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `tour_id` bigint DEFAULT NULL,
+  `updated_at` datetime(6) DEFAULT NULL,
+  `code` varchar(255) DEFAULT NULL,
+  `start_time` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `FKdtgqcm9m15qtbh38tx1txxfpj` (`customer_id`),
+  KEY `FKf9ofqgv3hm40q13xcj55rv6x9` (`tour_id`),
+  CONSTRAINT `FKdtgqcm9m15qtbh38tx1txxfpj` FOREIGN KEY (`customer_id`) REFERENCES `customers` (`id`),
+  CONSTRAINT `FKf9ofqgv3hm40q13xcj55rv6x9` FOREIGN KEY (`tour_id`) REFERENCES `tours` (`id`),
+  CONSTRAINT `tour_bookings_chk_1` CHECK ((`booking_status` between 0 and 2)),
+  CONSTRAINT `tour_bookings_chk_2` CHECK ((`payment_status` between 0 and 2)),
+  CONSTRAINT `tour_bookings_chk_3` CHECK ((`review_status` between 0 and 1))
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `tour_bookings`
+--
+
+LOCK TABLES `tour_bookings` WRITE;
+/*!40000 ALTER TABLE `tour_bookings` DISABLE KEYS */;
+INSERT INTO `tour_bookings` VALUES (1,7900000,0,1,0,0,1,'2024-08-05 16:08:55.852911',1,1,1,'2024-08-05 16:08:55.852911','BOOK-20240805160855','00:00:00 - 07/08/2024'),(3,28600000,0,1,1,1,1,'2024-08-05 18:36:41.123714',2,2,1,'2024-08-05 18:36:41.123714','BOOK-20240805183641','00:00:00 - 07/08/2024'),(1,2900000,0,1,0,1,0,'2024-08-05 18:41:52.726784',2,3,2,'2024-08-05 18:41:52.726784','BOOK-20240805184152','17:00:00 - 10/08/2024'),(2,20700000,0,1,1,1,0,'2024-08-07 14:13:03.007633',2,4,1,'2024-08-07 14:13:03.007633','BOOK-20240807141303','00:00:00 - 07/08/2024'),(2,2900000,1,1,1,0,0,'2024-08-07 14:17:31.593648',2,5,4,'2024-08-07 14:17:31.593648','BOOK-20240807141731','12:30:00 - 08/08/2024');
+/*!40000 ALTER TABLE `tour_bookings` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2024-08-09 10:56:10

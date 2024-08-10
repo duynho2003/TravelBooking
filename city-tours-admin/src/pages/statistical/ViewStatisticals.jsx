@@ -379,7 +379,7 @@ const ViewStatisticals = () => {
                 />
               </Col>
 
-              <Col
+              {/* <Col
                 style={{
                   padding: "0 0 20px 0",
                   display: "flex",
@@ -400,9 +400,9 @@ const ViewStatisticals = () => {
                   onChange={onChangeWeek}
                   picker="week"
                 />
-              </Col>
+              </Col> */}
 
-              <Col
+              {/* <Col
                 style={{
                   padding: "0 0 20px 0",
                   display: "flex",
@@ -423,7 +423,7 @@ const ViewStatisticals = () => {
                   onChange={onChangeMonth}
                   picker="month"
                 />
-              </Col>
+              </Col> */}
 
               <Col
                 style={{
