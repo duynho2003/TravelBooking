@@ -39,6 +39,8 @@ import {
   getAllTourBookings,
 } from "../../features/tourBooking/TourBookingSlice";
 import { getAllHotels } from "../../features/hotel/HotelSlice";
+import Cookies from "js-cookie";
+import axios from "axios";
 
 const { Search } = Input;
 const { Option } = Select;
@@ -155,6 +157,39 @@ const ViewRoomBookings = () => {
     return `${hours}:${minutes}:${seconds} ${day}/${month}/${year}`;
   };
 
+  const updateBookingStatus = async (roomBookingId, newStatus) => {
+    try {
+      const token = Cookies.get("token");
+
+      await axios.patch(
+        `http://localhost:5050/api/v1/roomBookings/update-status/${roomBookingId}`,
+        {
+          bookingStatus: newStatus,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      notification.success({
+        message: "Booking status updated successfully!",
+        description: "Booking status updated successfully!",
+      });
+      dispatch(getAllTourBookings(pagination));
+    } catch (error) {
+      notification.error({
+        message: "System Error",
+        description: "There was an error creating the tour.",
+      });
+      console.error(error);
+    }
+  };
+
+  const handleStatusChange = (value, record) => {
+    updateBookingStatus(record.id, value);
+  };
+
   const columns = [
     {
       title: (
@@ -228,26 +263,25 @@ const ViewRoomBookings = () => {
         </>
       ),
       dataIndex: "bookingStatus",
-      render: (bookingStatus) => {
-        let color, tagText;
-        switch (bookingStatus) {
-          case "FAILED":
-            color = "red";
-            tagText = "Failed";
-            break;
-          case "PENDING":
-            color = "blue";
-            tagText = "Pending";
-            break;
-          case "SUCCESS":
-            color = "green";
-            tagText = "Success";
-            break;
-          default:
-            color = "default";
-            tagText = "Không xác định";
-        }
-        return <Tag color={color}>{tagText}</Tag>;
+      render: (bookingStatus, record) => {
+        const isPending = bookingStatus === "PENDING";
+        const options = isPending
+          ? ["PENDING", "SUCCESS", "FAILED"]
+          : [bookingStatus];
+
+        return (
+          <Select
+            defaultValue={bookingStatus}
+            style={{ width: 120 }}
+            onChange={(value) => handleStatusChange(value, record)}
+          >
+            {options.map((status) => (
+              <Option key={status} value={status}>
+                {status.charAt(0).toUpperCase() + status.slice(1).toLowerCase()}
+              </Option>
+            ))}
+          </Select>
+        );
       },
     },
   ];
