@@ -257,16 +257,18 @@ class _RoomCheckoutState extends State<RoomCheckout> {
 
                   final api = RoomBookingApi();
                   final response = await api.createRoomBooking(
-                      context: context,
-                      userId: context.read<AuthProvider>().userId,
-                      roomId: widget.roomId,
-                      startDate: _checkinController.text,
-                      endDate: _checkoutController.text,
-                      roomType: _roomTypeController.text,
-                      roomNumber: _roomNumberController.text,
-                      price:
-                          double.tryParse(_totalAmountController.text) ?? 0.0,
-                      hotelName: roomBooking.hotelName);
+                    context: context,
+                    userId: context.read<AuthProvider>().userId,
+                    roomId: widget.roomId,
+                    startDate: _checkinController.text,
+                    endDate: _checkoutController.text,
+                    roomType: _roomTypeController.text,
+                    roomNumber: _roomNumberController.text,
+                    price: double.tryParse(_totalAmountController.text) ?? 0.0,
+                    hotelName: roomBooking.hotelName,
+                    bookingStatus: "PENDING",
+                    paymentStatus: "PENDING",
+                  );
 
                   print('Room Booking Response: $response');
 

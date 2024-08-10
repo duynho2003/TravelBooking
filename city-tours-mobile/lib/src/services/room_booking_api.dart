@@ -18,6 +18,8 @@ class RoomBookingApi {
     required String roomType,
     required String roomNumber,
     required String hotelName,
+    required String bookingStatus,
+    required String paymentStatus,
   }) async {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     final String token = authProvider.token;
@@ -38,6 +40,8 @@ class RoomBookingApi {
       'roomType': roomType,
       'roomNumber': roomNumber,
       'hotelName': hotelName,
+      'bookingStatus': bookingStatus,
+      'paymentStatus': paymentStatus,
     };
 
     try {

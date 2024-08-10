@@ -496,6 +496,8 @@ export default function Content({ userId, tour, reviews }) {
     return false;
   }
 
+  const negativeWords = ["bad", "awful", "terrible", "horrible", "worst"];
+
   return (
     <>
       <Modal
@@ -554,7 +556,19 @@ export default function Content({ userId, tour, reviews }) {
           <Controller
             name="content"
             control={control}
-            rules={{ required: "Content is required" }}
+            rules={{
+              required: "Content is required",
+              validate: (value) => {
+                if (
+                  negativeWords.some((word) =>
+                    value.toLowerCase().includes(word)
+                  )
+                ) {
+                  return "Content contains inappropriate words";
+                }
+                return true;
+              },
+            }}
             render={({ field, fieldState: { error } }) => (
               <Form.Item
                 label="Content"

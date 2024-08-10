@@ -161,7 +161,7 @@ export default function List({ userId, wishlists }) {
                       size={"14px"}
                       weight={"400"}
                       color={"var(--black-text)"}
-                      link={"/tours"}
+                      link={"/wishlist"}
                     >
                       Wishlist
                     </CustomText>

@@ -143,6 +143,7 @@ class _RoomCheckoutSuccessState extends State<RoomCheckoutSuccess> {
           _buildOrderDetailRow('Room Info', bookingData['roomInfo'] ?? 'N/A'),
           _buildOrderDetailRow('Total Amount',
               formatCurrency(bookingData['totalAmount']) ?? 'N/A'),
+          _buildOrderDetailRow('Booking Status', 'PENDING' ?? 'N/A'),
           _buildOrderDetailRow(
               'Payment Status', bookingData['paymentStatus'] ?? 'N/A'),
         ],

@@ -364,9 +364,9 @@ export default function RoomBooking({ tour }) {
                     justify={"space-between"}
                   >
                     <Col span={11}>
-                      <Form.Item label="Name" required>
+                      <Form.Item label="Name">
                         {customerName ? (
-                          <Input value={customerName} />
+                          <Input value={customerName} required/>
                         ) : (
                           <Input
                             placeholder="Enter your name"
@@ -382,9 +382,9 @@ export default function RoomBooking({ tour }) {
                     </Col>
 
                     <Col span={11}>
-                      <Form.Item label="Phone" required>
+                      <Form.Item label="Phone">
                         {phone ? (
-                          <Input value={phone} />
+                          <Input value={phone} required/>
                         ) : (
                           <Input
                             placeholder="Enter your phone"
@@ -401,9 +401,9 @@ export default function RoomBooking({ tour }) {
                     </Col>
 
                     <Col span={11}>
-                      <Form.Item label="Address" required>
+                      <Form.Item label="Address">
                         {address ? (
-                          <Input value={address} />
+                          <Input value={address} required/>
                         ) : (
                           <Input
                             placeholder="Enter your address"

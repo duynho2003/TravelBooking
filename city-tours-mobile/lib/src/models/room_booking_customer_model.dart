@@ -10,6 +10,8 @@ class RoomBookingCustomer {
   final String hotelName;
   final int customerId;
   final int roomId;
+  final String bookingStatus;
+  final String paymentStatus;
 
   RoomBookingCustomer({
     required this.id,
@@ -23,6 +25,8 @@ class RoomBookingCustomer {
     required this.hotelName,
     required this.customerId,
     required this.roomId,
+    required this.bookingStatus,
+    required this.paymentStatus,
   });
 
   factory RoomBookingCustomer.fromJson(Map<String, dynamic> json) {
@@ -31,13 +35,15 @@ class RoomBookingCustomer {
       startDate: json['startDate'],
       endDate: json['endDate'],
       price: json['price'],
-      customerName: json['customerName'],
+      customerName: json['customerName'] ?? '',
       reviewStatus: json['reviewStatus'],
       roomType: json['roomType'],
       roomNumber: json['roomNumber'],
       hotelName: json['hotelName'],
       customerId: json['customerId'],
       roomId: json['roomId'],
+      bookingStatus: json['bookingStatus'],
+      paymentStatus: json['paymentStatus'],
     );
   }
 }

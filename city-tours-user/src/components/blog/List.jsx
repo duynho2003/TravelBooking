@@ -114,7 +114,7 @@ export default function List({
                       size={"14px"}
                       weight={"400"}
                       color={"var(--black-text)"}
-                      link={"/blogs/list"}
+                      link={"/blogs/list?page=1&limit=4&search="}
                     >
                       Blogs List
                     </CustomText>

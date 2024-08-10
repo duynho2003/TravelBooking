@@ -415,6 +415,8 @@ export default function Detail({ userId, hotel, reviews }) {
     setSelectedImage(image);
   };
 
+  const negativeWords = ["bad", "awful", "terrible", "horrible", "worst"];
+
   return (
     <>
       <Modal
@@ -479,7 +481,19 @@ export default function Detail({ userId, hotel, reviews }) {
           <Controller
             name="content"
             control={control}
-            rules={{ required: "Content is required" }}
+            rules={{
+              required: "Content is required",
+              validate: (value) => {
+                if (
+                  negativeWords.some((word) =>
+                    value.toLowerCase().includes(word)
+                  )
+                ) {
+                  return "Content contains inappropriate words";
+                }
+                return true;
+              },
+            }}
             render={({ field, fieldState: { error } }) => (
               <Form.Item
                 label="Content"
@@ -1159,7 +1173,23 @@ export default function Detail({ userId, hotel, reviews }) {
                   padding: "10px 0",
                 }}
               >
-                
+                <Row>
+                  <CustomText
+                    size={"18px"}
+                    weight={"400"}
+                    color={"var(--gray-light)"}
+                  >
+                    {hotel?.numberOfRating} Star{" "}
+                    <Rate
+                      disabled
+                      value={hotel?.rating}
+                      style={{
+                        fontSize: "15px",
+                        color: "var(--orange)",
+                      }}
+                    />
+                  </CustomText>
+                </Row>
 
                 {reviews &&
                   reviews.length > 0 &&

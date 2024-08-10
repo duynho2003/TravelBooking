@@ -205,7 +205,7 @@ class _RoomBookingsState extends State<RoomBookings> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              roomBooking.roomNumber,
+                              roomBooking.hotelName,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: const TextStyle(
@@ -223,83 +223,49 @@ class _RoomBookingsState extends State<RoomBookings> {
                                 color: AppColors.greenDark,
                               ),
                             ),
-                            // const SizedBox(height: 5),
-                            // Text(
-                            //   "Booking code: ${tourBooking.code}",
-                            //   maxLines: 1,
-                            //   overflow: TextOverflow.ellipsis,
-                            //   style: const TextStyle(
-                            //     fontSize: 10,
-                            //     color: AppColors.grayDark,
-                            //     fontWeight: FontWeight.w500,
-                            //   ),
-                            // ),
-                            // const SizedBox(height: 5),
-                            // Text(
-                            //   "Payment status: ${tourBooking.paymentStatus}",
-                            //   maxLines: 1,
-                            //   overflow: TextOverflow.ellipsis,
-                            //   style: const TextStyle(
-                            //     fontSize: 10,
-                            //     color: AppColors.grayDark,
-                            //     fontWeight: FontWeight.w500,
-                            //   ),
-                            // ),
-                            // const SizedBox(height: 5),
-                            // Text(
-                            //   "Start time: ${tourBooking.startTime}",
-                            //   maxLines: 1,
-                            //   overflow: TextOverflow.ellipsis,
-                            //   style: const TextStyle(
-                            //     fontSize: 10,
-                            //     color: AppColors.grayDark,
-                            //     fontWeight: FontWeight.w500,
-                            //   ),
-                            // ),
-                            // const SizedBox(height: 5),
-                            // Row(
-                            //   children: [
-                            //     if (tourBooking.adults > 0)
-                            //       Text(
-                            //         "Adults: ${tourBooking.adults}",
-                            //         maxLines: 1,
-                            //         overflow: TextOverflow.ellipsis,
-                            //         style: const TextStyle(
-                            //           fontSize: 10,
-                            //           color: AppColors.grayDark,
-                            //           fontWeight: FontWeight.w500,
-                            //         ),
-                            //       ),
-                            //     SizedBox(
-                            //       width: 10,
-                            //     ),
-                            //     if (tourBooking.children > 0)
-                            //       Text(
-                            //         "Children: ${tourBooking.children}",
-                            //         maxLines: 1,
-                            //         overflow: TextOverflow.ellipsis,
-                            //         style: const TextStyle(
-                            //           fontSize: 10,
-                            //           color: AppColors.grayDark,
-                            //           fontWeight: FontWeight.w500,
-                            //         ),
-                            //       ),
-                            //     SizedBox(
-                            //       width: 10,
-                            //     ),
-                            //     if (tourBooking.baby > 0)
-                            //       Text(
-                            //         "Babies: ${tourBooking.baby}",
-                            //         maxLines: 1,
-                            //         overflow: TextOverflow.ellipsis,
-                            //         style: const TextStyle(
-                            //           fontSize: 10,
-                            //           color: AppColors.grayDark,
-                            //           fontWeight: FontWeight.w500,
-                            //         ),
-                            //       ),
-                            //   ],
-                            // )
+                            const SizedBox(height: 5),
+                            Text(
+                              "Number: ${roomBooking.roomNumber}",
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                fontSize: 10,
+                                color: AppColors.grayDark,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            const SizedBox(height: 5),
+                            Text(
+                              "Type: ${roomBooking.roomType}",
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                fontSize: 10,
+                                color: AppColors.grayDark,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            const SizedBox(height: 5),
+                            Text(
+                              "Checkin: ${roomBooking.startDate}",
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                fontSize: 10,
+                                color: AppColors.grayDark,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            Text(
+                              "Checkout: ${roomBooking.endDate}",
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                fontSize: 10,
+                                color: AppColors.grayDark,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
                           ],
                         ),
                       ),
