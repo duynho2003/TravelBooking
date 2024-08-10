@@ -139,7 +139,7 @@ export default function MainLayout() {
             onCollapse={(value) => setCollapsed(value)}
             width={"100%"}
           >
-            <Link to="/admin/website/view">
+            <Link to="/staff/bookings/tour/view">
               <Button
                 style={{
                   width: "100%",
