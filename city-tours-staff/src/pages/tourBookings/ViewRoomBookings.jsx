@@ -23,6 +23,7 @@ import {
   faEye,
   faPen,
   faPenToSquare,
+  faPrint,
   faTrash,
   faTrashCan,
 } from "@fortawesome/free-solid-svg-icons";
@@ -39,6 +40,10 @@ import {
   getAllTourBookings,
 } from "../../features/tourBooking/TourBookingSlice";
 import { getAllHotels } from "../../features/hotel/HotelSlice";
+import Cookies from "js-cookie";
+import axios from "axios";
+import jsPDF from "jspdf";
+import "jspdf-autotable";
 
 const { Search } = Input;
 const { Option } = Select;
@@ -156,6 +161,134 @@ const ViewRoomBookings = () => {
     return `${hours}:${minutes}:${seconds} ${day}/${month}/${year}`;
   };
 
+  const updateBookingStatus = async (roomBookingId, newStatus) => {
+    try {
+      const token = Cookies.get("token");
+
+      await axios.patch(
+        `http://localhost:5050/api/v1/roomBookings/update-status/${roomBookingId}`,
+        {
+          bookingStatus: newStatus,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      notification.success({
+        message: "Booking status updated successfully!",
+        description: "Booking status updated successfully!",
+      });
+      dispatch(getAllTourBookings(pagination));
+    } catch (error) {
+      notification.error({
+        message: "System Error",
+        description: "There was an error creating the tour.",
+      });
+      console.error(error);
+    }
+  };
+
+  const handleStatusChange = (value, record) => {
+    updateBookingStatus(record.id, value);
+  };
+
+  const printInvoice = (record) => {
+    const doc = new jsPDF("p", "mm", "a4");
+
+    // Thêm tiêu đề
+    doc.setFontSize(18);
+    doc.setFont("helvetica", "bold");
+    doc.text("BILL HOTEL BOOKING", 105, 20, { align: "center" });
+
+    // Thông tin hóa đơn
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "normal");
+    doc.text(`Hotel Name: ${record.hotelName || "N/A"}`, 10, 30);
+    doc.text(
+      `Price: ${new Intl.NumberFormat("vi-VN", {
+        style: "currency",
+        currency: "VND",
+      }).format(record.price || 0)}`,
+      10,
+      50
+    );
+    doc.text(
+      `Start Date: ${
+        new Date(record.startDate).toLocaleString("vi-VN") || "N/A"
+      }`,
+      10,
+      60
+    );
+    doc.text(
+      `End Date: ${new Date(record.endDate).toLocaleString("vi-VN") || "N/A"}`,
+      10,
+      70
+    );
+    doc.text(
+      `Booking Date: ${
+        new Date(record.createdAt).toLocaleString("vi-VN") || "N/A"
+      }`,
+      10,
+      80
+    );
+    doc.text(
+      `Booking Status: ${
+        record.bookingStatus
+          ? record.bookingStatus.charAt(0).toUpperCase() +
+            record.bookingStatus.slice(1).toLowerCase()
+          : "N/A"
+      }`,
+      10,
+      90
+    );
+
+    // Tạo bảng
+    const tableData = [
+      ["Hotel Name", record.hotelName || "N/A"],
+      [
+        "Price",
+        new Intl.NumberFormat("vi-VN", {
+          style: "currency",
+          currency: "VND",
+        }).format(record.price || 0),
+      ],
+      [
+        "Start Date",
+        new Date(record.startDate).toLocaleString("vi-VN") || "N/A",
+      ],
+      ["End Date", new Date(record.endDate).toLocaleString("vi-VN") || "N/A"],
+      [
+        "Booking Date",
+        new Date(record.createdAt).toLocaleString("vi-VN") || "N/A",
+      ],
+      [
+        "Booking Status",
+        record.bookingStatus
+          ? record.bookingStatus.charAt(0).toUpperCase() +
+            record.bookingStatus.slice(1).toLowerCase()
+          : "N/A",
+      ],
+    ];
+
+    doc.autoTable({
+      startY: 100,
+      head: [["Field", "Value"]],
+      body: tableData,
+      theme: "striped",
+      styles: { fontSize: 10 },
+      margin: { left: 10, right: 10 },
+      columnStyles: {
+        0: { cellWidth: "auto" },
+        1: { cellWidth: "auto" },
+      },
+    });
+
+    // Lưu file PDF
+    doc.save(`invoice_${record.id}.pdf`);
+  };
+
   const columns = [
     {
       title: (
@@ -229,27 +362,44 @@ const ViewRoomBookings = () => {
         </>
       ),
       dataIndex: "bookingStatus",
-      render: (bookingStatus) => {
-        let color, tagText;
-        switch (bookingStatus) {
-          case "FAILED":
-            color = "red";
-            tagText = "Failed";
-            break;
-          case "PENDING":
-            color = "blue";
-            tagText = "Pending";
-            break;
-          case "SUCCESS":
-            color = "green";
-            tagText = "Success";
-            break;
-          default:
-            color = "default";
-            tagText = "Không xác định";
-        }
-        return <Tag color={color}>{tagText}</Tag>;
+      render: (bookingStatus, record) => {
+        const isPending = bookingStatus === "PENDING";
+        const options = isPending
+          ? ["PENDING", "SUCCESS", "FAILED"]
+          : [bookingStatus];
+
+        return (
+          <Select
+            defaultValue={bookingStatus}
+            style={{ width: 120 }}
+            onChange={(value) => handleStatusChange(value, record)}
+          >
+            {options.map((status) => (
+              <Option key={status} value={status}>
+                {status.charAt(0).toUpperCase() + status.slice(1).toLowerCase()}
+              </Option>
+            ))}
+          </Select>
+        );
       },
+    },
+
+    {
+      title: (
+        <>
+          Actions <FontAwesomeIcon icon={faCaretDown} />
+        </>
+      ),
+      render: (text, record, index) => (
+        <>
+          <Button
+            onClick={() => printInvoice(record)}
+            icon={<FontAwesomeIcon icon={faPrint} />}
+          >
+            Print Invoice
+          </Button>
+        </>
+      ),
     },
   ];
 

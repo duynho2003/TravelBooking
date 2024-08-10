@@ -23,6 +23,7 @@ import {
   faEye,
   faPen,
   faPenToSquare,
+  faPrint,
   faTrash,
   faTrashCan,
 } from "@fortawesome/free-solid-svg-icons";
@@ -35,6 +36,10 @@ import { QuestionCircleOutlined } from "@ant-design/icons";
 import { paymentStatus } from "../../utils/enums/PaymentStatus";
 import { transactionStatus } from "../../utils/enums/TransactionStatus";
 import { getAllTourBookings } from "../../features/tourBooking/TourBookingSlice";
+import axios from "axios";
+import Cookies from "js-cookie";
+import jsPDF from "jspdf";
+import "jspdf-autotable";
 
 const { Search } = Input;
 const { Option } = Select;
@@ -146,6 +151,115 @@ const ViewTourBookings = () => {
     return `${hours}:${minutes}:${seconds} ${day}/${month}/${year}`;
   };
 
+  const updateBookingStatus = async (tourBookingId, newStatus) => {
+    try {
+      const token = Cookies.get("token");
+
+      await axios.patch(
+        `http://localhost:5050/api/v1/tourBookings/update-status/${tourBookingId}`,
+        {
+          bookingStatus: newStatus,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      notification.success({
+        message: "Booking status updated successfully!",
+        description: "Booking status updated successfully!",
+      });
+      dispatch(getAllTourBookings(pagination));
+    } catch (error) {
+      notification.error({
+        message: "System Error",
+        description: "There was an error creating the tour.",
+      });
+      console.error(error);
+    }
+  };
+
+  const handleStatusChange = (value, record) => {
+    updateBookingStatus(record.id, value);
+  };
+
+  const printInvoice = (record) => {
+    const doc = new jsPDF("p", "mm", "a4");
+
+    // Thêm tiêu đề
+    doc.setFontSize(18);
+    doc.setFont("helvetica", "bold");
+    doc.text("BILL BOOKING TOUR", 105, 20, { align: "center" });
+
+    // Thông tin tour
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "normal");
+    doc.text(`Tour Name: ${record.tourName}`, 10, 40);
+    doc.text(`Customer Name: ${record.customerName}`, 10, 70);
+    doc.text(
+      `Amount: ${new Intl.NumberFormat("vi-VN", {
+        style: "currency",
+        currency: "VND",
+      }).format(record.amount)}`,
+      10,
+      80
+    );
+    doc.text(
+      `Booking Date: ${new Date(record.createdAt).toLocaleString("vi-VN")}`,
+      10,
+      90
+    );
+    doc.text(
+      `Booking Status: ${
+        record.bookingStatus.charAt(0).toUpperCase() +
+        record.bookingStatus.slice(1).toLowerCase()
+      }`,
+      10,
+      100
+    );
+
+    // Tạo bảng
+    const tableData = [
+      ["Tour Name", record.tourName],
+      ["Customer Name", record.customerName],
+      [
+        "Amount",
+        new Intl.NumberFormat("vi-VN", {
+          style: "currency",
+          currency: "VND",
+        }).format(record.amount),
+      ],
+      ["Booking Date", new Date(record.createdAt).toLocaleString("vi-VN")],
+      [
+        "Booking Status",
+        record.bookingStatus.charAt(0).toUpperCase() +
+          record.bookingStatus.slice(1).toLowerCase(),
+      ],
+    ];
+
+    doc.autoTable({
+      startY: 110,
+      head: [["Field", "Value"]],
+      body: tableData,
+      theme: "striped",
+      styles: { fontSize: 10 },
+      margin: { left: 10, right: 10 },
+      columnStyles: {
+        0: { cellWidth: "auto" },
+        1: { cellWidth: "auto" },
+      },
+      didDrawCell: (data) => {
+        if (data.column.dataKey === 1 && data.cell.text.length > 40) {
+          data.cell.text = data.cell.text.split("\n");
+        }
+      },
+    });
+
+    // Lưu file PDF
+    doc.save(`invoice_${record.id}.pdf`);
+  };
+
   const columns = [
     {
       title: (
@@ -153,7 +267,7 @@ const ViewTourBookings = () => {
           STT <FontAwesomeIcon icon={faCaretDown} />
         </>
       ),
-      render: (text, record, index) => index + 1,
+      render: (text, record, index) => <>{index + 1}</>,
     },
     {
       title: (
@@ -211,27 +325,44 @@ const ViewTourBookings = () => {
         </>
       ),
       dataIndex: "bookingStatus",
-      render: (bookingStatus) => {
-        let color, tagText;
-        switch (bookingStatus) {
-          case "FAILED":
-            color = "red";
-            tagText = "Failed";
-            break;
-          case "PENDING":
-            color = "blue";
-            tagText = "Pending";
-            break;
-          case "SUCCESS":
-            color = "green";
-            tagText = "Success";
-            break;
-          default:
-            color = "default";
-            tagText = "Không xác định";
-        }
-        return <Tag color={color}>{tagText}</Tag>;
+      render: (bookingStatus, record) => {
+        const isPending = bookingStatus === "PENDING";
+        const options = isPending
+          ? ["PENDING", "SUCCESS", "FAILED"]
+          : [bookingStatus];
+
+        return (
+          <Select
+            defaultValue={bookingStatus}
+            style={{ width: 120 }}
+            onChange={(value) => handleStatusChange(value, record)}
+          >
+            {options.map((status) => (
+              <Option key={status} value={status}>
+                {status.charAt(0).toUpperCase() + status.slice(1).toLowerCase()}
+              </Option>
+            ))}
+          </Select>
+        );
       },
+    },
+
+    {
+      title: (
+        <>
+          Actions <FontAwesomeIcon icon={faCaretDown} />
+        </>
+      ),
+      render: (text, record, index) => (
+        <>
+          <Button
+            onClick={() => printInvoice(record)}
+            icon={<FontAwesomeIcon icon={faPrint} />}
+          >
+            Print Invoice
+          </Button>
+        </>
+      ),
     },
   ];
 

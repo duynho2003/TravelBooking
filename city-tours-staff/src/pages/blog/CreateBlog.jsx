@@ -130,7 +130,7 @@ const CreateBlog = () => {
         description: data.description,
         content: data.content,
         thumbnail: thumbnail,
-        activeStatus: "IN_ACTIVE",
+        activeStatus: "ACTIVE",
       };
 
       console.log("newData: ", newData);

@@ -166,7 +166,7 @@ const UpdateBlog = () => {
       hashTags: hashTagsString,
       description: data.description,
       content: data.content,
-      activeStatus: blog?.activeStatus,
+      activeStatus: data.activeStatus,
       thumbnail: thumbnailToUse,
     };
 
@@ -395,6 +395,41 @@ const UpdateBlog = () => {
                             height: "400px",
                           }}
                         />
+                      </Form.Item>
+                    )}
+                  />
+
+                  <Controller
+                    name="activeStatus"
+                    control={control}
+                    render={({ field, fieldState: { error } }) => (
+                      <Form.Item
+                        label="Active Status"
+                        validateStatus={error ? "error" : ""}
+                        help={error?.message}
+                      >
+                        <Select
+                          {...field}
+                          onChange={(value) => {
+                            field.onChange(value);
+                          }}
+                        >
+                          {activeStatus.map((activeStatus) => {
+                            let label = activeStatus;
+
+                            if (activeStatus === "ACTIVE") {
+                              label = "Active";
+                            } else if (activeStatus === "IN_ACTIVE") {
+                              label = "In Active";
+                            }
+
+                            return (
+                              <Option key={activeStatus} value={activeStatus}>
+                                {label}
+                              </Option>
+                            );
+                          })}
+                        </Select>
                       </Form.Item>
                     )}
                   />
