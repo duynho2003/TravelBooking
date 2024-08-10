@@ -1,8 +1,12 @@
 package com.example.city_tours.service;
 
 import com.example.city_tours.dto.request.RoomBooking.CreateRoomBookingRequestDto;
+import com.example.city_tours.dto.request.RoomBooking.UpdateStatusRoomBookingRequestDto;
+import com.example.city_tours.dto.request.TourBooking.UpdateStatusTourBookingRequestDto;
 import com.example.city_tours.dto.response.RoomBooking.CreateRoomBookingResponseDto;
 import com.example.city_tours.dto.response.RoomBooking.GetRoomBookingResponseDto;
+import com.example.city_tours.dto.response.RoomBooking.UpdateStatusRoomBookingResponseDto;
+import com.example.city_tours.dto.response.TourBooking.UpdateStatusTourBookingResponseDto;
 import com.example.city_tours.dto.response.User.PageResponseDto;
 import com.example.city_tours.entity.*;
 import com.example.city_tours.enums.BookingStatus;
@@ -231,6 +235,29 @@ public class RoomBookingServiceImpl implements RoomBookingService{
 
         // Return the responseDtoList
         return pageResponseDto;
+    }
+
+    @Override
+    public UpdateStatusRoomBookingResponseDto updateStatusRoomBooking(Long roomBookingId, UpdateStatusRoomBookingRequestDto requestDto) {
+        Optional<RoomBooking> optionalRoomBooking = roomBookingRepository.findById(roomBookingId);
+
+        if (!optionalRoomBooking.isPresent()) {
+            throw new ResourceNotFoundException("Room booking not found");
+        }
+
+        RoomBooking roomBooking = optionalRoomBooking.get();
+
+        roomBooking.setBookingStatus(BookingStatus.valueOf(requestDto.getBookingStatus()));
+
+        roomBookingRepository.save(roomBooking);
+
+        UpdateStatusRoomBookingResponseDto responseDto = new UpdateStatusRoomBookingResponseDto();
+
+        responseDto.setId(roomBooking.getId());
+        responseDto.setBookingStatus(roomBooking.getBookingStatus().toString());
+
+        return responseDto;
+
     }
 
 }

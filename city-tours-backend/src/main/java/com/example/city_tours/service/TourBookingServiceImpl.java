@@ -1,13 +1,11 @@
 package com.example.city_tours.service;
 
 import com.example.city_tours.dto.request.TourBooking.CreateTourBookingRequestDto;
+import com.example.city_tours.dto.request.TourBooking.UpdateStatusTourBookingRequestDto;
 import com.example.city_tours.dto.request.TourBooking.UpdateTourBookingRequestDto;
 import com.example.city_tours.dto.request.TourRoomBooking.CreateTourRoomBookingRequestDto;
 import com.example.city_tours.dto.response.Tour.GetAllToursResponseDto;
-import com.example.city_tours.dto.response.TourBooking.CreateTourBookingResponseDto;
-import com.example.city_tours.dto.response.TourBooking.GetAllTourBookingsByUserIdResponseDto;
-import com.example.city_tours.dto.response.TourBooking.GetAllTourBookingsResponseDto;
-import com.example.city_tours.dto.response.TourBooking.UpdateTourBookingResponseDto;
+import com.example.city_tours.dto.response.TourBooking.*;
 import com.example.city_tours.dto.response.TourRoomBooking.CreateTourRoomBookingResponseDto;
 import com.example.city_tours.dto.response.User.PageResponseDto;
 import com.example.city_tours.entity.*;
@@ -118,8 +116,8 @@ public class TourBookingServiceImpl implements TourBookingService{
     }
 
     @Override
-    public UpdateTourBookingResponseDto updateTourBooking(UpdateTourBookingRequestDto requestDto) {
-        Optional<TourBooking> optionalTourBooking = tourBookingRepository.findById(requestDto.getTourBookingId());
+    public UpdateStatusTourBookingResponseDto updateStatusTourBooking(Long tourBookingId, UpdateStatusTourBookingRequestDto requestDto) {
+        Optional<TourBooking> optionalTourBooking = tourBookingRepository.findById(tourBookingId);
 
         if (!optionalTourBooking.isPresent()) {
             throw new ResourceNotFoundException("Tour booking not found");
@@ -131,9 +129,9 @@ public class TourBookingServiceImpl implements TourBookingService{
 
         tourBookingRepository.save(tourBooking);
 
-        UpdateTourBookingResponseDto responseDto = new UpdateTourBookingResponseDto();
+        UpdateStatusTourBookingResponseDto responseDto = new UpdateStatusTourBookingResponseDto();
 
-        responseDto.setTourBookingId(tourBooking.getId());
+        responseDto.setId(tourBooking.getId());
         responseDto.setBookingStatus(tourBooking.getBookingStatus().toString());
 
         return responseDto;

@@ -4,9 +4,11 @@ import com.example.city_tours.common.ApiErrorResponse;
 import com.example.city_tours.common.ApiSuccessResponse;
 import com.example.city_tours.common.ErrorCode;
 import com.example.city_tours.dto.request.TourBooking.CreateTourBookingRequestDto;
+import com.example.city_tours.dto.request.TourBooking.UpdateStatusTourBookingRequestDto;
 import com.example.city_tours.dto.request.TourRoomBooking.CreateTourRoomBookingRequestDto;
 import com.example.city_tours.dto.response.TourBooking.CreateTourBookingResponseDto;
 import com.example.city_tours.dto.response.TourBooking.GetAllTourBookingsResponseDto;
+import com.example.city_tours.dto.response.TourBooking.UpdateStatusTourBookingResponseDto;
 import com.example.city_tours.dto.response.TourRoomBooking.CreateTourRoomBookingResponseDto;
 import com.example.city_tours.dto.response.User.PageResponseDto;
 import com.example.city_tours.exception.ResourceNotFoundException;
@@ -135,6 +137,40 @@ public class TourBookingController {
                     ));
         } catch (ServerErrorException e) {
             // Return error response for server error
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiErrorResponse(
+                            HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                            e.getMessage(),
+                            ErrorCode.INTERNAL_SERVER_ERROR,
+                            "http://localhost:5050/docs/errors/1012"
+                    ));
+        }
+    }
+
+    @PreAuthorize("hasAnyRole('ROLE_STAFF', 'ROLE_ADMIN')")
+    @PatchMapping("/update-status/{tourBookingId}")
+    public ResponseEntity<?> updateStatusTourBooking(@PathVariable Long tourBookingId, @RequestBody UpdateStatusTourBookingRequestDto requestDto) {
+        try {
+            UpdateStatusTourBookingResponseDto responseDto = tourBookingService.updateStatusTourBooking(tourBookingId, requestDto);
+
+            return ResponseEntity
+                    .status(HttpStatus.CREATED)
+                    .body(new ApiSuccessResponse<>(
+                            HttpStatus.CREATED.value(),
+                            "Updated tour booking successfully",
+                            responseDto
+                    ));
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(new ApiErrorResponse(
+                            HttpStatus.NOT_FOUND.value(),
+                            e.getMessage(),
+                            ErrorCode.NOT_FOUND,
+                            "http://localhost:5050/docs/errors/1012"
+                    ));
+        } catch (ServerErrorException e) {
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ApiErrorResponse(
